@@ -1,41 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Zodiac · Larak's</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/style.css" />
-  </head>
-  <body>
-    <div class="page">
-      <header class="header">
-        <h1>Zodiac · Larak's</h1>
-        <p class="subtitle">Prototype · Firebase + Node backend</p>
-      </header>
 
-      <main class="main">
-        <section class="card">
-          <h2>Today’s Zodiac Reading</h2>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Larak's Zodiac</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
 
-          <div id="status" class="status">Loading...</div>
-
-          <div id="result" class="result hidden">
-            <p><strong>Date:</strong> <span id="zodiac-date"></span></p>
-            <p><strong>Sign:</strong> <span id="zodiac-sign"></span></p>
-            <p><strong>Luck:</strong> <span id="zodiac-luck"></span></p>
-            <p><strong>Message:</strong></p>
-            <p id="zodiac-message"></p>
-          </div>
-        </section>
-
-        <section class="card">
-          <h2>Debug</h2>
-          <pre id="debug-log" class="debug-log"></pre>
-        </section>
-      </main>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="logo">
+      <div class="logo-icon"></div>
+      <span>Larak's Zodiac</span>
     </div>
+    <ul class="nav-links">
+      <li><a href="#" class="active">Home</a></li>
+      <li><a href="#">Archive</a></li>
+      <li><a href="#">Query</a></li>
+      <li><a href="#">Fortune</a></li>
+      <li><a href="#">Matching</a></li>
+      <li><a href="#">Member Center</a></li>
+      <li><a href="#">Community (Blog)</a></li>
+    </ul>
+  </nav>
 
-    <!-- 前端入口脚本：用 ES module，这样才能用 import -->
-    <script type="module" src="/app.js"></script>
-  </body>
+  <!-- Hero / Search -->
+  <section class="hero">
+    <div class="search-container">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" placeholder="Quick Zodiac Lookup (e.g., Dragon, 1988)">
+    </div>
+    <div class="auth-buttons">
+      <button class="btn-login">Login</button>
+      <button class="btn-register">Register</button>
+    </div>
+  </section>
+
+  <!-- Zodiac Grid -->
+  <main class="zodiac-grid">
+    <div class="zodiac-card">
+      <div class="card-image">
+        <img src="images/rat.png" alt="Rat">
+      </div>
+      <h3>Rat</h3>
+      <p>..., 1996, 2008, 2020</p>
+    </div>
+    <div class="zodiac-card">
+      <div class="card-image">
+        <img src="images/ox.png" alt="Ox">
+      </div>
+      <h3>Ox</h3>
+      <p>..., 1997, 2009, 2021</p>
+    </div>
+    <div class="zodiac-card">
+      <div class="card-image">
+        <img src="images/tiger.png" alt="Tiger">
+      </div>
+      <h3>Tiger</h3>
+      <p>..., 1998, 2010, 2022</p>
+    </div>
+    <div class="zodiac-card">
+      <div class="card-image">
+        <img src="images/rabbit.png" alt="Rabbit">
+      </div>
+      <h3>Rabbit</h3>
+      <p>..., 1999, 2011, 2023</p>
+    </div>
+    <div class="zodiac-card">
+      <div class="card-image">
+        <img src="images/dragon.png" alt="Dragon">
+      </div>
+      <h3>Dragon</h3>
+      <p>..., 2000, 2012, 2024</p>
+    </div>
+    <div class="zodiac-card">
+      <div class="card-image">
+        <img src="images/snake.png" alt="Snake">
+      </div>
+      <h3>Snake</h3>
+      <p>..., 2001, 2013, 2025</p>
+    </div>
+    <div class="zodiac-card">
+      <div class="card-image">
+        <img src="images/horse.png" alt="Horse">
+      </div>
+      <h3>Horse</h3>
+      <p>..., 2002, 2014, 2026</p>
+    </div>
+    <div class="zodiac-card">
+      <div class="card-image">
+        <img src="images/goat.png" alt="Goat">
+      </div>
+      <h3>Goat</h3>
+      <p>..., 2003, 2015, 2027</p>
+    </div>
+    <div class="zodiac-card">
+      <div class="card-image">
+        <img src="images/monkey.png" alt="Monkey">
+      </div>
+      <h3>Monkey</h3>
+      <p>..., 2004, 2016, 2028</p>
+    </div>
+    <div class="zodiac-card">
+      <div class="card-image">
+        <img src="images/rooster.png" alt="Rooster">
+      </div>
+      <h3>Rooster</h3>
+      <p>..., 2005, 2017, 2029</p>
+    </div>
+    <div class="zodiac-card">
+      <div class="card-image">
+        <img src="images/dog.png" alt="Dog">
+      </div>
+      <h3>Dog</h3>
+      <p>..., 2006, 2018, 2030</p>
+    </div>
+    <div class="zodiac-card">
+      <div class="card-image">
+        <img src="images/pig.png" alt="Pig">
+      </div>
+      <h3>Pig</h3>
+      <p>..., 2007, 2019, 2031</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="#">About Us</a>
+      <a href="#">Contact</a>
+      <a href="#">Privacy Policy</a>
+    </div>
+    <div class="social-icons">
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+    </div>
+    <p class="copyright">© 2024 Larak's Zodiac. All Rights Reserved.</p>
+  </footer>
+</body>
+
 </html>
