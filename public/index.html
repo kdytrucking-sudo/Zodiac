@@ -1,12 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <title>Zodiac</title>
-    <script type="module" src="/app.js"></script>
+    <meta charset="UTF-8" />
+    <title>Zodiac · Larak's</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <h1>Zodiac Web App</h1>
-    <p>Hello Firebase!</p>
+    <div class="page">
+      <header class="header">
+        <h1>Zodiac · Larak's</h1>
+        <p class="subtitle">Prototype · Firebase + Node backend</p>
+      </header>
+
+      <main class="main">
+        <section class="card">
+          <h2>Today’s Zodiac Reading</h2>
+
+          <div id="status" class="status">Loading...</div>
+
+          <div id="result" class="result hidden">
+            <p><strong>Date:</strong> <span id="zodiac-date"></span></p>
+            <p><strong>Sign:</strong> <span id="zodiac-sign"></span></p>
+            <p><strong>Luck:</strong> <span id="zodiac-luck"></span></p>
+            <p><strong>Message:</strong></p>
+            <p id="zodiac-message"></p>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Debug</h2>
+          <pre id="debug-log" class="debug-log"></pre>
+        </section>
+      </main>
+    </div>
+
+    <!-- 前端入口脚本：用 ES module，这样才能用 import -->
+    <script type="module" src="/app.js"></script>
   </body>
 </html>
