@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zodiac Archive - Larak's Zodiac</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <span>Larak's Zodiac</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="archive.html" class="active">Archive</a></li>
+            <li><a href="#">Query</a></li>
+            <li><a href="#">Fortune</a></li>
+            <li><a href="#">Matching</a></li>
+            <li><a href="#">Member Center</a></li>
+            <li><a href="#">Community (Blog)</a></li>
+        </ul>
+        <div class="header-search">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" placeholder="Quick Zodiac Lookup (e.g., Dragon, 1988)">
+        </div>
+        <div class="header-auth">
+            <button class="btn-login">Login</button>
+            <button class="btn-register">Register</button>
+        </div>
+    </nav>
+
+    <main class="archive-container">
+        <!-- Archive Header with Selector -->
+        <header class="archive-header">
+            <h1>Zodiac Archive</h1>
+            <p class="archive-subtitle">Explore the wisdom and characteristics of each Chinese Zodiac sign</p>
+
+            <div class="zodiac-selector">
+                <label for="zodiac-select">
+                    <i class="fas fa-star"></i> Select a Zodiac Sign:
+                </label>
+                <select id="zodiac-select">
+                    <option value="">-- Choose a Zodiac --</option>
+                    <option value="rat">Rat (鼠)</option>
+                    <option value="ox">Ox (牛)</option>
+                    <option value="tiger">Tiger (虎)</option>
+                    <option value="rabbit">Rabbit (兔)</option>
+                    <option value="dragon">Dragon (龙)</option>
+                    <option value="snake">Snake (蛇)</option>
+                    <option value="horse">Horse (马)</option>
+                    <option value="goat">Goat (羊)</option>
+                    <option value="monkey">Monkey (猴)</option>
+                    <option value="rooster">Rooster (鸡)</option>
+                    <option value="dog">Dog (狗)</option>
+                    <option value="pig">Pig (猪)</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Zodiac Detail Content (Initially Hidden) -->
+        <div id="zodiac-content" class="zodiac-content" style="display: none;">
+            <div class="detail-header">
+                <div class="zodiac-circle-img">
+                    <img id="header-img" src="" alt="Zodiac">
+                </div>
+                <div class="zodiac-title">
+                    <div class="chinese-char" id="chinese-char"></div>
+                    <h1 id="zodiac-name">Loading...</h1>
+                    <p class="earthly-branch" id="earthly-branch"></p>
+                    <p class="years" id="years"></p>
+                </div>
+            </div>
+
+            <div class="content-wrapper">
+                <!-- Introduction -->
+                <section class="detail-section">
+                    <h2><i class="fas fa-book-open"></i> Introduction</h2>
+                    <hr>
+                    <p id="introduction">Loading introduction...</p>
+                </section>
+
+                <!-- Lifetime Fortune -->
+                <section class="detail-section">
+                    <h2><i class="fas fa-chart-line"></i> Lifetime Fortune</h2>
+                    <hr>
+                    <p id="lifetime-fortune">Loading fortune...</p>
+                </section>
+
+                <!-- Love & Wealth Grid -->
+                <div class="two-col-grid">
+                    <section class="detail-section">
+                        <h2><i class="far fa-heart"></i> Love and Marriage</h2>
+                        <hr>
+                        <p id="love-marriage">Loading...</p>
+                    </section>
+                    <section class="detail-section">
+                        <h2><i class="fas fa-coins"></i> Wealth</h2>
+                        <hr>
+                        <p id="wealth">Loading...</p>
+                    </section>
+                </div>
+
+                <!-- Health -->
+                <section class="detail-section">
+                    <h2><i class="fas fa-heartbeat"></i> Health</h2>
+                    <hr>
+                    <p id="health">Loading...</p>
+                </section>
+
+                <!-- Personality Grid -->
+                <section class="detail-section">
+                    <div class="personality-grid">
+                        <div class="p-col">
+                            <h3>Personality</h3>
+                            <ul id="personality-list"></ul>
+                        </div>
+                        <div class="p-col">
+                            <h3>Strengths</h3>
+                            <ul id="strengths-list"></ul>
+                        </div>
+                        <div class="p-col">
+                            <h3>Weaknesses</h3>
+                            <ul id="weaknesses-list"></ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Origin -->
+                <section class="detail-section">
+                    <h2><i class="fas fa-scroll"></i> Origin and Legend</h2>
+                    <hr>
+                    <p id="origin">Loading...</p>
+                </section>
+
+                <!-- Destiny Attributes -->
+                <section class="detail-section">
+                    <h2><i class="fas fa-star"></i> Destiny Attributes</h2>
+                    <hr>
+                    <div class="attributes-grid">
+                        <div class="attr-box">
+                            <span class="attr-label">FIVE ELEMENTS</span>
+                            <span class="attr-value" id="attr-element">-</span>
+                        </div>
+                        <div class="attr-box">
+                            <span class="attr-label">YIN/YANG</span>
+                            <span class="attr-value" id="attr-yinyang">-</span>
+                        </div>
+                        <div class="attr-box">
+                            <span class="attr-label">LUCKY NUMBERS</span>
+                            <span class="attr-value" id="attr-numbers">-</span>
+                        </div>
+                        <div class="attr-box">
+                            <span class="attr-label">LUCKY COLORS</span>
+                            <span class="attr-value" id="attr-colors">-</span>
+                        </div>
+                        <div class="attr-box">
+                            <span class="attr-label">AUSPICIOUS DIRECTIONS</span>
+                            <span class="attr-value" id="attr-directions">-</span>
+                        </div>
+                        <div class="attr-box">
+                            <span class="attr-label">LUCKY FLOWERS</span>
+                            <span class="attr-value" id="attr-flowers">-</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Share Button -->
+                <div class="share-container">
+                    <button class="btn-share"><i class="fas fa-share-alt"></i> Share as Card</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-yin-yang"></i>
+            </div>
+            <h2>Select a Zodiac Sign</h2>
+            <p>Choose a zodiac sign from the dropdown above to explore its detailed information, personality traits, and
+                fortune insights.</p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <div class="social-icons">
+            <a href="https://www.threads.net/@laraksoracle" target="_blank"><i class="fa-brands fa-threads"></i></a>
+            <a href="https://www.tiktok.com/@laraksoracle" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/laraksoracle/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.facebook.com/laraksoracleta" target="_blank"><i
+                    class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.youtube.com/@LaraKsOracle" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://x.com/laraks_oracle" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+        <p class="copyright">© 2024 Larak's Zodiac. All Rights Reserved.</p>
+    </footer>
+
+    <script type="module" src="archive.js"></script>
+</body>
+
+</html>

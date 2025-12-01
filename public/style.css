@@ -1384,3 +1384,147 @@ body {
     font-size: 1.1rem;
     text-align: center;
 }
+
+/* --- Archive Page Styles --- */
+
+.archive-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+}
+
+.archive-header {
+    text-align: center;
+    margin-bottom: 50px;
+    padding-top: 20px;
+}
+
+.archive-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: #fdd56a;
+    margin: 0 0 15px;
+}
+
+.archive-subtitle {
+    font-size: 1.2rem;
+    color: #d1d1d6;
+    margin-bottom: 40px;
+}
+
+/* Zodiac Selector */
+.zodiac-selector {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.zodiac-selector label {
+    display: block;
+    color: #eaddcf;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.zodiac-selector label i {
+    color: #fdd56a;
+    margin-right: 8px;
+}
+
+.zodiac-selector select {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    background: #1e1e2f;
+    color: white;
+    border: 2px solid rgba(253, 213, 106, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--font-main);
+    transition: all 0.3s;
+}
+
+.zodiac-selector select:hover {
+    border-color: #fdd56a;
+}
+
+.zodiac-selector select:focus {
+    outline: none;
+    border-color: #fdd56a;
+    box-shadow: 0 0 0 3px rgba(253, 213, 106, 0.1);
+}
+
+.zodiac-selector option {
+    padding: 10px;
+    background: #1e1e2f;
+    color: white;
+}
+
+/* Zodiac Content */
+.zodiac-content {
+    margin-top: 50px;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    margin-top: 50px;
+}
+
+.empty-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 30px;
+    background: linear-gradient(135deg, rgba(253, 213, 106, 0.2), rgba(229, 77, 66, 0.2));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.empty-icon i {
+    font-size: 4rem;
+    color: #fdd56a;
+}
+
+.empty-state h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: #eaddcf;
+    margin-bottom: 15px;
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+    color: #a0a3b1;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
