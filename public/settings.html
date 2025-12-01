@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Larak's Zodiac</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <span>Larak's Zodiac</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="archive.html">Archive</a></li>
+            <li><a href="#">Query</a></li>
+            <li><a href="#">Fortune</a></li>
+            <li><a href="#">Matching</a></li>
+            <li><a href="dashboard.html">Member Center</a></li>
+            <li><a href="#">Community (Blog)</a></li>
+        </ul>
+        <div class="header-search">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" placeholder="Quick Zodiac Lookup (e.g., Dragon, 1988)">
+        </div>
+        <div class="header-auth">
+            <!-- Auth state will be injected here -->
+        </div>
+    </nav>
+
+    <main class="settings-container">
+        <div class="settings-header">
+            <h1>Account Settings</h1>
+            <p>Manage your profile details and payment preferences</p>
+        </div>
+
+        <div class="settings-grid">
+            <!-- Sidebar Navigation -->
+            <div class="settings-sidebar">
+                <button class="settings-nav-btn active" data-target="profile-section">
+                    <i class="fas fa-user"></i> Profile Information
+                </button>
+                <button class="settings-nav-btn" data-target="payment-section">
+                    <i class="fas fa-credit-card"></i> Payment Methods
+                </button>
+                <button class="settings-nav-btn" data-target="security-section">
+                    <i class="fas fa-lock"></i> Security
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="settings-content">
+
+                <!-- Profile Section -->
+                <section id="profile-section" class="settings-section active">
+                    <div class="section-header">
+                        <h2>Profile Information</h2>
+                        <p>Update your personal details for accurate zodiac readings.</p>
+                    </div>
+
+                    <form id="profile-form">
+                        <div class="form-group">
+                            <label for="display-name">Display Name</label>
+                            <input type="text" id="display-name" name="display-name" placeholder="Your Name">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="birthdate">Date of Birth</label>
+                                <input type="date" id="birthdate" name="birthdate">
+                            </div>
+                            <div class="form-group">
+                                <label for="birthtime">Time of Birth</label>
+                                <input type="time" id="birthtime" name="birthtime">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">Birth Location</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <input type="text" id="location" name="location"
+                                    placeholder="City, Country (e.g. Shanghai, China)">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save">Save Changes</button>
+                            <div id="profile-message" class="status-message"></div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Payment Section -->
+                <section id="payment-section" class="settings-section">
+                    <div class="section-header">
+                        <h2>Payment Methods</h2>
+                        <p>Manage your saved cards and billing information.</p>
+                    </div>
+
+                    <div class="payment-methods-list">
+                        <!-- Mock Existing Card -->
+                        <div class="payment-card">
+                            <div class="card-icon">
+                                <i class="fab fa-cc-visa"></i>
+                            </div>
+                            <div class="card-details">
+                                <div class="card-number">•••• •••• •••• 4242</div>
+                                <div class="card-expiry">Expires 12/28</div>
+                            </div>
+                            <button class="btn-remove-card"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+
+                    <button class="btn-add-card">
+                        <i class="fas fa-plus"></i> Add New Payment Method
+                    </button>
+                </section>
+
+                <!-- Security Section (Placeholder) -->
+                <section id="security-section" class="settings-section">
+                    <div class="section-header">
+                        <h2>Security</h2>
+                        <p>Manage your password and account security.</p>
+                    </div>
+                    <div class="security-options">
+                        <button class="btn-outline">Change Password</button>
+                        <button class="btn-outline danger">Delete Account</button>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <div class="social-icons">
+            <a href="https://www.threads.net/@laraksoracle" target="_blank"><i class="fa-brands fa-threads"></i></a>
+            <a href="https://www.tiktok.com/@laraksoracle" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/laraksoracle/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.facebook.com/laraksoracleta" target="_blank"><i
+                    class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.youtube.com/@LaraKsOracle" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://x.com/laraks_oracle" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+        <p class="copyright">© 2024 Larak's Zodiac. All Rights Reserved.</p>
+    </footer>
+
+    <script type="module" src="auth-state.js"></script>
+    <script type="module" src="settings.js"></script>
+</body>
+
+</html>

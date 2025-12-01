@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Larak's Zodiac</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <span>Larak's Zodiac</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="archive.html">Archive</a></li>
+            <li><a href="#">Query</a></li>
+            <li><a href="#">Fortune</a></li>
+            <li><a href="#">Matching</a></li>
+            <li><a href="dashboard.html" class="active">Member Center</a></li>
+            <li><a href="#">Community (Blog)</a></li>
+        </ul>
+        <div class="header-search">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" placeholder="Quick Zodiac Lookup (e.g., Dragon, 1988)">
+        </div>
+        <div class="header-auth">
+            <!-- Auth state will be injected here -->
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        <!-- Profile Warning Banner (Hidden by default) -->
+        <div id="profile-warning" class="profile-warning" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>Please complete your birth information in <a href="settings.html">Settings</a> to get accurate
+                personalized fortunes. Showing sample data below.</span>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Left Column: Fortune Card -->
+            <div class="dashboard-col-left">
+                <div class="fortune-card">
+                    <div class="fortune-header">
+                        <h3>Today's Brief Fortune</h3>
+                    </div>
+
+                    <div class="fortune-date-box">
+                        <div class="date-info">
+                            <span id="current-date">November 1, 2025</span>
+                            <span id="current-day" class="highlight-day">(Saturday)</span>
+                            <div class="zodiac-sign-display">
+                                <span id="user-zodiac-name">Rat</span>
+                                <span class="gender-icon"><i class="fas fa-venus"></i></span>
+                            </div>
+                        </div>
+                        <div class="zodiac-thumb">
+                            <img id="user-zodiac-img" src="images/rat.png" alt="Zodiac">
+                        </div>
+                    </div>
+
+                    <div class="fortune-tabs">
+                        <button class="tab-btn active">Today</button>
+                        <button class="tab-btn">Tomorrow</button>
+                        <button class="tab-btn">This Week</button>
+                        <button class="tab-btn">This Month</button>
+                        <button class="tab-btn">This Year</button>
+                    </div>
+
+                    <div class="fortune-score-card">
+                        <div class="score-header">
+                            <div class="big-score">79</div>
+                            <div class="score-text">
+                                <div class="score-label">Overall Fortune</div>
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                            </div>
+                            <div class="fortune-quote">
+                                "Actively Seek Benefactors"
+                            </div>
+                        </div>
+
+                        <div class="progress-bars">
+                            <div class="p-bar-item">
+                                <div class="p-label">
+                                    <span>Career</span>
+                                    <span>Love</span>
+                                </div>
+                                <div class="p-track-row">
+                                    <div class="p-track">
+                                        <div class="p-fill" style="width: 60%;"></div>
+                                    </div>
+                                    <div class="p-track">
+                                        <div class="p-fill" style="width: 85%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-bar-item">
+                                <div class="p-label">
+                                    <span>Health</span>
+                                    <span>Wealth</span>
+                                </div>
+                                <div class="p-track-row">
+                                    <div class="p-track">
+                                        <div class="p-fill" style="width: 40%;"></div>
+                                    </div>
+                                    <div class="p-track">
+                                        <div class="p-fill" style="width: 70%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lucky-grid">
+                            <div class="lucky-item">
+                                <div class="lucky-val" id="lucky-benefactor">Dragon</div>
+                                <div class="lucky-lbl">Benefactor</div>
+                            </div>
+                            <div class="lucky-item">
+                                <div class="lucky-val" id="lucky-color">Green</div>
+                                <div class="lucky-lbl">Lucky Color</div>
+                            </div>
+                            <div class="lucky-item">
+                                <div class="lucky-val" id="lucky-numbers">3, 7</div>
+                                <div class="lucky-lbl">Lucky Numbers</div>
+                            </div>
+                        </div>
+
+                        <div class="lucky-grid">
+                            <div class="lucky-item">
+                                <div class="lucky-val" id="lucky-direction">Southwest</div>
+                                <div class="lucky-lbl">Love Direction</div>
+                            </div>
+                            <div class="lucky-item">
+                                <div class="lucky-val" id="lucky-joy">North</div>
+                                <div class="lucky-lbl">Joy Direction</div>
+                            </div>
+                            <div class="lucky-item">
+                                <div class="lucky-val" id="lucky-wealth">East</div>
+                                <div class="lucky-lbl">Wealth Direction</div>
+                            </div>
+                        </div>
+
+                        <div class="dos-donts">
+                            <div class="do-item">
+                                <span class="badge do">Do</span>
+                                <span>Study and Self-Improvement</span>
+                            </div>
+                            <div class="dont-item">
+                                <span class="badge dont">Don't</span>
+                                <span>Seeking Quick Success</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: User Info & Tables -->
+            <div class="dashboard-col-right">
+
+                <!-- User Info Section -->
+                <div class="dashboard-card user-info-card">
+                    <div class="card-header">
+                        <h3>User Information</h3>
+                        <a href="settings.html" class="edit-link"><i class="fas fa-pen"></i> Edit</a>
+                    </div>
+                    <div class="user-details-grid">
+                        <div class="u-item">
+                            <span class="u-label">Name:</span>
+                            <span class="u-value" id="display-name">Loading...</span>
+                        </div>
+                        <div class="u-item">
+                            <span class="u-label">Account Tier:</span>
+                            <span class="tier-badge" id="account-tier">Free Member</span>
+                        </div>
+                        <div class="u-item">
+                            <span class="u-label">Date of Birth:</span>
+                            <span class="u-value" id="display-dob">-</span>
+                        </div>
+                        <div class="u-item">
+                            <span class="u-label">Time of Birth:</span>
+                            <span class="u-value" id="display-tob">-</span>
+                        </div>
+                        <div class="u-item full-width">
+                            <span class="u-label">Place of Birth:</span>
+                            <span class="u-value" id="display-location">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Favorite Library -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Favorite Library</h3>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div class="list-container" id="favorites-list">
+                        <!-- Items will be injected by JS -->
+                        <div class="list-item">
+                            <span>Detailed Fortune for the Year of the Snake 2025</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="list-item">
+                            <span>How to Choose the Best Partner Based on Zodiac Sign</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="list-item">
+                            <span>Office Feng Shui Layout to Enhance Career Luck</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction Log -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Payment Transaction Log</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>DATE</th>
+                                    <th>DESCRIPTION</th>
+                                    <th>AMOUNT</th>
+                                    <th>STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transaction-list">
+                                <!-- Items will be injected by JS -->
+                                <tr>
+                                    <td>2024-10-25</td>
+                                    <td>Annual Membership Subscription</td>
+                                    <td>$188.00</td>
+                                    <td><span class="status-badge success">Successful</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-09-12</td>
+                                    <td>Personal Fortune Report</td>
+                                    <td>$28.00</td>
+                                    <td><span class="status-badge success">Successful</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <div class="social-icons">
+            <a href="https://www.threads.net/@laraksoracle" target="_blank"><i class="fa-brands fa-threads"></i></a>
+            <a href="https://www.tiktok.com/@laraksoracle" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/laraksoracle/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.facebook.com/laraksoracleta" target="_blank"><i
+                    class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.youtube.com/@LaraKsOracle" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://x.com/laraks_oracle" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+        <p class="copyright">© 2024 Larak's Zodiac. All Rights Reserved.</p>
+    </footer>
+
+    <script type="module" src="auth-state.js"></script>
+    <script type="module" src="dashboard.js"></script>
+</body>
+
+</html>
