@@ -15,9 +15,9 @@ const firebaseConfig = {
 };
 
 // --- 初始化 Firebase 前端 ---
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+export const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app, "zodia1");
+export const auth = getAuth(app);
 
 logDebug("Firebase initialized");
 logDebug(`projectId: ${firebaseConfig.projectId}`);

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Zodiac Data Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <div class="logo-icon"></div>
+                <span>Larak's Zodiac Admin</span>
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="detail.html?sign=rat">View Detail</a></li>
+        </ul>
+    </nav>
+
+    <main class="admin-container">
+        <header class="admin-header">
+            <h1>Manage Zodiac Data</h1>
+            <div class="selector-group">
+                <label for="zodiac-select">Select Zodiac:</label>
+                <select id="zodiac-select">
+                    <option value="rat">Rat (鼠)</option>
+                    <option value="ox">Ox (牛)</option>
+                    <option value="tiger">Tiger (虎)</option>
+                    <option value="rabbit">Rabbit (兔)</option>
+                    <option value="dragon">Dragon (龙)</option>
+                    <option value="snake">Snake (蛇)</option>
+                    <option value="horse">Horse (马)</option>
+                    <option value="goat">Goat (羊)</option>
+                    <option value="monkey">Monkey (猴)</option>
+                    <option value="rooster">Rooster (鸡)</option>
+                    <option value="dog">Dog (狗)</option>
+                    <option value="pig">Pig (猪)</option>
+                </select>
+                <button id="btn-load" class="btn-primary">Load Data</button>
+            </div>
+        </header>
+
+        <form id="zodiac-form" class="admin-form">
+            <div class="form-section">
+                <h2>Basic Info</h2>
+                <div class="form-group">
+                    <label>Name (English)</label>
+                    <input type="text" id="name" placeholder="e.g. The Rat">
+                </div>
+                <div class="form-group">
+                    <label>Chinese Character</label>
+                    <input type="text" id="chineseChar" placeholder="e.g. 鼠">
+                </div>
+                <div class="form-group">
+                    <label>Earthly Branch</label>
+                    <input type="text" id="earthlyBranch" placeholder="e.g. 子 (Zi)">
+                </div>
+                <div class="form-group">
+                    <label>Years (comma separated)</label>
+                    <input type="text" id="years" placeholder="e.g. 1996, 2008, 2020">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Content</h2>
+                <div class="form-group">
+                    <label>Introduction</label>
+                    <textarea id="introduction" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Lifetime Fortune</label>
+                    <textarea id="lifetimeFortune" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Love and Marriage</label>
+                    <textarea id="loveMarriage" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Wealth</label>
+                    <textarea id="wealth" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Health</label>
+                    <textarea id="health" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Origin and Legend</label>
+                    <textarea id="origin" rows="4"></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Traits (Comma separated)</h2>
+                <div class="form-group">
+                    <label>Personality</label>
+                    <input type="text" id="personality" placeholder="e.g. Intelligent, Charming">
+                </div>
+                <div class="form-group">
+                    <label>Strengths</label>
+                    <input type="text" id="strengths" placeholder="e.g. Adaptable, Quick-witted">
+                </div>
+                <div class="form-group">
+                    <label>Weaknesses</label>
+                    <input type="text" id="weaknesses" placeholder="e.g. Timid, Stubborn">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Destiny Attributes</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Element</label>
+                        <input type="text" id="attr-element" placeholder="e.g. Water (Shui)">
+                    </div>
+                    <div class="form-group">
+                        <label>Yin/Yang</label>
+                        <input type="text" id="attr-yinyang" placeholder="e.g. Yang">
+                    </div>
+                    <div class="form-group">
+                        <label>Lucky Numbers (comma separated)</label>
+                        <input type="text" id="attr-numbers" placeholder="e.g. 2, 3">
+                    </div>
+                    <div class="form-group">
+                        <label>Lucky Colors (comma separated)</label>
+                        <input type="text" id="attr-colors" placeholder="e.g. Blue, Gold">
+                    </div>
+                    <div class="form-group">
+                        <label>Auspicious Directions (comma separated)</label>
+                        <input type="text" id="attr-directions" placeholder="e.g. West, Northwest">
+                    </div>
+                    <div class="form-group">
+                        <label>Lucky Flowers (comma separated)</label>
+                        <input type="text" id="attr-flowers" placeholder="e.g. Lily">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" id="btn-save" class="btn-save">Save Changes</button>
+                <span id="status-msg" class="status-msg"></span>
+            </div>
+        </form>
+    </main>
+
+    <script type="module" src="admin.js"></script>
+</body>
+
+</html>
