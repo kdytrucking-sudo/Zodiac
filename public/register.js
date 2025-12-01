@@ -65,24 +65,17 @@ registerForm.addEventListener('submit', async (e) => {
         });
 
         // Prepare user data for Firestore
+        // Prepare user data for Firestore
         const userData = {
             uid: user.uid,
             name: name,
             email: email,
+            birthdate: birthdate || "",
+            birthtime: birthtime || "",
+            location: location || "",
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
-
-        // Add optional fields if provided
-        if (birthdate) {
-            userData.birthdate = birthdate;
-        }
-        if (birthtime) {
-            userData.birthtime = birthtime;
-        }
-        if (location) {
-            userData.location = location;
-        }
 
         // Save user data to Firestore 'users' collection
         await setDoc(doc(db, "users", user.uid), userData);
@@ -106,8 +99,13 @@ registerForm.addEventListener('submit', async (e) => {
 
         switch (error.code) {
             case 'auth/email-already-in-use':
-                errorMsg = 'This email is already registered. Please login instead.';
-                break;
+                errorMsg = 'This email is already registered. Redirecting to login...';
+                errorMessage.textContent = errorMsg;
+                errorMessage.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return; // Stop further execution
             case 'auth/invalid-email':
                 errorMsg = 'Invalid email address.';
                 break;
@@ -126,3 +124,54 @@ registerForm.addEventListener('submit', async (e) => {
         console.error('Registration error:', error);
     }
 });
+
+// Google Sign-In
+import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const googleBtn = document.querySelector('.google-btn');
+if (googleBtn) {
+    googleBtn.addEventListener('click', async () => {
+        const provider = new GoogleAuthProvider();
+
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            // Check if user exists in Firestore
+            const userDocRef = doc(db, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (!userDocSnap.exists()) {
+                // Create new user document
+                const userData = {
+                    uid: user.uid,
+                    name: user.displayName || 'User',
+                    email: user.email,
+                    birthdate: "",
+                    birthtime: "",
+                    location: "",
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                await setDoc(userDocRef, userData);
+            }
+
+            // Show success message
+            successMessage.textContent = 'Google sign-in successful! Redirecting...';
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+
+            // Redirect to home page
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+
+        } catch (error) {
+            console.error('Google Sign-In Error:', error);
+            errorMessage.textContent = error.message;
+            errorMessage.style.display = 'block';
+        }
+    });
+}

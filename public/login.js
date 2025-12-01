@@ -68,3 +68,55 @@ loginForm.addEventListener('submit', async (e) => {
         console.error('Login error:', error);
     }
 });
+
+// Google Sign-In
+import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { db } from "./app.js";
+
+const googleBtn = document.querySelector('.google-btn');
+if (googleBtn) {
+    googleBtn.addEventListener('click', async () => {
+        const provider = new GoogleAuthProvider();
+
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            // Check if user exists in Firestore
+            const userDocRef = doc(db, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (!userDocSnap.exists()) {
+                // Create new user document
+                const userData = {
+                    uid: user.uid,
+                    name: user.displayName || 'User',
+                    email: user.email,
+                    birthdate: "",
+                    birthtime: "",
+                    location: "",
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                await setDoc(userDocRef, userData);
+            }
+
+            // Show success message
+            successMessage.textContent = 'Google login successful! Redirecting...';
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+
+            // Redirect to home page
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+
+        } catch (error) {
+            console.error('Google Sign-In Error:', error);
+            errorMessage.textContent = error.message;
+            errorMessage.style.display = 'block';
+        }
+    });
+}

@@ -6,12 +6,12 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth
 
 // --- 你的 Firebase Web App 配置（来自控制台 Zodiac 这个 Web 应用） ---
 const firebaseConfig = {
-  apiKey: "AIzaSyDxBk4psobp1BTrlUKhmfWl4aKAF26gU",
+  apiKey: "AIzaSyDBk4Qspp1eBT1rkUhmffWLf4a4kAF26gU",
   authDomain: "studio-4395392521-1abeb.firebaseapp.com",
   projectId: "studio-4395392521-1abeb",
   storageBucket: "studio-4395392521-1abeb.firebasestorage.app",
-  messagingSenderId: "4133532569115", // 如果和控制台不一致，以控制台为准
-  appId: "1:4133532569115:web:afa287808769758b5382be"
+  messagingSenderId: "413532569115",
+  appId: "1:413532569115:web:afa287880769758b5382be"
 };
 
 // --- 初始化 Firebase 前端 ---
