@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Larak's Zodiac</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <span>Larak's Zodiac</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="archive.html">Archive</a></li>
+            <li><a href="#">Query</a></li>
+            <li><a href="#">Fortune</a></li>
+            <li><a href="#">Matching</a></li>
+            <li><a href="#">Member Center</a></li>
+            <li><a href="#">Community (Blog)</a></li>
+        </ul>
+        <div class="header-search">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" placeholder="Quick Zodiac Lookup (e.g., Dragon, 1988)">
+        </div>
+        <div class="header-auth">
+            <button class="btn-login" onclick="location.href='login.html'">Login</button>
+            <button class="btn-register" onclick="location.href='register.html'">Register</button>
+        </div>
+    </nav>
+
+    <main class="auth-container">
+        <div class="auth-box register-box">
+            <div class="auth-header">
+                <h1>Create Account</h1>
+                <p>Join us to unlock personalized zodiac readings and insights</p>
+            </div>
+
+            <form id="register-form" class="auth-form">
+                <!-- Required Fields -->
+                <div class="form-section-header">Required Information</div>
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="your@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="At least 6 characters">
+                    <small class="form-hint">Must be at least 6 characters long</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required
+                        placeholder="Re-enter your password">
+                </div>
+
+                <!-- Optional Fields - Collapsible -->
+                <div class="optional-section">
+                    <button type="button" class="optional-toggle" id="optional-toggle">
+                        <span>Optional Information (for personalized readings)</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+
+                    <div class="optional-content" id="optional-content" style="display: none;">
+                        <div class="form-group">
+                            <label for="birthdate">Date of Birth</label>
+                            <input type="date" id="birthdate" name="birthdate">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="birthtime">Time of Birth</label>
+                            <input type="time" id="birthtime" name="birthtime">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">Birth Location</label>
+                            <input type="text" id="location" name="location" placeholder="City, Country">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms -->
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="terms" required>
+                        <span>I agree to the <a href="privacy.html" target="_blank">Privacy Policy</a> and <a href="#"
+                                target="_blank">Terms of Service</a></span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+
+                <div id="error-message" class="error-message" style="display: none;"></div>
+                <div id="success-message" class="success-message" style="display: none;"></div>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html">Sign in here</a></p>
+            </div>
+
+            <div class="divider">
+                <span>or sign up with</span>
+            </div>
+
+            <div class="social-auth">
+                <button class="social-btn google-btn">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button class="social-btn facebook-btn">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <div class="social-icons">
+            <a href="https://www.threads.net/@laraksoracle" target="_blank"><i class="fa-brands fa-threads"></i></a>
+            <a href="https://www.tiktok.com/@laraksoracle" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/laraksoracle/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.facebook.com/laraksoracleta" target="_blank"><i
+                    class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.youtube.com/@LaraKsOracle" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://x.com/laraks_oracle" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+        <p class="copyright">© 2024 Larak's Zodiac. All Rights Reserved.</p>
+    </footer>
+
+    <script type="module" src="register.js"></script>
+</body>
+
+</html>
