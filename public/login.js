@@ -96,6 +96,7 @@ if (googleBtn) {
                     birthdate: "",
                     birthtime: "",
                     location: "",
+                    level: 0, // 0: Free, 1: Premium
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
@@ -115,6 +116,56 @@ if (googleBtn) {
 
         } catch (error) {
             console.error('Google Sign-In Error:', error);
+            errorMessage.textContent = error.message;
+            errorMessage.style.display = 'block';
+        }
+    });
+}
+
+// Facebook Sign-In
+import { FacebookAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+const facebookBtn = document.querySelector('.facebook-btn');
+if (facebookBtn) {
+    facebookBtn.addEventListener('click', async () => {
+        const provider = new FacebookAuthProvider();
+
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            // Check if user exists in Firestore (same logic as Google)
+            const userDocRef = doc(db, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (!userDocSnap.exists()) {
+                const userData = {
+                    uid: user.uid,
+                    name: user.displayName || 'User',
+                    email: user.email || '', // Facebook might not return email
+                    birthdate: "",
+                    birthtime: "",
+                    location: "",
+                    level: 0, // 0: Free, 1: Premium
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                await setDoc(userDocRef, userData);
+            }
+
+            // Show success message
+            successMessage.textContent = 'Facebook login successful! Redirecting...';
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+
+            // Redirect to home page
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+
+        } catch (error) {
+            console.error('Facebook Sign-In Error:', error);
             errorMessage.textContent = error.message;
             errorMessage.style.display = 'block';
         }
