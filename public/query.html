@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zodiac Query - Larak's Zodiac</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <span>Larak's Zodiac</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="archive.html">Archive</a></li>
+            <li><a href="query.html" class="active">Query</a></li>
+            <li><a href="#">Fortune</a></li>
+            <li><a href="#">Matching</a></li>
+            <li><a href="dashboard.html">Member Center</a></li>
+            <li><a href="#">Community (Blog)</a></li>
+        </ul>
+        <div class="header-search">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" placeholder="Quick Zodiac Lookup (e.g., Dragon, 1988)">
+        </div>
+        <div class="header-auth">
+            <!-- Auth state will be injected here -->
+        </div>
+    </nav>
+
+    <main class="query-container">
+        <div class="query-header">
+            <h1>Zodiac Query</h1>
+            <p>Discover your fortune and personality traits.</p>
+        </div>
+
+        <!-- Query Form -->
+        <div class="query-card form-card">
+            <form id="zodiac-query-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="query-date">Date of Birth</label>
+                        <div class="input-wrapper">
+                            <input type="date" id="query-date" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="query-time">Time of Birth</label>
+                        <div class="input-wrapper">
+                            <input type="time" id="query-time">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="query-location">Birth Location</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="query-location" placeholder="e.g., San Francisco">
+                        </div>
+                    </div>
+                    <div class="form-group button-group">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn-query">Query Zodiac</button>
+                    </div>
+                </div>
+                <div class="form-row bottom-row">
+                    <div class="gender-group">
+                        <span class="label">Gender:</span>
+                        <label class="radio-label">
+                            <input type="radio" name="gender" value="male" checked>
+                            <span class="radio-custom"></span> Male
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="gender" value="female">
+                            <span class="radio-custom"></span> Female
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="gender" value="other">
+                            <span class="radio-custom"></span> Other
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <label class="switch">
+                            <input type="checkbox" id="solar-time-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Use True Solar Time</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Container (Hidden by default) -->
+        <div id="results-container" style="display: none;">
+
+            <!-- Free Information Section -->
+            <div class="query-card result-card">
+                <div class="card-header-line">
+                    <h3>Information</h3>
+                </div>
+
+                <div class="free-info-content">
+                    <div class="zodiac-circle">
+                        <img id="result-zodiac-img" src="images/rooster.png" alt="Rooster">
+                    </div>
+                    <div class="zodiac-text">
+                        <div class="zodiac-label">YOUR ZODIAC ANIMAL</div>
+                        <h2 id="result-zodiac-name" class="zodiac-title">Rooster</h2>
+                        <div class="lunar-info" id="result-lunar-info">Lunar Calendar: Year of the Fire Rooster, 丁酉
+                        </div>
+                        <p class="zodiac-desc" id="result-zodiac-desc">
+                            Roosters are known for their confidence, punctuality, and hardworking nature. They are often
+                            seen as observant, resourceful, and courageous. People born in the Year of the Rooster are
+                            typically active, amusing, and popular within a crowd. They are talkative, outspoken, and
+                            enjoy being the center of attention.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unlock CTA (Visible for Free Users) -->
+            <div id="unlock-section" class="query-card unlock-card">
+                <div class="unlock-header">
+                    <h2>Unlock Your Full Destiny</h2>
+                    <p>Go beyond the surface with a comprehensive report. Our detailed analysis reveals the intricate
+                        connections between your zodiac, elements, and life path.</p>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                        <h4>Personality & Fortune</h4>
+                        <p>In-depth personality traits and future predictions.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-fire"></i></div>
+                        <h4>Five Elements Analysis</h4>
+                        <p>Understand your balance of Wood, Fire, Earth, Metal, and Water.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-book-open"></i></div>
+                        <h4>I-Ching Analysis</h4>
+                        <p>Ancient wisdom applied to your modern life challenges.</p>
+                    </div>
+                </div>
+
+                <button id="purchase-btn" class="btn-purchase">Upgrade Membership to Unlock Details</button>
+            </div>
+
+            <!-- Paid Content (Visible for Paid Users) -->
+            <div id="paid-content" style="display: none;">
+
+                <!-- Grand Chart Placeholder -->
+                <div class="query-card paid-card chart-card">
+                    <h3>Your Grand Astrological Chart</h3>
+                    <p class="subtitle">A comprehensive look into your destiny, revealing the intricate connections of
+                        your cosmic blueprint.</p>
+                    <div class="chart-placeholder">
+                        <i class="fas fa-dharmachakra"></i>
+                    </div>
+                </div>
+
+                <!-- Detailed Analysis -->
+                <div class="query-card paid-card">
+                    <div class="section-icon"><i class="fas fa-dharmachakra"></i></div>
+                    <h3>Detailed Personality and Fortune Analysis</h3>
+                    <div class="two-col-text">
+                        <p>As a Fire Rooster, your personality is a vibrant tapestry of confidence, diligence, and
+                            charisma. You possess an innate ability to command attention and inspire others with your
+                            sharp intellect and articulate nature. However, your fiery essence can sometimes manifest as
+                            impatience or a tendency towards bluntness. Understanding this duality is key to harnessing
+                            your strengths.</p>
+                        <p>Your fortune in the coming year is strongly influenced by the Metal element. This suggests a
+                            period of consolidation and refinement. Financial prospects are stable, but significant
+                            gains will require meticulous planning and disciplined execution. In relationships, your
+                            passionate nature will be a source of great joy, but it's crucial to temper it with patience
+                            and understanding to avoid unnecessary conflicts.</p>
+                    </div>
+                </div>
+
+                <!-- Five Elements -->
+                <div class="query-card paid-card">
+                    <div class="section-icon"><i class="fas fa-seedling"></i></div>
+                    <h3>Five Elements Analysis</h3>
+                    <div class="elements-content">
+                        <p class="intro-text">Your elemental chart reveals a dominant Fire element, balanced by a strong
+                            presence of Metal from your birth year. This combination grants you drive and precision.
+                            However, a deficiency in the Water element is noted, which can lead to occasional
+                            inflexibility and resistance to change. To create greater harmony in your life, it is
+                            advised to introduce more Water-related activities and symbols.</p>
+                        <ul class="elements-list">
+                            <li><span class="e-name wood">Wood:</span> Represents growth and creativity. Yours is
+                                moderately strong, fueling your ambitions.</li>
+                            <li><span class="e-name fire">Fire:</span> Your dominant element, signifying passion,
+                                leadership, and expression.</li>
+                            <li><span class="e-name earth">Earth:</span> Provides stability and grounding. Strengthening
+                                this element can enhance your patience.</li>
+                            <li><span class="e-name metal">Metal:</span> Governs order, structure, and resilience. This
+                                is a key supportive element for you.</li>
+                            <li><span class="e-name water">Water:</span> Represents flow, intuition, and adaptability.
+                                This element requires cultivation for optimal balance.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- I-Ching -->
+                <div class="query-card paid-card">
+                    <div class="section-icon"><i class="fas fa-book"></i></div>
+                    <h3>I-Ching Analysis</h3>
+                    <div class="two-col-text">
+                        <p>The hexagram derived from your birth chart is #31, Hsien (Influence). This hexagram
+                            symbolizes mutual attraction and the power of connection. It suggests that your greatest
+                            successes will come through collaboration and forming meaningful partnerships, both personal
+                            and professional. The mountain over the lake image signifies a grounding influence that
+                            stabilizes your emotional depths.</p>
+                        <p>The changing lines in your reading point towards a period of significant personal
+                            development. The fourth line, "Perseverance brings good fortune; regrets vanish," is
+                            particularly potent. It urges you to remain steadfast in your chosen path, even when faced
+                            with self-doubt. By staying true to your core principles, you will attract the support and
+                            resources needed to overcome obstacles and achieve profound fulfillment.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <div class="social-icons">
+            <a href="https://www.threads.net/@laraksoracle" target="_blank"><i class="fa-brands fa-threads"></i></a>
+            <a href="https://www.tiktok.com/@laraksoracle" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/laraksoracle/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.facebook.com/laraksoracleta" target="_blank"><i
+                    class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.youtube.com/@LaraKsOracle" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://x.com/laraks_oracle" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+        <p class="copyright">© 2024 Larak's Zodiac. All Rights Reserved.</p>
+    </footer>
+
+    <script type="module" src="auth-state.js"></script>
+    <script type="module" src="query.js"></script>
+</body>
+
+</html>
