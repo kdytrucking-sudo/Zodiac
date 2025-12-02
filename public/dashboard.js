@@ -1,6 +1,6 @@
 import { auth, db } from "./app.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { doc, getDoc, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { doc, getDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 const profileWarning = document.getElementById('profile-warning');
 
@@ -17,16 +17,48 @@ const currentDayEl = document.getElementById('current-day');
 const userZodiacNameEl = document.getElementById('user-zodiac-name');
 const userZodiacImgEl = document.getElementById('user-zodiac-img');
 
+// Fortune Data Elements
+const bigScoreEl = document.querySelector('.big-score');
+const fortuneQuoteEl = document.querySelector('.fortune-quote');
+const starsContainer = document.querySelector('.stars');
+const pFillCareer = document.querySelectorAll('.p-fill')[0];
+const pFillLove = document.querySelectorAll('.p-fill')[1];
+const pFillHealth = document.querySelectorAll('.p-fill')[2];
+const pFillWealth = document.querySelectorAll('.p-fill')[3];
+
+const luckyBenefactorEl = document.getElementById('lucky-benefactor');
+const luckyColorEl = document.getElementById('lucky-color');
+const luckyNumbersEl = document.getElementById('lucky-numbers');
+const luckyDirectionEl = document.getElementById('lucky-direction');
+const luckyJoyEl = document.getElementById('lucky-joy');
+const luckyWealthEl = document.getElementById('lucky-wealth');
+
+const doItemEl = document.querySelector('.do-item span:last-child');
+const dontItemEl = document.querySelector('.dont-item span:last-child');
+
+// Tabs
+const tabs = document.querySelectorAll('.tab-btn');
+let currentZodiac = 'Rat'; // Default
+let currentPeriod = 'Daily'; // Default
+
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-        // User is signed in, fetch data
         await loadUserData(user.uid);
-        // Load other data (favorites, transactions) - using mock/sample for now as per requirement
-        // In a real app, these would be separate async calls to subcollections
     } else {
-        // User is not signed in, redirect to login
         window.location.href = 'login.html';
     }
+});
+
+// Tab Event Listeners
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        // Update active state
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        currentPeriod = tab.textContent;
+        loadFortuneData(currentZodiac, currentPeriod);
+    });
 });
 
 async function loadUserData(uid) {
@@ -38,7 +70,7 @@ async function loadUserData(uid) {
             const data = docSnap.data();
 
             // Render User Info
-            displayNameEl.textContent = data.name || 'User';
+            displayNameEl.textContent = data.name || auth.currentUser.displayName || 'User';
 
             // Account Tier
             if (data.level === 1) {
@@ -54,45 +86,121 @@ async function loadUserData(uid) {
                 displayDobEl.textContent = formatDate(data.birthdate);
                 profileWarning.style.display = 'none';
 
-                // Calculate Zodiac based on birth year (Simple logic for demo)
+                // Calculate Zodiac
                 const birthYear = new Date(data.birthdate).getFullYear();
                 const zodiacs = ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
-                // 1900 was Rat. (Year - 1900) % 12
-                // Note: This is simplified and doesn't account for Chinese New Year date
                 const zIndex = (birthYear - 1900) % 12;
-                const myZodiac = zodiacs[zIndex >= 0 ? zIndex : zIndex + 12];
-
-                updateFortuneCard(myZodiac);
+                currentZodiac = zodiacs[zIndex >= 0 ? zIndex : zIndex + 12];
 
             } else {
-                // Missing birth info
                 displayDobEl.textContent = 'Not set';
-                profileWarning.style.display = 'flex'; // Show warning
-
-                // Show sample data
-                updateFortuneCard('Rat'); // Default sample
+                profileWarning.style.display = 'flex';
+                currentZodiac = 'Rat'; // Default
             }
 
             displayTobEl.textContent = data.birthtime || 'Not set';
             displayLocationEl.textContent = data.location || 'Not set';
 
+            // Initial Load
+            updateFortuneHeader(currentZodiac);
+            loadFortuneData(currentZodiac, 'Daily');
+
         } else {
-            console.log("No such user document!");
+            // Document doesn't exist (legacy user or creation failed)
+            console.log("User document not found in Firestore.");
+            displayNameEl.textContent = auth.currentUser.displayName || 'User';
+            accountTierEl.textContent = 'Free Member';
+            displayDobEl.textContent = 'Not set';
+            displayTobEl.textContent = 'Not set';
+            displayLocationEl.textContent = 'Not set';
+            profileWarning.style.display = 'flex';
+
+            // Default load
+            currentZodiac = 'Rat';
+            updateFortuneHeader(currentZodiac);
+            loadFortuneData(currentZodiac, 'Daily');
         }
     } catch (error) {
         console.error("Error getting user document:", error);
+        // Fallback on error
+        displayNameEl.textContent = auth.currentUser?.displayName || 'User';
     }
 }
 
-function updateFortuneCard(zodiac) {
+function updateFortuneHeader(zodiac) {
     userZodiacNameEl.textContent = zodiac;
     userZodiacImgEl.src = `images/${zodiac.toLowerCase()}.png`;
 
-    // Update Date
     const now = new Date();
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     currentDateEl.textContent = now.toLocaleDateString('en-US', options);
     currentDayEl.textContent = `(${now.toLocaleDateString('en-US', { weekday: 'long' })})`;
+}
+
+async function loadFortuneData(zodiac, period) {
+    try {
+        // Fetch the single document for the Zodiac
+        const docRef = doc(db, "fortune", zodiac);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const fullData = docSnap.data();
+            let periodData = null;
+
+            // Map period to field name
+            // Tabs are: Daily, Weekly, Monthly, Yearly
+            const fieldName = period.toLowerCase();
+
+            if (fullData[fieldName]) {
+                periodData = fullData[fieldName];
+                renderFortuneData(periodData);
+            } else {
+                console.log(`No data for ${fieldName} in ${zodiac}`);
+                bigScoreEl.textContent = '--';
+                fortuneQuoteEl.textContent = "Data not available";
+            }
+        } else {
+            console.log("No fortune document found for", zodiac);
+            bigScoreEl.textContent = '--';
+            fortuneQuoteEl.textContent = "Data not available yet";
+        }
+    } catch (error) {
+        console.error("Error loading fortune:", error);
+    }
+}
+
+function renderFortuneData(data) {
+    bigScoreEl.textContent = data.overall_score;
+    fortuneQuoteEl.textContent = `"${data.do_text}"`; // Using do_text as quote for now, or brief_text
+
+    // Stars
+    let starsHtml = '';
+    for (let i = 0; i < 5; i++) {
+        if (i < data.overall_stars) {
+            starsHtml += '<i class="fas fa-star"></i>';
+        } else {
+            starsHtml += '<i class="far fa-star"></i>';
+        }
+    }
+    starsContainer.innerHTML = starsHtml;
+
+    // Progress Bars
+    pFillCareer.style.width = `${data.career_score}%`;
+    pFillLove.style.width = `${data.love_score}%`;
+    pFillHealth.style.width = `${data.health_score}%`;
+    pFillWealth.style.width = `${data.wealth_score}%`;
+
+    // Lucky Grid
+    luckyBenefactorEl.textContent = data.benefactor;
+    luckyColorEl.textContent = data.lucky_color;
+    luckyNumbersEl.textContent = data.lucky_number;
+    luckyDirectionEl.textContent = data.love_direction;
+    luckyJoyEl.textContent = data.joy_direction;
+    luckyWealthEl.textContent = data.wealth_direction;
+
+    // Do's and Don'ts
+    doItemEl.textContent = data.do_text;
+    dontItemEl.textContent = data.donot_text;
 }
 
 function formatDate(dateString) {

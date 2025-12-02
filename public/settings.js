@@ -1,6 +1,7 @@
 import { auth, db } from "./app.js";
 import { onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { solarToLunar, calculateZodiac } from "./lunar-utils.js";
 
 const profileForm = document.getElementById('profile-form');
 const profileMessage = document.getElementById('profile-message');
@@ -74,16 +75,31 @@ profileForm.addEventListener('submit', async (e) => {
 
     try {
         const newName = displayNameInput.value.trim();
+        const newBirthdate = birthdateInput.value;
+
+        // Calculate Lunar Date and Zodiac
+        let lunarInfo = null;
+        let zodiacSign = "";
+
+        if (newBirthdate) {
+            lunarInfo = solarToLunar(newBirthdate);
+            if (lunarInfo) {
+                zodiacSign = calculateZodiac(lunarInfo.lunarYear);
+            }
+        }
 
         // Update Firestore Data
+        // Use setDoc with merge: true to handle both create and update
         const userRef = doc(db, "users", currentUser.uid);
-        await updateDoc(userRef, {
+        await setDoc(userRef, {
             name: newName,
-            birthdate: birthdateInput.value,
+            birthdate: newBirthdate,
             birthtime: birthtimeInput.value,
             location: locationInput.value.trim(),
+            lunarBirthdate: lunarInfo ? lunarInfo.lunarDate : "",
+            zodiac: zodiacSign,
             updatedAt: new Date().toISOString()
-        });
+        }, { merge: true });
 
         // Update Auth Profile if name changed
         if (newName !== currentUser.displayName) {

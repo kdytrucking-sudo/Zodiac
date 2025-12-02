@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Seed Fortune Data</title>
+</head>
+
+<body>
+    <h1>Seed Fortune Data</h1>
+    <button id="seed-btn">Seed Data Now</button>
+    <script type="module">
+        import { seedFortuneData } from "./seed_fortune.js";
+        document.getElementById('seed-btn').addEventListener('click', seedFortuneData);
+    </script>
+</body>
+
+</html>

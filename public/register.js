@@ -1,6 +1,7 @@
 import { auth, db } from "./app.js";
 import { createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { solarToLunar, calculateZodiac } from "./lunar-utils.js";
 
 const registerForm = document.getElementById('register-form');
 const errorMessage = document.getElementById('error-message');
@@ -64,15 +65,27 @@ registerForm.addEventListener('submit', async (e) => {
             displayName: name
         });
 
-        // Prepare user data for Firestore
+        // Calculate Lunar Date and Zodiac
+        let lunarInfo = null;
+        let zodiacSign = "";
+
+        if (birthdate) {
+            lunarInfo = solarToLunar(birthdate);
+            if (lunarInfo) {
+                zodiacSign = calculateZodiac(lunarInfo.lunarYear);
+            }
+        }
+
         // Prepare user data for Firestore
         const userData = {
             uid: user.uid,
-            name: name,
+            name: name, // Use name from form
             email: email,
             birthdate: birthdate || "",
             birthtime: birthtime || "",
             location: location || "",
+            lunarBirthdate: lunarInfo ? lunarInfo.lunarDate : "",
+            zodiac: zodiacSign,
             level: 0, // 0: Free, 1: Premium
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
