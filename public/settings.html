@@ -121,9 +121,34 @@
                         </div>
                     </div>
 
-                    <button class="btn-add-card">
+                    <button class="add-card-btn">
                         <i class="fas fa-plus"></i> Add New Payment Method
                     </button>
+
+                    <!-- Transaction Log -->
+                    <div class="settings-card" style="margin-top: 2rem;">
+                        <div class="card-header">
+                            <h3>Payment Transaction Log</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>DATE</th>
+                                        <th>DESCRIPTION</th>
+                                        <th>AMOUNT</th>
+                                        <th>STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transaction-list">
+                                    <!-- Items will be injected by JS -->
+                                    <tr>
+                                        <td colspan="4" style="text-align: center;">Loading transactions...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </section>
 
                 <!-- Security Section (Placeholder) -->

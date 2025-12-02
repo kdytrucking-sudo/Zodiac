@@ -1,10 +1,11 @@
 import { auth, db } from "./app.js";
 import { onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { doc, getDoc, setDoc, collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { solarToLunar, calculateZodiac } from "./lunar-utils.js";
 
 const profileForm = document.getElementById('profile-form');
 const profileMessage = document.getElementById('profile-message');
+const transactionListEl = document.getElementById('transaction-list');
 
 // Form Fields
 const displayNameInput = document.getElementById('display-name');
@@ -38,6 +39,7 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUser = user;
         await loadUserData(user.uid);
+        await loadTransactionLogs(user.uid);
     } else {
         window.location.href = 'login.html';
     }
@@ -118,6 +120,84 @@ profileForm.addEventListener('submit', async (e) => {
         submitBtn.textContent = 'Save Changes';
     }
 });
+
+async function loadTransactionLogs(uid) {
+    if (!transactionListEl) return;
+
+    try {
+        const q = query(
+            collection(db, "transactions"),
+            where("uid", "==", uid),
+            orderBy("date", "desc"),
+            limit(10)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        transactionListEl.innerHTML = ''; // Clear loading/mock data
+
+        if (querySnapshot.empty) {
+            transactionListEl.innerHTML = '<tr><td colspan="4" style="text-align: center;">No transactions found.</td></tr>';
+            return;
+        }
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const date = new Date(data.date).toLocaleDateString();
+            const row = document.createElement('tr');
+
+            let statusClass = 'success';
+            if (data.status === 'Pending') statusClass = 'pending';
+            if (data.status === 'Failed') statusClass = 'failed';
+
+            row.innerHTML = `
+                <td>${date}</td>
+                <td>${data.description}</td>
+                <td>$${data.amount.toFixed(2)}</td>
+                <td><span class="status-badge ${statusClass}">${data.status}</span></td>
+            `;
+            transactionListEl.appendChild(row);
+        });
+
+    } catch (error) {
+        console.error("Error loading transactions:", error);
+        if (error.code === 'failed-precondition') {
+            console.warn("Missing index for transactions query. Please create it in Firebase Console.");
+            // Fallback: Try without orderBy
+            try {
+                const qSimple = query(
+                    collection(db, "transactions"),
+                    where("uid", "==", uid),
+                    limit(10)
+                );
+                const snapSimple = await getDocs(qSimple);
+                transactionListEl.innerHTML = '';
+                if (snapSimple.empty) {
+                    transactionListEl.innerHTML = '<tr><td colspan="4" style="text-align: center;">No transactions found.</td></tr>';
+                    return;
+                }
+                snapSimple.forEach((doc) => {
+                    const data = doc.data();
+                    const date = new Date(data.date).toLocaleDateString();
+                    const row = document.createElement('tr');
+                    let statusClass = 'success';
+                    if (data.status === 'Pending') statusClass = 'pending';
+                    if (data.status === 'Failed') statusClass = 'failed';
+
+                    row.innerHTML = `
+                        <td>${date}</td>
+                        <td>${data.description}</td>
+                        <td>$${data.amount.toFixed(2)}</td>
+                        <td><span class="status-badge ${statusClass}">${data.status}</span></td>
+                    `;
+                    transactionListEl.appendChild(row);
+                });
+            } catch (e) {
+                console.error("Fallback failed", e);
+            }
+        }
+    }
+}
 
 function showMessage(msg, type) {
     profileMessage.textContent = msg;

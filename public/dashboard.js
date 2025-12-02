@@ -37,6 +37,7 @@ const doItemEl = document.querySelector('.do-item span:last-child');
 const dontItemEl = document.querySelector('.dont-item span:last-child');
 
 const favoritesListEl = document.getElementById('favorites-list');
+const readingLogListEl = document.getElementById('reading-log-list');
 
 // Tabs
 const tabs = document.querySelectorAll('.tab-btn');
@@ -47,6 +48,7 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         await loadUserData(user.uid);
         await loadFavorites(user.uid);
+        await loadReadingLogs(user.uid);
     } else {
         window.location.href = 'login.html';
     }
@@ -263,6 +265,73 @@ async function loadFavorites(uid) {
                     item.className = 'list-item';
                     item.innerHTML = `<span>${data.articleTitle}</span><i class="fas fa-chevron-right"></i>`;
                     favoritesListEl.appendChild(item);
+                });
+            } catch (e) {
+                console.error("Fallback failed", e);
+            }
+        }
+    }
+}
+
+async function loadReadingLogs(uid) {
+    try {
+        const q = query(
+            collection(db, "reading_logs"),
+            where("uid", "==", uid),
+            orderBy("timestamp", "desc"),
+            limit(10)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        readingLogListEl.innerHTML = ''; // Clear existing/mock data
+
+        if (querySnapshot.empty) {
+            readingLogListEl.innerHTML = '<tr><td colspan="4">No reading history found.</td></tr>';
+            return;
+        }
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const date = new Date(data.timestamp).toLocaleDateString();
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${date}</td>
+                <td>${data.title}</td>
+                <td><span class="status-badge">${data.category}</span></td>
+                <td>${data.result}</td>
+            `;
+            readingLogListEl.appendChild(row);
+        });
+
+    } catch (error) {
+        console.error("Error loading reading logs:", error);
+        if (error.code === 'failed-precondition') {
+            console.warn("Missing index for reading_logs query. Please create it in Firebase Console.");
+            // Fallback: Try without orderBy
+            try {
+                const qSimple = query(
+                    collection(db, "reading_logs"),
+                    where("uid", "==", uid),
+                    limit(10)
+                );
+                const snapSimple = await getDocs(qSimple);
+                readingLogListEl.innerHTML = '';
+                if (snapSimple.empty) {
+                    readingLogListEl.innerHTML = '<tr><td colspan="4">No reading history found.</td></tr>';
+                    return;
+                }
+                snapSimple.forEach((doc) => {
+                    const data = doc.data();
+                    const date = new Date(data.timestamp).toLocaleDateString();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${date}</td>
+                        <td>${data.title}</td>
+                        <td><span class="status-badge">${data.category}</span></td>
+                        <td>${data.result}</td>
+                    `;
+                    readingLogListEl.appendChild(row);
                 });
             } catch (e) {
                 console.error("Fallback failed", e);
