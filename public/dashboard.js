@@ -1,6 +1,6 @@
 import { auth, db } from "./app.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { doc, getDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { doc, getDoc, collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 const profileWarning = document.getElementById('profile-warning');
 
@@ -36,6 +36,8 @@ const luckyWealthEl = document.getElementById('lucky-wealth');
 const doItemEl = document.querySelector('.do-item span:last-child');
 const dontItemEl = document.querySelector('.dont-item span:last-child');
 
+const favoritesListEl = document.getElementById('favorites-list');
+
 // Tabs
 const tabs = document.querySelectorAll('.tab-btn');
 let currentZodiac = 'Rat'; // Default
@@ -44,6 +46,7 @@ let currentPeriod = 'Daily'; // Default
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         await loadUserData(user.uid);
+        await loadFavorites(user.uid);
     } else {
         window.location.href = 'login.html';
     }
@@ -171,7 +174,7 @@ async function loadFortuneData(zodiac, period) {
 
 function renderFortuneData(data) {
     bigScoreEl.textContent = data.overall_score;
-    fortuneQuoteEl.textContent = `"${data.do_text}"`; // Using do_text as quote for now, or brief_text
+    fortuneQuoteEl.textContent = `"${data.do_text}"`;
 
     // Stars
     let starsHtml = '';
@@ -201,6 +204,71 @@ function renderFortuneData(data) {
     // Do's and Don'ts
     doItemEl.textContent = data.do_text;
     dontItemEl.textContent = data.donot_text;
+}
+
+async function loadFavorites(uid) {
+    try {
+        const q = query(
+            collection(db, "favorites"),
+            where("uid", "==", uid),
+            orderBy("timestamp", "desc"),
+            limit(5)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        favoritesListEl.innerHTML = ''; // Clear existing/mock data
+
+        if (querySnapshot.empty) {
+            favoritesListEl.innerHTML = '<div class="list-item"><span>No favorites yet.</span></div>';
+            return;
+        }
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const item = document.createElement('div');
+            item.className = 'list-item';
+            item.innerHTML = `
+                <span>${data.articleTitle}</span>
+                <i class="fas fa-chevron-right"></i>
+            `;
+            // Optional: Add click handler to navigate to article
+            item.addEventListener('click', () => {
+                // window.location.href = `article.html?id=${data.articleId}`;
+                console.log("Navigate to article:", data.articleId);
+            });
+            favoritesListEl.appendChild(item);
+        });
+
+    } catch (error) {
+        console.error("Error loading favorites:", error);
+        if (error.code === 'failed-precondition') {
+            console.warn("Missing index for favorites query. Please create it in Firebase Console.");
+            // Fallback: Try without orderBy if index is missing
+            try {
+                const qSimple = query(
+                    collection(db, "favorites"),
+                    where("uid", "==", uid),
+                    limit(5)
+                );
+                const snapSimple = await getDocs(qSimple);
+                favoritesListEl.innerHTML = '';
+                if (snapSimple.empty) {
+                    favoritesListEl.innerHTML = '<div class="list-item"><span>No favorites yet.</span></div>';
+                    return;
+                }
+                snapSimple.forEach((doc) => {
+                    const data = doc.data();
+                    const item = document.createElement('div');
+                    item.className = 'list-item';
+                    item.innerHTML = `<span>${data.articleTitle}</span><i class="fas fa-chevron-right"></i>`;
+                    favoritesListEl.appendChild(item);
+                });
+            } catch (e) {
+                console.error("Fallback failed", e);
+            }
+        }
+    }
 }
 
 function formatDate(dateString) {

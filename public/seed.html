@@ -8,10 +8,22 @@
 
 <body>
     <h1>Seed Fortune Data</h1>
-    <button id="seed-btn">Seed Data Now</button>
+    <button id="seed-btn">Seed Fortune Data</button>
+    <button id="seed-articles-btn">Seed Articles Data</button>
+    <button id="seed-favorites-btn">Seed User Favorites (Must be Logged In)</button>
+    <button id="seed-all-favorites-btn">Seed Favorites for ALL Users</button>
+
+    <p><a href="login.html" target="_blank">Login Here first</a> if you are not logged in.</p>
+
     <script type="module">
         import { seedFortuneData } from "./seed_fortune.js";
+        import { seedArticlesData } from "./seed_articles.js";
+        import { seedFavoritesData, seedAllUsersFavorites } from "./seed_favorites.js";
+
         document.getElementById('seed-btn').addEventListener('click', seedFortuneData);
+        document.getElementById('seed-articles-btn').addEventListener('click', seedArticlesData);
+        document.getElementById('seed-favorites-btn').addEventListener('click', seedFavoritesData);
+        document.getElementById('seed-all-favorites-btn').addEventListener('click', seedAllUsersFavorites);
     </script>
 </body>
 
