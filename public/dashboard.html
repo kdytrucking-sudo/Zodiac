@@ -14,28 +14,7 @@
 
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="logo">
-            <div class="logo-icon"></div>
-            <span>Larak's Zodiac</span>
-        </div>
-        <ul class="nav-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="archive.html">Archive</a></li>
-            <li><a href="query.html">Query</a></li>
-            <li><a href="#">Fortune</a></li>
-            <li><a href="#">Matching</a></li>
-            <li><a href="dashboard.html" class="active">Member Center</a></li>
-            <li><a href="#">Community (Blog)</a></li>
-        </ul>
-        <div class="header-search">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" placeholder="Quick Zodiac Lookup (e.g., Dragon, 1988)">
-        </div>
-        <div class="header-auth">
-            <!-- Auth state will be injected here -->
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
 
     <main class="dashboard-container">
         <!-- Profile Warning Banner (Hidden by default) -->
@@ -267,7 +246,7 @@
         <p class="copyright">© 2024 Larak's Zodiac. All Rights Reserved.</p>
     </footer>
 
-    <script type="module" src="auth-state.js"></script>
+    <script type="module" src="navbar.js"></script>
     <script type="module" src="dashboard.js"></script>
 </body>
 

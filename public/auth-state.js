@@ -1,9 +1,11 @@
 import { auth } from "./app.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-const headerAuth = document.querySelector('.header-auth');
+export function initAuth() {
+    const headerAuth = document.querySelector('.header-auth');
 
-if (headerAuth) {
+    if (!headerAuth) return;
+
     onAuthStateChanged(auth, (user) => {
         if (user) {
             // User is signed in
@@ -67,3 +69,4 @@ if (headerAuth) {
         }
     });
 }
+
