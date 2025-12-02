@@ -1,11 +1,32 @@
-const path = require('path');
-const express = require('express');
-const cors = require('cors');
+import 'dotenv/config';
+import path from 'path';
+import express from 'express';
+import cors from 'cors';
+import { fileURLToPath } from 'url';
+
+// Genkit imports
+import { genkit } from 'genkit';
+import { googleAI } from '@genkit-ai/googleai';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
 // Cloud Run / App Hosting 指定的端口（一定要用这个）
 const PORT = process.env.PORT || 8080;
+
+// Initialize Genkit
+const ai = genkit({
+  plugins: [googleAI()],
+  model: 'googleai/gemini-2.0-flash',
+});
+
+// Define a simple flow
+const zodiacFlow = ai.defineFlow('zodiacFlow', async (input) => {
+  const { text } = await ai.generate(`Tell me a fun fact about the ${input} zodiac sign.`);
+  return text;
+});
 
 // 中间件
 app.use(cors());
@@ -29,6 +50,18 @@ app.get('/api/zodiac/today', async (req, res) => {
     luck: 'high',
     message: 'Today is a good day to build your Zodiac AI backend 🐉'
   });
+});
+
+// Genkit API endpoint
+app.post('/api/genkit/zodiac', async (req, res) => {
+  const { sign } = req.body;
+  try {
+    const result = await zodiacFlow(sign);
+    res.json({ result });
+  } catch (error) {
+    console.error('Genkit error:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // 全局错误兜底（以后加复杂逻辑时有用）
