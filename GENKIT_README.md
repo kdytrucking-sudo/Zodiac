@@ -5,7 +5,7 @@ This project has been updated to include [Firebase Genkit](https://firebase.goog
 ## Setup
 
 1.  **API Key**: You need a Google AI API Key (Gemini).
-    *   The project is configured to use the **Gemini 2.0 Flash** model.
+    *   The project is configured to use the **Gemini 2.5 Flash** model.
     *   A `.env` file has been created with your API key.
     *   Ensure `GOOGLE_GENAI_API_KEY` is set in `.env`.
 

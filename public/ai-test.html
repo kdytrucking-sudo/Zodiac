@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genkit AI 测试平台</title>
+    <link rel="stylesheet" href="ai-test.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>🤖 Genkit AI 测试平台</h1>
+                <p class="subtitle">使用 Gemini 2.5 Flash 模型进行 AI 测试</p>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- 左侧：输入区域 -->
+            <div class="input-section">
+                <div class="card">
+                    <h2>💬 提示词输入</h2>
+                    <textarea id="promptInput"
+                        placeholder="请输入您的提示词...&#10;&#10;例如：&#10;- 写一首关于春天的诗&#10;- 解释量子计算的原理&#10;- 创建一个Python排序算法"
+                        rows="8"></textarea>
+                </div>
+
+                <div class="card">
+                    <h2>⚙️ 模型参数</h2>
+
+                    <div class="parameter">
+                        <div class="param-header">
+                            <label for="temperature">Temperature (温度)</label>
+                            <span class="param-value" id="temperatureValue">1.0</span>
+                        </div>
+                        <input type="range" id="temperature" min="0" max="2" step="0.1" value="1.0">
+                        <p class="param-description">控制输出的随机性。值越高，输出越有创意；值越低，输出越确定。</p>
+                    </div>
+
+                    <div class="parameter">
+                        <div class="param-header">
+                            <label for="topK">Top K</label>
+                            <span class="param-value" id="topKValue">40</span>
+                        </div>
+                        <input type="range" id="topK" min="1" max="100" step="1" value="40">
+                        <p class="param-description">限制每步采样的词汇数量。值越小，输出越集中。</p>
+                    </div>
+
+                    <div class="parameter">
+                        <div class="param-header">
+                            <label for="topP">Top P (核采样)</label>
+                            <span class="param-value" id="topPValue">0.95</span>
+                        </div>
+                        <input type="range" id="topP" min="0" max="1" step="0.05" value="0.95">
+                        <p class="param-description">累积概率阈值。只考虑累积概率达到此值的词汇。</p>
+                    </div>
+
+                    <div class="parameter">
+                        <div class="param-header">
+                            <label for="maxTokens">Max Tokens (最大令牌数)</label>
+                            <span class="param-value" id="maxTokensValue">1024</span>
+                        </div>
+                        <input type="range" id="maxTokens" min="64" max="8192" step="64" value="1024">
+                        <p class="param-description">生成文本的最大长度（以令牌为单位）。</p>
+                    </div>
+
+                    <button id="resetParams" class="btn-secondary">重置参数</button>
+                </div>
+
+                <button id="generateBtn" class="btn-primary">
+                    <span class="btn-icon">✨</span>
+                    生成内容
+                </button>
+            </div>
+
+            <!-- 右侧：输出区域 -->
+            <div class="output-section">
+                <div class="card">
+                    <div class="output-header">
+                        <h2>📝 AI 输出结果</h2>
+                        <button id="copyBtn" class="btn-icon-only" title="复制结果">
+                            📋
+                        </button>
+                    </div>
+
+                    <div id="outputArea" class="output-area">
+                        <div class="placeholder">
+                            <div class="placeholder-icon">🤖</div>
+                            <p>AI 生成的内容将在这里显示</p>
+                            <p class="placeholder-hint">输入提示词并点击"生成内容"开始</p>
+                        </div>
+                    </div>
+
+                    <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>AI 正在思考中...</p>
+                    </div>
+                </div>
+
+                <div class="card" id="configCard" style="display: none;">
+                    <h3>🔧 使用的配置</h3>
+                    <pre id="configDisplay"></pre>
+                </div>
+
+                <div class="card stats-card">
+                    <h3>📊 统计信息</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">总请求次数</span>
+                            <span class="stat-value" id="totalRequests">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">成功次数</span>
+                            <span class="stat-value" id="successCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">失败次数</span>
+                            <span class="stat-value" id="failCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平均响应时间</span>
+                            <span class="stat-value" id="avgTime">0ms</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="ai-test.js"></script>
+</body>
+
+</html>

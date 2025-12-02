@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 8080;
 // Initialize Genkit
 const ai = genkit({
   plugins: [googleAI()],
-  model: 'googleai/gemini-2.0-flash',
+  model: 'googleai/gemini-2.5-flash',
 });
 
 // Define a simple flow
@@ -60,6 +60,36 @@ app.post('/api/genkit/zodiac', async (req, res) => {
     res.json({ result });
   } catch (error) {
     console.error('Genkit error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Genkit AI 测试端点 - 支持自定义参数
+app.post('/api/genkit/generate', async (req, res) => {
+  const { prompt, temperature, topK, topP, maxTokens } = req.body;
+
+  if (!prompt) {
+    return res.status(400).json({ error: 'Prompt is required' });
+  }
+
+  try {
+    const config = {};
+    if (temperature !== undefined) config.temperature = parseFloat(temperature);
+    if (topK !== undefined) config.topK = parseInt(topK);
+    if (topP !== undefined) config.topP = parseFloat(topP);
+    if (maxTokens !== undefined) config.maxOutputTokens = parseInt(maxTokens);
+
+    const { text } = await ai.generate({
+      prompt,
+      config
+    });
+
+    res.json({
+      result: text,
+      config: config
+    });
+  } catch (error) {
+    console.error('Genkit generation error:', error);
     res.status(500).json({ error: error.message });
   }
 });
