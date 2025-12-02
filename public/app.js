@@ -3,6 +3,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
 
 // --- 你的 Firebase Web App 配置（来自控制台 Zodiac 这个 Web 应用） ---
 const firebaseConfig = {
@@ -11,13 +12,15 @@ const firebaseConfig = {
   projectId: "studio-4395392521-1abeb",
   storageBucket: "studio-4395392521-1abeb.firebasestorage.app",
   messagingSenderId: "413532569115",
-  appId: "1:413532569115:web:afa287880769758b5382be"
+  appId: "1:413532569115:web:afa287880769758b5382be",
+  measurementId: "G-BM8SRGB02P"
 };
 
 // --- 初始化 Firebase 前端 ---
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app, "zodia1");
 export const auth = getAuth(app);
+export const analytics = getAnalytics(app);
 
 logDebug("Firebase initialized");
 logDebug(`projectId: ${firebaseConfig.projectId}`);
