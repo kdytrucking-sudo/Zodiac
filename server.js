@@ -109,6 +109,10 @@ app.post('/api/genkit/generate', async (req, res) => {
   }
 });
 
+
+
+
+
 // 全局错误兜底（以后加复杂逻辑时有用）
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
