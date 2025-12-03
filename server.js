@@ -8,10 +8,21 @@ import { fileURLToPath } from 'url';
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
 
+// ==== 关键：从环境变量里拿出 KEY，并显式传给 googleAI ====
+const rawKey =
+  process.env.GOOGLE_GENAI_API_KEY ||
+  process.env.GOOGLE_API_KEY || // 备用：如果你以后改名
+  '';
 
+console.log(
+  'KEY CHECK (runtime):',
+  !!rawKey,
+  '/ prefix:',
+  rawKey.slice(0, 8),
+  '/ suffix:',
+  rawKey.slice(-4)
+);
 
-
-console.log('KEY CHECK (runtime):', !!process.env.GOOGLE_GENAI_API_KEY);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -20,15 +31,17 @@ const app = express();
 // Cloud Run / App Hosting 指定的端口（一定要用这个）
 const PORT = process.env.PORT || 8080;
 
-// Initialize Genkit
+// Initialize Genkit —— 显式传 apiKey
 const ai = genkit({
-  plugins: [googleAI()],
+  plugins: [googleAI({ apiKey: rawKey })],
   model: 'googleai/gemini-2.5-flash',
 });
 
 // Define a simple flow
 const zodiacFlow = ai.defineFlow('zodiacFlow', async (input) => {
-  const { text } = await ai.generate(`Tell me a fun fact about the ${input} zodiac sign.`);
+  const { text } = await ai.generate(
+    `Tell me a fun fact about the ${input} zodiac sign.`
+  );
   return text;
 });
 
@@ -46,13 +59,11 @@ app.get('/', (req, res) => {
 
 // 示例后端 API：以后你可以在这里接 Firestore / AI
 app.get('/api/zodiac/today', async (req, res) => {
-  // 这里先返回一个假数据，将来你可以接数据库 / AI
-  // 比如根据用户 id / 时区 / 生肖生成
   res.json({
     sign: 'dragon',
     date: new Date().toISOString().slice(0, 10),
     luck: 'high',
-    message: 'Today is a good day to build your Zodiac AI backend 🐉'
+    message: 'Today is a good day to build your Zodiac AI backend 🐉',
   });
 });
 
@@ -85,12 +96,12 @@ app.post('/api/genkit/generate', async (req, res) => {
 
     const { text } = await ai.generate({
       prompt,
-      config
+      config,
     });
 
     res.json({
       result: text,
-      config: config
+      config: config,
     });
   } catch (error) {
     console.error('Genkit generation error:', error);
