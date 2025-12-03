@@ -8,6 +8,8 @@ import { fileURLToPath } from 'url';
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
 
+
+console.log('KEY CHECK (runtime):', !!process.env.GOOGLE_GENAI_API_KEY);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
