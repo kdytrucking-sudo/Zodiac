@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zodiac Fortune - Larak's Zodiac</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <div id="navbar-placeholder"></div>
+
+    <main class="fortune-container">
+        <div class="fortune-header">
+            <h1>Discover Your Fortune</h1>
+        </div>
+
+        <!-- Unified Selectors (Visible for all users) -->
+        <div class="paid-selectors" style="margin-bottom: 40px;">
+            <div class="selector-group">
+                <label for="zodiac-select">Select Your Zodiac Sign</label>
+                <select id="zodiac-select" class="custom-select">
+                    <option value="tiger">Tiger</option>
+                    <option value="rat">Rat</option>
+                    <option value="ox">Ox</option>
+                    <option value="rabbit">Rabbit</option>
+                    <option value="dragon">Dragon</option>
+                    <option value="snake">Snake</option>
+                    <option value="horse">Horse</option>
+                    <option value="goat">Goat</option>
+                    <option value="monkey">Monkey</option>
+                    <option value="rooster">Rooster</option>
+                    <option value="dog">Dog</option>
+                    <option value="pig">Pig</option>
+                </select>
+            </div>
+            <div class="selector-group">
+                <label>Select Fortune Type</label>
+                <div class="period-buttons">
+                    <button class="period-btn-small" data-period="today">Today</button>
+                    <button class="period-btn-small active" data-period="week">This Week</button>
+                    <button class="period-btn-small" data-period="month">This Month</button>
+                    <button class="period-btn-small" data-period="year">This Year</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Free User View -->
+        <div id="free-content" class="fortune-content">
+            <div class="fortune-grid">
+                <!-- Free Fortune Overview -->
+                <div class="fortune-overview-card">
+                    <h2>Free Fortune Overview for the <span id="free-zodiac-name">Tiger</span></h2>
+                    <p class="overview-text" id="free-overview-text">
+                        A brief summary of your fortune for this week. Lorem ipsum dolor sit amet, consectetur
+                        adipiscing elit.
+                        Opportunities may arise, but caution is advised in financial matters.
+                    </p>
+
+                    <div class="fortune-aspects">
+                        <div class="aspect-item">
+                            <i class="fas fa-briefcase aspect-icon"></i>
+                            <div class="aspect-content">
+                                <h4>Career</h4>
+                                <p id="free-career">A project will demand your full attention.</p>
+                            </div>
+                        </div>
+                        <div class="aspect-item">
+                            <i class="fas fa-heart aspect-icon"></i>
+                            <div class="aspect-content">
+                                <h4>Love</h4>
+                                <p id="free-love">Communication is key with your partner.</p>
+                            </div>
+                        </div>
+                        <div class="aspect-item">
+                            <i class="fas fa-heartbeat aspect-icon"></i>
+                            <div class="aspect-content">
+                                <h4>Health</h4>
+                                <p id="free-health">Focus on maintaining a balanced diet.</p>
+                            </div>
+                        </div>
+                        <div class="aspect-item">
+                            <i class="fas fa-coins aspect-icon"></i>
+                            <div class="aspect-content">
+                                <h4>Wealth</h4>
+                                <p id="free-wealth">Avoid impulsive spending this week.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lucky-elements-section">
+                        <h3>Lucky Elements</h3>
+                        <div class="lucky-items">
+                            <span>Lucky Color: <strong id="free-lucky-color">Azure</strong></span>
+                            <span>Lucky Number: <strong id="free-lucky-number">7</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="dos-donts-section">
+                        <h3>Do's & Don'ts</h3>
+                        <div class="dos-donts-list">
+                            <div class="do-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span id="free-do">Do: Take initiative on new projects.</span>
+                            </div>
+                            <div class="dont-item">
+                                <i class="fas fa-times-circle"></i>
+                                <span id="free-dont">Don't: Engage in unnecessary arguments.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unlock Card -->
+                <div class="unlock-fortune-card">
+                    <i class="fas fa-lock unlock-icon"></i>
+                    <h3>Unlock Your In-Depth Fortune</h3>
+                    <p>Go beyond the basics with a comprehensive report, personalized advice, and more.</p>
+
+                    <ul class="unlock-features">
+                        <li><i class="fas fa-check"></i> Detailed life areas analysis</li>
+                        <li><i class="fas fa-check"></i> Expanded lucky elements</li>
+                        <li><i class="fas fa-check"></i> Personalized Do's & Don'ts</li>
+                    </ul>
+
+                    <button class="btn-unlock" id="unlock-btn">Unlock Full Report for $4.99</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paid User View -->
+        <div id="paid-content" class="fortune-content" style="display: none;">
+
+            <!-- Detailed Fortune Report -->
+            <div class="detailed-fortune-card">
+                <div class="fortune-title-section">
+                    <h2>This Week's Fortune for the <span id="paid-zodiac-name">Tiger</span></h2>
+                    <p class="fortune-subtitle">
+                        An in-depth analysis of your fortune for this week. Explore the cosmic influences on your
+                        career, health, love, and wealth, complete with personalized advice and lucky elements to
+                        guide your path.
+                    </p>
+                </div>
+
+                <!-- Detailed Aspects -->
+                <div class="detailed-aspects">
+                    <div class="detailed-aspect-card">
+                        <div class="aspect-header">
+                            <i class="fas fa-briefcase"></i>
+                            <h3>Career</h3>
+                        </div>
+                        <p class="aspect-description" id="paid-career-desc">
+                            This is a pivotal week for your professional life. A major project will
+                            demand your full attention, and your leadership qualities will be put to the test.
+                            Collaboration
+                            with colleagues will be fruitful, but be mindful of asserting your ideas without
+                            overshadowing
+                            others. An unexpected opportunity for advancement may present itself towards the end of the
+                            week. Be
+                            prepared to act swiftly and decisively, as hesitation could mean missing out on a
+                            significant
+                            career boost.
+                        </p>
+                        <div class="personalized-advice">
+                            <h4>Personalized Advice:</h4>
+                            <p id="paid-career-advice">
+                                Focus on completing one task at a time to avoid feeling overwhelmed.
+                                Schedule a meeting to present your innovative ideas this week. Trust
+                                your intuition when evaluating new opportunities, but don't neglect due
+                                diligence. Networking with senior colleagues could open doors.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="detailed-aspect-card">
+                        <div class="aspect-header">
+                            <i class="fas fa-heartbeat"></i>
+                            <h3>Health</h3>
+                        </div>
+                        <p class="aspect-description" id="paid-health-desc">
+                            Your energy levels may fluctuate, so it's crucial to prioritize rest
+                            and nutrition. Focus on maintaining a balanced diet, incorporating
+                            more green vegetables and lean proteins. Stress from work could
+                            affect you physically, so incorporating relaxation techniques such as
+                            meditation or a gentle walk in nature is highly recommended. Pay
+                            attention to your body's signals and avoid pushing yourself to the
+                            extreme.
+                        </p>
+                        <div class="personalized-advice">
+                            <h4>Personalized Advice:</h4>
+                            <p id="paid-health-advice">
+                                Aim for 7-8 hours of sleep each night. Prepare healthy meals in advance to
+                                avoid unhealthy snacking. Dedicate at least 15 minutes each day to
+                                mindfulness or deep breathing exercises. Listen to calming music before
+                                bed to improve sleep quality.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="detailed-aspect-card">
+                        <div class="aspect-header">
+                            <i class="fas fa-heart"></i>
+                            <h3>Love</h3>
+                        </div>
+                        <p class="aspect-description" id="paid-love-desc">
+                            Communication is the cornerstone of your relationships this week.
+                            For those in a relationship, open and honest dialogue will strengthen your bond. Don't shy
+                            away from
+                            discussing deeper emotions or future plans. Singles may
+                            encounter someone intriguing through a social or professional
+                            gathering, so be open to new connections. However, avoid letting
+                            favor genuine emotional expression over superficial charm. It's a
+                            time for building trust and understanding.
+                        </p>
+                        <div class="personalized-advice">
+                            <h4>Personalized Advice:</h4>
+                            <p id="paid-love-advice">
+                                Set aside quality time with your partner without distractions. For singles, be
+                                accept social invitations that generally interest you. Express your feelings
+                                honestly, but kindly. Listen actively to what others are saying, both verbally
+                                and non-verbally.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="detailed-aspect-card">
+                        <div class="aspect-header">
+                            <i class="fas fa-coins"></i>
+                            <h3>Wealth</h3>
+                        </div>
+                        <p class="aspect-description" id="paid-wealth-desc">
+                            Financial prudence is essential this week. While your income
+                            streams remain stable, there is a temptation for impulsive
+                            purchases or investments. Exercise caution and thoroughly vet any
+                            financial opportunities before committing. Stick to
+                            your budget and long-term financial goals. Avoid high-risk
+                            investments and seek professional advice if you are considering
+                            any significant financial decisions. An unexpected expense may
+                            arise, so having a contingency fund will be beneficial.
+                        </p>
+                        <div class="personalized-advice">
+                            <h4>Personalized Advice:</h4>
+                            <p id="paid-wealth-advice">
+                                Review your monthly budget and stick to it. Delay any non-essential
+                                large purchases for a few weeks. Research thoroughly before making any
+                                investments. Set aside a small amount of money into your savings account.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lucky Elements -->
+                <div class="lucky-elements-detailed">
+                    <h3>Your Lucky Elements</h3>
+                    <div class="lucky-grid">
+                        <div class="lucky-element">
+                            <i class="fas fa-palette"></i>
+                            <h4>Colors</h4>
+                            <p id="paid-lucky-colors">Azure, Silver</p>
+                        </div>
+                        <div class="lucky-element">
+                            <i class="fas fa-hashtag"></i>
+                            <h4>Numbers</h4>
+                            <p id="paid-lucky-numbers">3, 7, 18</p>
+                        </div>
+                        <div class="lucky-element">
+                            <i class="fas fa-compass"></i>
+                            <h4>Directions</h4>
+                            <p id="paid-lucky-directions">East, Southeast</p>
+                        </div>
+                        <div class="lucky-element">
+                            <i class="fas fa-seedling"></i>
+                            <h4>Flower</h4>
+                            <p id="paid-lucky-flower">Yellow Lily</p>
+                        </div>
+                        <div class="lucky-element">
+                            <i class="fas fa-gem"></i>
+                            <h4>Mineral</h4>
+                            <p id="paid-lucky-mineral">Sapphire</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Do's and Don'ts -->
+                <div class="detailed-dos-donts">
+                    <div class="dos-card">
+                        <h3><i class="fas fa-check-circle"></i> Detailed Do's</h3>
+                        <ul id="paid-dos-list">
+                            <li>Take initiative on new projects and showcase your leadership skills.</li>
+                            <li>Engage in open and honest communication with your loved ones.</li>
+                            <li>Prioritize self-care and listen to your body's need for rest.</li>
+                            <li>Review your finances and create a solid budget for the week.</li>
+                        </ul>
+                    </div>
+                    <div class="donts-card">
+                        <h3><i class="fas fa-times-circle"></i> Detailed Don'ts</h3>
+                        <ul id="paid-donts-list">
+                            <li>Engage in unnecessary arguments or workplace gossip.</li>
+                            <li>Make impulsive purchases or high-risk financial decisions.</li>
+                            <li>Ignore feelings of stress or fatigue; avoid overexertion.</li>
+                            <li>Hesitate to express your true feelings in personal relationships.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <div class="social-icons">
+            <a href="https://www.threads.net/@laraksoracle" target="_blank"><i class="fa-brands fa-threads"></i></a>
+            <a href="https://www.tiktok.com/@laraksoracle" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/laraksoracle/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.facebook.com/laraksoracleta" target="_blank"><i
+                    class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.youtube.com/@LaraKsOracle" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://x.com/laraks_oracle" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+        <p class="copyright">© 2024 Larak's Zodiac. All Rights Reserved.</p>
+    </footer>
+
+    <script type="module" src="navbar.js"></script>
+    <script type="module" src="fortune.js"></script>
+</body>
+
+</html>
