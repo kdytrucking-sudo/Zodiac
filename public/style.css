@@ -2762,6 +2762,27 @@ body {
     font-size: 0.95rem;
 }
 
+/* Date and Time Picker Styling */
+.form-group input[type="date"]::-webkit-calendar-picker-indicator,
+.form-group input[type="time"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(1);
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.form-group input[type="date"]::-webkit-calendar-picker-indicator:hover,
+.form-group input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* Firefox date/time picker */
+.form-group input[type="date"]::-moz-calendar-picker-indicator,
+.form-group input[type="time"]::-moz-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
 .form-group input:focus {
     outline: none;
     border-color: #e54d42;

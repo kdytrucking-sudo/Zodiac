@@ -34,6 +34,18 @@ const zodiacDescriptions = {
     Pig: "Pigs are diligent, compassionate, and generous. They have great concentration: once they set a goal, they will devote all their energy to achieving it."
 };
 
+// Set default values on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Set default date: 07/18/1975 (format: yyyy-mm-dd for input type="date")
+    document.getElementById('query-date').value = '1975-07-18';
+
+    // Set default time: 02:22 AM (format: HH:mm for input type="time")
+    document.getElementById('query-time').value = '02:22';
+
+    // Set default location: Los Angeles
+    document.getElementById('query-location').value = 'Los Angeles';
+});
+
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUser = user;
