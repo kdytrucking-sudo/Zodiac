@@ -11,9 +11,9 @@ const navbarHTML = `
         <li><a href="archive.html" data-page="archive.html">Archive</a></li>
         <li><a href="query.html" data-page="query.html">Query</a></li>
         <li><a href="fortune.html" data-page="fortune.html">Fortune</a></li>
-        <li><a href="#" data-page="matching">Matching</a></li>
+        <li><a href="matching.html" data-page="matching">Matching</a></li>
         <li><a href="dashboard.html" data-page="dashboard.html">Member Center</a></li>
-        <li><a href="#" data-page="community">Community (Blog)</a></li>
+        <li><a href="community.html" data-page="community">Community (Blog)</a></li>
     </ul>
     <div class="header-search">
         <i class="fas fa-search search-icon"></i>

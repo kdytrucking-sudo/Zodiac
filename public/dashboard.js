@@ -26,12 +26,15 @@ const pFillLove = document.querySelectorAll('.p-fill')[1];
 const pFillHealth = document.querySelectorAll('.p-fill')[2];
 const pFillWealth = document.querySelectorAll('.p-fill')[3];
 
+// Lucky Data Elements
 const luckyBenefactorEl = document.getElementById('lucky-benefactor');
 const luckyColorEl = document.getElementById('lucky-color');
 const luckyNumbersEl = document.getElementById('lucky-numbers');
-const luckyDirectionEl = document.getElementById('lucky-direction');
+const luckyTimeEl = document.getElementById('lucky-time'); // New
+const luckyLoveDirectionEl = document.getElementById('lucky-direction'); // ID in HTML is lucky-direction for Love
 const luckyJoyEl = document.getElementById('lucky-joy');
 const luckyWealthEl = document.getElementById('lucky-wealth');
+const luckyGeneralDirectionEl = document.getElementById('lucky-general-direction'); // New
 
 const doItemEl = document.querySelector('.do-item span:last-child');
 const dontItemEl = document.querySelector('.dont-item span:last-child');
@@ -145,7 +148,7 @@ function updateFortuneHeader(zodiac) {
 async function loadFortuneData(zodiac, period) {
     try {
         // Fetch the single document for the Zodiac
-        const docRef = doc(db, "fortune", zodiac);
+        const docRef = doc(db, "fortune", zodiac.toLowerCase()); // Ensure lowercase for ID
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
@@ -154,10 +157,17 @@ async function loadFortuneData(zodiac, period) {
 
             // Map period to field name
             // Tabs are: Daily, Weekly, Monthly, Yearly
-            const fieldName = period.toLowerCase();
+            // Database keys are: today, week, month, year
+            const periodMap = {
+                'daily': 'today',
+                'weekly': 'week',
+                'monthly': 'month',
+                'yearly': 'year'
+            };
+            const fieldName = periodMap[period.toLowerCase()];
 
-            if (fullData[fieldName]) {
-                periodData = fullData[fieldName];
+            if (fullData[fieldName] && fullData[fieldName].free) {
+                periodData = fullData[fieldName].free;
                 renderFortuneData(periodData);
             } else {
                 console.log(`No data for ${fieldName} in ${zodiac}`);
@@ -175,13 +185,26 @@ async function loadFortuneData(zodiac, period) {
 }
 
 function renderFortuneData(data) {
-    bigScoreEl.textContent = data.overall_score;
-    fortuneQuoteEl.textContent = `"${data.do_text}"`;
+    // Overall Score
+    if (data.overallScore) {
+        bigScoreEl.textContent = data.overallScore;
+    } else {
+        // Fallback calculation if overallScore is missing
+        const avgRating = (data.ratingCareer + data.ratingLove + data.ratingHealth + data.ratingWealth) / 4;
+        bigScoreEl.textContent = Math.round(avgRating * 20);
+    }
 
-    // Stars
+    // Overview Quote
+    fortuneQuoteEl.textContent = data.overview ? `"${data.overview}"` : "Data not available";
+
+    // Stars (based on overall score or ratings)
     let starsHtml = '';
+    // Calculate stars from overall score (0-100 -> 0-5)
+    const score = data.overallScore || ((data.ratingCareer + data.ratingLove + data.ratingHealth + data.ratingWealth) / 4 * 20);
+    const starCount = Math.round(score / 20);
+
     for (let i = 0; i < 5; i++) {
-        if (i < data.overall_stars) {
+        if (i < starCount) {
             starsHtml += '<i class="fas fa-star"></i>';
         } else {
             starsHtml += '<i class="far fa-star"></i>';
@@ -189,23 +212,27 @@ function renderFortuneData(data) {
     }
     starsContainer.innerHTML = starsHtml;
 
-    // Progress Bars
-    pFillCareer.style.width = `${data.career_score}%`;
-    pFillLove.style.width = `${data.love_score}%`;
-    pFillHealth.style.width = `${data.health_score}%`;
-    pFillWealth.style.width = `${data.wealth_score}%`;
+    // Progress Bars (Ratings are 1-5, convert to %)
+    pFillCareer.style.width = `${data.ratingCareer * 20}%`;
+    pFillLove.style.width = `${data.ratingLove * 20}%`;
+    pFillHealth.style.width = `${data.ratingHealth * 20}%`;
+    pFillWealth.style.width = `${data.ratingWealth * 20}%`;
 
     // Lucky Grid
-    luckyBenefactorEl.textContent = data.benefactor;
-    luckyColorEl.textContent = data.lucky_color;
-    luckyNumbersEl.textContent = data.lucky_number;
-    luckyDirectionEl.textContent = data.love_direction;
-    luckyJoyEl.textContent = data.joy_direction;
-    luckyWealthEl.textContent = data.wealth_direction;
+    luckyBenefactorEl.textContent = data.benefactor || '-';
+    luckyColorEl.textContent = data.luckyColor || '-';
+    luckyNumbersEl.textContent = data.luckyNumber || '-';
+    if (luckyTimeEl) luckyTimeEl.textContent = data.luckyTime || '-';
+
+    // Map specific directions
+    luckyLoveDirectionEl.textContent = data.loveDirection || data.luckyDirection || '-';
+    luckyJoyEl.textContent = data.joyDirection || data.luckyDirection || '-';
+    luckyWealthEl.textContent = data.wealthDirection || data.luckyDirection || '-';
+    if (luckyGeneralDirectionEl) luckyGeneralDirectionEl.textContent = data.luckyDirection || '-';
 
     // Do's and Don'ts
-    doItemEl.textContent = data.do_text;
-    dontItemEl.textContent = data.donot_text;
+    doItemEl.textContent = data.do || '-';
+    dontItemEl.textContent = data.dont || '-';
 }
 
 async function loadFavorites(uid) {

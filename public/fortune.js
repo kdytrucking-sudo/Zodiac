@@ -6,49 +6,7 @@ let currentUser = null;
 let userLevel = 0;
 let selectedZodiac = 'tiger';
 let selectedPeriod = 'week';
-
-// Fortune data (mock data - in production this would come from backend/API)
-const fortuneData = {
-    tiger: {
-        week: {
-            overview: "A brief summary of your fortune for this week. Opportunities may arise, but caution is advised in financial matters.",
-            career: "A project will demand your full attention.",
-            love: "Communication is key with your partner.",
-            health: "Focus on maintaining a balanced diet.",
-            wealth: "Avoid impulsive spending this week.",
-            luckyColor: "Azure",
-            luckyNumber: "7",
-            do: "Take initiative on new projects.",
-            dont: "Engage in unnecessary arguments.",
-            // Paid content
-            careerDetailed: "This is a pivotal week for your professional life. A major project will demand your full attention, and your leadership qualities will be put to the test. Collaboration with colleagues will be fruitful, but be mindful of asserting your ideas without overshadowing others. An unexpected opportunity for advancement may present itself towards the end of the week. Be prepared to act swiftly and decisively, as hesitation could mean missing out on a significant career boost.",
-            careerAdvice: "Focus on completing one task at a time to avoid feeling overwhelmed. Schedule a meeting to present your innovative ideas this week. Trust your intuition when evaluating new opportunities, but don't neglect due diligence. Networking with senior colleagues could open doors.",
-            healthDetailed: "Your energy levels may fluctuate, so it's crucial to prioritize rest and nutrition. Focus on maintaining a balanced diet, incorporating more green vegetables and lean proteins. Stress from work could affect you physically, so incorporating relaxation techniques such as meditation or a gentle walk in nature is highly recommended. Pay attention to your body's signals and avoid pushing yourself to the extreme.",
-            healthAdvice: "Aim for 7-8 hours of sleep each night. Prepare healthy meals in advance to avoid unhealthy snacking. Dedicate at least 15 minutes each day to mindfulness or deep breathing exercises. Listen to calming music before bed to improve sleep quality.",
-            loveDetailed: "Communication is the cornerstone of your relationships this week. For those in a relationship, open and honest dialogue will strengthen your bond. Don't shy away from discussing deeper emotions or future plans. Singles may encounter someone intriguing through a social or professional gathering, so be open to new connections. However, avoid letting favor genuine emotional expression over superficial charm. It's a time for building trust and understanding.",
-            loveAdvice: "Set aside quality time with your partner without distractions. For singles, accept social invitations that generally interest you. Express your feelings honestly, but kindly. Listen actively to what others are saying, both verbally and non-verbally.",
-            wealthDetailed: "Financial prudence is essential this week. While your income streams remain stable, there is a temptation for impulsive purchases or investments. Exercise caution and thoroughly vet any financial opportunities before committing. Stick to your budget and long-term financial goals. Avoid high-risk investments and seek professional advice if you are considering any significant financial decisions. An unexpected expense may arise, so having a contingency fund will be beneficial.",
-            wealthAdvice: "Review your monthly budget and stick to it. Delay any non-essential large purchases for a few weeks. Research thoroughly before making any investments. Set aside a small amount of money into your savings account.",
-            luckyColors: "Azure, Silver",
-            luckyNumbers: "3, 7, 18",
-            luckyDirections: "East, Southeast",
-            luckyFlower: "Yellow Lily",
-            luckyMineral: "Sapphire",
-            dos: [
-                "Take initiative on new projects and showcase your leadership skills.",
-                "Engage in open and honest communication with your loved ones.",
-                "Prioritize self-care and listen to your body's need for rest.",
-                "Review your finances and create a solid budget for the week."
-            ],
-            donts: [
-                "Engage in unnecessary arguments or workplace gossip.",
-                "Make impulsive purchases or high-risk financial decisions.",
-                "Ignore feelings of stress or fatigue; avoid overexertion.",
-                "Hesitate to express your true feelings in personal relationships."
-            ]
-        }
-    }
-};
+let currentFortuneData = null; // Store fetched data for the current zodiac
 
 // Check user authentication and level
 onAuthStateChanged(auth, async (user) => {
@@ -69,10 +27,36 @@ onAuthStateChanged(auth, async (user) => {
     }
 
     // Show appropriate content based on user level
-    toggleContentView();
+    await updateContent();
 });
 
-function toggleContentView() {
+async function fetchFortuneData(zodiac) {
+    try {
+        const docRef = doc(db, "fortune", zodiac);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            currentFortuneData = docSnap.data();
+            return currentFortuneData;
+        } else {
+            console.error("No fortune data found for zodiac:", zodiac);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching fortune data:", error);
+        return null;
+    }
+}
+
+async function updateContent() {
+    // Fetch data if it's not loaded or if the zodiac changed (logic handled by caller usually, but safe to check)
+    // For simplicity, we'll fetch if currentFortuneData is null or doesn't match selectedZodiac (if we tracked it)
+    // Since we don't track which zodiac is in currentFortuneData explicitly in a var, we can just fetch.
+    // Optimization: We could store loadedZodiac.
+
+    // Always fetch for now to ensure freshness and simplicity
+    await fetchFortuneData(selectedZodiac);
+
     const freeContent = document.getElementById('free-content');
     const paidContent = document.getElementById('paid-content');
 
@@ -90,7 +74,12 @@ function toggleContentView() {
 }
 
 function updateFreeContent() {
-    const data = fortuneData[selectedZodiac]?.[selectedPeriod] || fortuneData.tiger.week;
+    if (!currentFortuneData || !currentFortuneData[selectedPeriod]) {
+        console.warn("Data not available for", selectedZodiac, selectedPeriod);
+        return;
+    }
+
+    const data = currentFortuneData[selectedPeriod].free;
 
     document.getElementById('free-zodiac-name').textContent = capitalizeFirst(selectedZodiac);
     document.getElementById('free-overview-text').textContent = data.overview;
@@ -100,12 +89,36 @@ function updateFreeContent() {
     document.getElementById('free-wealth').textContent = data.wealth;
     document.getElementById('free-lucky-color').textContent = data.luckyColor;
     document.getElementById('free-lucky-number').textContent = data.luckyNumber;
+
+    // New fields
+    if (document.getElementById('free-lucky-direction'))
+        document.getElementById('free-lucky-direction').textContent = data.luckyDirection || 'N/A';
+    if (document.getElementById('free-lucky-time'))
+        document.getElementById('free-lucky-time').textContent = data.luckyTime || 'N/A';
+    if (document.getElementById('free-benefactor'))
+        document.getElementById('free-benefactor').textContent = capitalizeFirst(data.benefactor || 'N/A');
+
+    // Ratings
+    if (document.getElementById('free-career-rating'))
+        document.getElementById('free-career-rating').textContent = `(${data.ratingCareer}/5)`;
+    if (document.getElementById('free-love-rating'))
+        document.getElementById('free-love-rating').textContent = `(${data.ratingLove}/5)`;
+    if (document.getElementById('free-health-rating'))
+        document.getElementById('free-health-rating').textContent = `(${data.ratingHealth}/5)`;
+    if (document.getElementById('free-wealth-rating'))
+        document.getElementById('free-wealth-rating').textContent = `(${data.ratingWealth}/5)`;
+
     document.getElementById('free-do').textContent = `Do: ${data.do}`;
     document.getElementById('free-dont').textContent = `Don't: ${data.dont}`;
 }
 
 function updatePaidContent() {
-    const data = fortuneData[selectedZodiac]?.[selectedPeriod] || fortuneData.tiger.week;
+    if (!currentFortuneData || !currentFortuneData[selectedPeriod]) {
+        console.warn("Data not available for", selectedZodiac, selectedPeriod);
+        return;
+    }
+
+    const data = currentFortuneData[selectedPeriod].paid;
 
     document.getElementById('paid-zodiac-name').textContent = capitalizeFirst(selectedZodiac);
     document.getElementById('paid-career-desc').textContent = data.careerDetailed;
@@ -123,13 +136,33 @@ function updatePaidContent() {
     document.getElementById('paid-lucky-flower').textContent = data.luckyFlower;
     document.getElementById('paid-lucky-mineral').textContent = data.luckyMineral;
 
+    // New fields
+    if (document.getElementById('paid-lucky-time'))
+        document.getElementById('paid-lucky-time').textContent = data.luckyTime || 'N/A';
+    if (document.getElementById('paid-benefactor'))
+        document.getElementById('paid-benefactor').textContent = capitalizeFirst(data.benefactor || 'N/A');
+
+    // Ratings
+    if (document.getElementById('paid-career-rating'))
+        document.getElementById('paid-career-rating').textContent = `(${data.ratingCareer}/5)`;
+    if (document.getElementById('paid-love-rating'))
+        document.getElementById('paid-love-rating').textContent = `(${data.ratingLove}/5)`;
+    if (document.getElementById('paid-health-rating'))
+        document.getElementById('paid-health-rating').textContent = `(${data.ratingHealth}/5)`;
+    if (document.getElementById('paid-wealth-rating'))
+        document.getElementById('paid-wealth-rating').textContent = `(${data.ratingWealth}/5)`;
+
     // Update Do's list
     const dosList = document.getElementById('paid-dos-list');
-    dosList.innerHTML = data.dos.map(item => `<li>${item}</li>`).join('');
+    if (data.dos && Array.isArray(data.dos)) {
+        dosList.innerHTML = data.dos.map(item => `<li>${item}</li>`).join('');
+    }
 
     // Update Don'ts list
     const dontsList = document.getElementById('paid-donts-list');
-    dontsList.innerHTML = data.donts.map(item => `<li>${item}</li>`).join('');
+    if (data.donts && Array.isArray(data.donts)) {
+        dontsList.innerHTML = data.donts.map(item => `<li>${item}</li>`).join('');
+    }
 }
 
 function capitalizeFirst(str) {
@@ -139,29 +172,30 @@ function capitalizeFirst(str) {
 // Unified Zodiac Selection
 const zodiacSelect = document.getElementById('zodiac-select');
 if (zodiacSelect) {
-    zodiacSelect.addEventListener('change', (e) => {
+    zodiacSelect.addEventListener('change', async (e) => {
         selectedZodiac = e.target.value;
-        updateContent();
+        await updateContent();
     });
 }
 
 // Unified Period Selection
 document.querySelectorAll('.period-btn-small').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
         document.querySelectorAll('.period-btn-small').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         selectedPeriod = btn.dataset.period;
-        updateContent();
+        // No need to fetch again if we have the whole zodiac doc, just update view
+        if (currentFortuneData) {
+            if (currentUser && userLevel > 0) {
+                updatePaidContent();
+            } else {
+                updateFreeContent();
+            }
+        } else {
+            await updateContent();
+        }
     });
 });
-
-function updateContent() {
-    if (currentUser && userLevel > 0) {
-        updatePaidContent();
-    } else {
-        updateFreeContent();
-    }
-}
 
 // Unlock button
 const unlockBtn = document.getElementById('unlock-btn');
@@ -182,4 +216,6 @@ if (unlockBtn) {
 document.addEventListener('DOMContentLoaded', () => {
     // Set initial values if needed
     if (zodiacSelect) zodiacSelect.value = selectedZodiac;
+    // Initial load handled by auth state change or manual call if auth is slow
+    // But auth listener will fire eventually.
 });
