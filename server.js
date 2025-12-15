@@ -8,6 +8,20 @@ import { fileURLToPath } from 'url';
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
 
+// Webhook routes
+import webhookRoutes from './server/routes/webhook.mjs';
+
+// Firebase Admin SDK
+import admin from 'firebase-admin';
+
+// Initialize Firebase Admin (if not already initialized)
+if (!admin.apps.length) {
+  admin.initializeApp({
+    projectId: 'studio-4395392521-1abeb'
+  });
+  console.log('✅ Firebase Admin initialized');
+}
+
 // ==== 关键：从环境变量里拿出 KEY，并显式传给 googleAI ====
 const rawKey =
   process.env.GOOGLE_GENAI_API_KEY ||
@@ -109,8 +123,9 @@ app.post('/api/genkit/generate', async (req, res) => {
   }
 });
 
-
-
+// Webhook API routes
+app.use('/api/webhook', webhookRoutes);
+console.log('✅ Webhook routes loaded');
 
 
 // 全局错误兜底（以后加复杂逻辑时有用）
