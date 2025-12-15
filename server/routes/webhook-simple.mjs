@@ -33,7 +33,7 @@ function verifyWebhookAuth(req, res, next) {
 // ============================================
 // 数据验证
 // ============================================
-const VALID_CATEGORIES = ['fortune', 'culture', 'compatibility', 'lifestyle'];
+const VALID_CATEGORIES = ['lifestyle', 'culture', 'history', 'compatibility', 'fortune', 'basics', 'calendar', 'legend'];
 const VALID_ZODIAC_SIGNS = ['rat', 'ox', 'tiger', 'rabbit', 'dragon', 'snake', 'horse', 'goat', 'monkey', 'rooster', 'dog', 'pig'];
 
 function validateArticleData(data) {
