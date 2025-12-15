@@ -13,7 +13,7 @@ const navbarHTML = `
         <li><a href="fortune.html" data-page="fortune.html">Fortune</a></li>
         <li><a href="matching.html" data-page="matching">Matching</a></li>
         <li><a href="article.html" data-page="article.html">Article</a></li>
-        <li><a href="community.html" data-page="community">Community (Blog)</a></li>
+        <li><a href="forum.html" data-page="forum.html">Forum</a></li>
     </ul>
     <div class="header-search">
         <i class="fas fa-search search-icon"></i>
