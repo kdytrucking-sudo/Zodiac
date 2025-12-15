@@ -19,6 +19,7 @@ function generateArticle(index) {
         title: `${zodiac} Sign: ${category} Insights for 2025`,
         content: `This is a sample article content for the ${zodiac} sign. It explores the deep connection between the ${zodiac} and the ${category} aspect of life. In traditional Chinese culture, the ${zodiac} is seen as a symbol of ${category === 'Fortune' ? 'luck and prosperity' : 'unique character traits'}. \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`,
         category: category,
+        zodiacSign: zodiac.toLowerCase(), // Added zodiac sign field
         keywords: [zodiac, category, '2025', 'Zodiac', 'Astrology'],
         source: getRandomItem(sources),
         created_at: new Date().toISOString(),

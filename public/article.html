@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Articles - Larak's Zodiac</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <div id="navbar-placeholder"></div>
+
+    <main class="article-page">
+        <!-- Page Header -->
+        <header class="page-header">
+            <div class="header-content">
+                <h1><i class="fas fa-newspaper"></i> Zodiac Articles</h1>
+                <p class="subtitle">Explore insights, stories, and wisdom about Chinese Zodiac</p>
+            </div>
+        </header>
+
+        <!-- Filter Section -->
+        <section class="filter-section">
+            <div class="filter-container">
+                <!-- Category Filter -->
+                <div class="filter-group">
+                    <label><i class="fas fa-filter"></i> Category:</label>
+                    <div class="filter-buttons" id="category-filter">
+                        <button class="filter-btn active" data-category="all">All</button>
+                        <button class="filter-btn" data-category="Fortune">Fortune</button>
+                        <button class="filter-btn" data-category="Personality">Personality</button>
+                        <button class="filter-btn" data-category="Culture">Culture</button>
+                        <button class="filter-btn" data-category="Compatibility">Compatibility</button>
+                        <button class="filter-btn" data-category="History">History</button>
+                    </div>
+                </div>
+
+                <!-- Zodiac Filter -->
+                <div class="filter-group">
+                    <label><i class="fas fa-paw"></i> Zodiac Sign:</label>
+                    <div class="filter-buttons" id="zodiac-filter">
+                        <button class="filter-btn active" data-zodiac="all">All</button>
+                        <button class="filter-btn" data-zodiac="rat">Rat</button>
+                        <button class="filter-btn" data-zodiac="ox">Ox</button>
+                        <button class="filter-btn" data-zodiac="tiger">Tiger</button>
+                        <button class="filter-btn" data-zodiac="rabbit">Rabbit</button>
+                        <button class="filter-btn" data-zodiac="dragon">Dragon</button>
+                        <button class="filter-btn" data-zodiac="snake">Snake</button>
+                        <button class="filter-btn" data-zodiac="horse">Horse</button>
+                        <button class="filter-btn" data-zodiac="goat">Goat</button>
+                        <button class="filter-btn" data-zodiac="monkey">Monkey</button>
+                        <button class="filter-btn" data-zodiac="rooster">Rooster</button>
+                        <button class="filter-btn" data-zodiac="dog">Dog</button>
+                        <button class="filter-btn" data-zodiac="pig">Pig</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Articles Grid -->
+        <section class="articles-section">
+            <div class="articles-container">
+                <div id="articles-grid" class="articles-grid">
+                    <!-- Loading indicator -->
+                    <div class="loading-indicator">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading articles...</p>
+                    </div>
+                </div>
+
+                <!-- No Results Message -->
+                <div id="no-results" class="no-results" style="display: none;">
+                    <i class="fas fa-search"></i>
+                    <h3>No Articles Found</h3>
+                    <p>Try adjusting your filters to see more results.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <div class="social-icons">
+            <a href="https://www.threads.net/@laraksoracle" target="_blank"><i class="fa-brands fa-threads"></i></a>
+            <a href="https://www.tiktok.com/@laraksoracle" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/laraksoracle/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.facebook.com/laraksoracleta" target="_blank"><i
+                    class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.youtube.com/@LaraKsOracle" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://x.com/laraks_oracle" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+        <p class="copyright">© 2024 Larak's Zodiac. All Rights Reserved.</p>
+    </footer>
+
+    <script type="module" src="article.js"></script>
+    <script type="module" src="navbar.js"></script>
+</body>
+
+</html>

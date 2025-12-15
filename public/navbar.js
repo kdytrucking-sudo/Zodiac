@@ -12,7 +12,7 @@ const navbarHTML = `
         <li><a href="query.html" data-page="query.html">Query</a></li>
         <li><a href="fortune.html" data-page="fortune.html">Fortune</a></li>
         <li><a href="matching.html" data-page="matching">Matching</a></li>
-        <li><a href="dashboard.html" data-page="dashboard.html">Member Center</a></li>
+        <li><a href="article.html" data-page="article.html">Article</a></li>
         <li><a href="community.html" data-page="community">Community (Blog)</a></li>
     </ul>
     <div class="header-search">

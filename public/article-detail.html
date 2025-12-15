@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Detail - Larak's Zodiac</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <div id="navbar-placeholder"></div>
+
+    <main class="article-detail-page">
+        <!-- Loading Indicator -->
+        <div id="loading-indicator" class="loading-container">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading article...</p>
+        </div>
+
+        <!-- Article Content -->
+        <article id="article-content" class="article-detail-container" style="display: none;">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb">
+                <a href="index.html"><i class="fas fa-home"></i> Home</a>
+                <span class="separator">/</span>
+                <a href="article.html">Articles</a>
+                <span class="separator">/</span>
+                <span id="breadcrumb-title">Article</span>
+            </nav>
+
+            <!-- Article Header -->
+            <header class="article-detail-header">
+                <div class="article-meta-top">
+                    <span class="article-category-badge" id="article-category"></span>
+                    <span class="article-zodiac-badge" id="article-zodiac"></span>
+                </div>
+                <h1 id="article-title" class="article-detail-title"></h1>
+                <div class="article-detail-meta">
+                    <span class="meta-item">
+                        <i class="far fa-calendar"></i>
+                        <span id="article-date"></span>
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-book"></i>
+                        <span id="article-source"></span>
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-tags"></i>
+                        <span id="article-keywords"></span>
+                    </span>
+                </div>
+            </header>
+
+            <!-- Article Body -->
+            <div class="article-detail-body">
+                <div id="article-text" class="article-text"></div>
+            </div>
+
+            <!-- Related Zodiac Info -->
+            <aside class="related-zodiac-info" id="related-zodiac">
+                <h3><i class="fas fa-info-circle"></i> About This Zodiac Sign</h3>
+                <div class="zodiac-quick-info">
+                    <div class="zodiac-icon-large" id="zodiac-icon"></div>
+                    <div class="zodiac-info-text">
+                        <h4 id="zodiac-name"></h4>
+                        <p id="zodiac-description">Learn more about this zodiac sign...</p>
+                        <a href="#" id="zodiac-detail-link" class="btn-link">
+                            View Full Details <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Share Section -->
+            <div class="article-share">
+                <h4>Share this article:</h4>
+                <div class="share-buttons">
+                    <button class="share-btn facebook" onclick="shareOnFacebook()">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </button>
+                    <button class="share-btn twitter" onclick="shareOnTwitter()">
+                        <i class="fab fa-twitter"></i> Twitter
+                    </button>
+                    <button class="share-btn copy" onclick="copyLink()">
+                        <i class="fas fa-link"></i> Copy Link
+                    </button>
+                </div>
+            </div>
+
+            <!-- Back to Articles -->
+            <div class="article-navigation">
+                <a href="article.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to Articles
+                </a>
+            </div>
+        </article>
+
+        <!-- Error Message -->
+        <div id="error-message" class="error-container" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <h2>Article Not Found</h2>
+            <p>The article you're looking for doesn't exist or has been removed.</p>
+            <a href="article.html" class="btn-primary">Browse All Articles</a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <div class="social-icons">
+            <a href="https://www.threads.net/@laraksoracle" target="_blank"><i class="fa-brands fa-threads"></i></a>
+            <a href="https://www.tiktok.com/@laraksoracle" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/laraksoracle/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.facebook.com/laraksoracleta" target="_blank"><i
+                    class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.youtube.com/@LaraKsOracle" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://x.com/laraks_oracle" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+        <p class="copyright">© 2024 Larak's Zodiac. All Rights Reserved.</p>
+    </footer>
+
+    <script type="module" src="article-detail.js"></script>
+    <script type="module" src="navbar.js"></script>
+</body>
+
+</html>
