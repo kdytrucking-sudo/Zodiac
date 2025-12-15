@@ -74,6 +74,11 @@ function createArticleCard(article) {
     // Truncate content for preview
     const preview = article.content.substring(0, 150) + '...';
 
+    // Get statistics (default to 0 if not present)
+    const viewCount = article.viewCount || 0;
+    const favoriteCount = article.favoriteCount || 0;
+    const commentCount = article.commentCount || 0;
+
     card.innerHTML = `
         <div class="article-card-header">
             <div class="article-category">${article.category}</div>
@@ -89,6 +94,17 @@ function createArticleCard(article) {
             </span>
             <span class="article-source">
                 <i class="fas fa-book"></i> ${article.source}
+            </span>
+        </div>
+        <div class="article-stats-mini">
+            <span class="stat-mini">
+                <i class="fas fa-eye"></i> ${viewCount}
+            </span>
+            <span class="stat-mini">
+                <i class="fas fa-star"></i> ${favoriteCount}
+            </span>
+            <span class="stat-mini">
+                <i class="fas fa-comments"></i> ${commentCount}
             </span>
         </div>
         <a href="article-detail.html?id=${article.id}" class="article-read-more">

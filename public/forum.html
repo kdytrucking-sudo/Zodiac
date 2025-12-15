@@ -166,10 +166,50 @@
                 <div class="post-detail-content" id="detail-content">
                     Post content will appear here...
                 </div>
+                <div class="post-detail-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-eye"></i> <span id="detail-views">0</span> views
+                    </span>
+                </div>
                 <div class="post-detail-actions">
                     <button class="btn-like" id="detail-like-btn">
                         <i class="far fa-heart"></i> <span id="detail-likes">0</span>
                     </button>
+                </div>
+
+                <!-- Replies Section -->
+                <div class="replies-section" style="display: block;">
+                    <h3 class="replies-title">
+                        <i class="fas fa-comments"></i> Replies (<span id="replies-count">0</span>)
+                    </h3>
+
+                    <!-- Reply Form -->
+                    <div class="reply-form-container" id="reply-form-container">
+                        <form id="reply-form" class="reply-form">
+                            <textarea id="reply-content" placeholder="Write a reply..." rows="3" maxlength="500"
+                                required></textarea>
+                            <div class="reply-form-actions">
+                                <span class="char-count"><span id="reply-count">0</span>/500</span>
+                                <button type="submit" class="btn-reply">
+                                    <i class="fas fa-paper-plane"></i> Reply
+                                </button>
+                            </div>
+                        </form>
+                        <p class="reply-login-hint" id="reply-login-hint" style="display: none;">
+                            <i class="fas fa-info-circle"></i> Please <a href="login.html">login</a> to reply
+                        </p>
+                    </div>
+
+                    <!-- Replies List -->
+                    <div id="replies-list" class="replies-list">
+                        <!-- Replies will be dynamically inserted here -->
+                    </div>
+
+                    <!-- No Replies Message -->
+                    <div id="no-replies" class="no-replies">
+                        <i class="fas fa-comment-slash"></i>
+                        <p>No replies yet. Be the first to reply!</p>
+                    </div>
                 </div>
             </div>
         </div>

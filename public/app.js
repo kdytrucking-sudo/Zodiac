@@ -34,6 +34,12 @@ async function loadTodayZodiac() {
   const luckEl = document.getElementById("zodiac-luck");
   const messageEl = document.getElementById("zodiac-message");
 
+  // Check if elements exist (they won't exist on forum page, etc.)
+  if (!statusEl || !resultEl || !dateEl || !signEl || !luckEl || !messageEl) {
+    console.log("Zodiac elements not found on this page, skipping loadTodayZodiac");
+    return;
+  }
+
   statusEl.textContent = "Loading from backend /api/zodiac/today ...";
   resultEl.classList.add("hidden");
 

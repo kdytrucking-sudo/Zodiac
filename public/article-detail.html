@@ -77,9 +77,9 @@
                 </div>
             </aside>
 
-            <!-- Share Section -->
+            <!-- Actions Section -->
             <div class="article-share">
-                <h4>Share this article:</h4>
+                <h4>Actions:</h4>
                 <div class="share-buttons">
                     <button class="share-btn facebook" onclick="shareOnFacebook()">
                         <i class="fab fa-facebook-f"></i> Facebook
@@ -90,6 +90,60 @@
                     <button class="share-btn copy" onclick="copyLink()">
                         <i class="fas fa-link"></i> Copy Link
                     </button>
+                    <button class="share-btn favorite btn-favorite" id="favorite-btn">
+                        <i class="far fa-star"></i> Favorite
+                    </button>
+                </div>
+                <p class="favorite-login-hint" id="favorite-login-hint" style="display: none;">
+                    <i class="fas fa-info-circle"></i> Please <a href="login.html">login</a> to favorite this article
+                </p>
+            </div>
+
+            <!-- Article Statistics -->
+            <div class="article-stats">
+                <span class="stat-item">
+                    <i class="fas fa-eye"></i> <span id="article-views">0</span> views
+                </span>
+                <span class="stat-item">
+                    <i class="fas fa-star"></i> <span id="article-favorites">0</span> favorites
+                </span>
+                <span class="stat-item">
+                    <i class="fas fa-comments"></i> <span id="article-comments-count">0</span> comments
+                </span>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="comments-section">
+                <h3 class="comments-title">
+                    <i class="fas fa-comments"></i> Comments (<span id="comments-count">0</span>)
+                </h3>
+
+                <!-- Comment Form -->
+                <div class="comment-form-container" id="comment-form-container">
+                    <form id="comment-form" class="comment-form">
+                        <textarea id="comment-content" placeholder="Write a comment..." rows="3" maxlength="500"
+                            required></textarea>
+                        <div class="comment-form-actions">
+                            <span class="char-count"><span id="comment-count">0</span>/500</span>
+                            <button type="submit" class="btn-comment">
+                                <i class="fas fa-paper-plane"></i> Comment
+                            </button>
+                        </div>
+                    </form>
+                    <p class="comment-login-hint" id="comment-login-hint" style="display: none;">
+                        <i class="fas fa-info-circle"></i> Please <a href="login.html">login">login</a> to comment
+                    </p>
+                </div>
+
+                <!-- Comments List -->
+                <div id="comments-list" class="comments-list">
+                    <!-- Comments will be dynamically inserted here -->
+                </div>
+
+                <!-- No Comments Message -->
+                <div id="no-comments" class="no-comments">
+                    <i class="fas fa-comment-slash"></i>
+                    <p>No comments yet. Be the first to comment!</p>
                 </div>
             </div>
 

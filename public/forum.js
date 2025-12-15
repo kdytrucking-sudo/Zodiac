@@ -1,10 +1,11 @@
 import { auth, db } from './app.js';
-import { collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc, increment, Timestamp } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
+import { collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc, increment, Timestamp, deleteDoc } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js';
 
 let currentUser = null;
 let currentSection = 'customer-service';
 let allPosts = [];
+let currentPostId = null; // Track current viewing post
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -78,36 +79,88 @@ function initEventListeners() {
         const count = contentTextarea.value.length;
         document.getElementById('content-count').textContent = count;
     });
+
+    // Reply form character counter
+    const replyTextarea = document.getElementById('reply-content');
+    replyTextarea.addEventListener('input', () => {
+        const count = replyTextarea.value.length;
+        document.getElementById('reply-count').textContent = count;
+    });
 }
 
 // Load posts from Firestore
 async function loadPosts() {
+    console.log('=== loadPosts called ===');
     const loadingIndicator = document.getElementById('loading-indicator');
     const postsGrid = document.getElementById('posts-grid');
+
+    console.log('Loading indicator:', loadingIndicator);
+    console.log('Posts grid:', postsGrid);
 
     try {
         loadingIndicator.style.display = 'block';
         postsGrid.style.display = 'none';
 
         const postsRef = collection(db, 'forum-posts');
-        const q = query(postsRef, orderBy('createdAt', 'desc'));
-        const querySnapshot = await getDocs(q);
+        console.log('Posts ref created');
+
+        let querySnapshot;
+        let usedOrderBy = false;
+
+        try {
+            // Try to sort by lastReplyAt using Firestore (faster)
+            const q = query(postsRef, orderBy('lastReplyAt', 'desc'));
+            console.log('Trying query with orderBy lastReplyAt...');
+            querySnapshot = await getDocs(q);
+            usedOrderBy = true;
+            console.log('✅ Query with orderBy succeeded - using Firestore sorting');
+        } catch (indexError) {
+            console.warn('⚠️ Cannot use orderBy (some posts missing lastReplyAt), using client-side sorting');
+            // Fallback: get all posts without orderBy
+            querySnapshot = await getDocs(postsRef);
+            console.log('Fallback query succeeded');
+        }
+
+        console.log('Query snapshot size:', querySnapshot.size);
 
         allPosts = [];
         querySnapshot.forEach((doc) => {
+            const data = doc.data();
             allPosts.push({
                 id: doc.id,
-                ...doc.data()
+                ...data
             });
         });
 
+        console.log('All posts loaded:', allPosts.length);
+
+        // Only sort on client side if we didn't use orderBy
+        if (!usedOrderBy) {
+            console.log('Sorting on client side...');
+            allPosts.sort((a, b) => {
+                const aTime = a.lastReplyAt?.toDate ? a.lastReplyAt.toDate() :
+                    (a.createdAt?.toDate ? a.createdAt.toDate() : new Date(0));
+                const bTime = b.lastReplyAt?.toDate ? b.lastReplyAt.toDate() :
+                    (b.createdAt?.toDate ? b.createdAt.toDate() : new Date(0));
+                return bTime - aTime;
+            });
+            console.log('Client-side sorting complete');
+        }
+
+        console.log('Posts sorted, first post:', allPosts[0]?.title);
+
         updatePostCounts();
+        console.log('Post counts updated');
+
         displayPosts();
+        console.log('displayPosts called');
     } catch (error) {
         console.error('Error loading posts:', error);
+        console.error('Error details:', error.message, error.stack);
         showError('Failed to load posts. Please try again later.');
     } finally {
         loadingIndicator.style.display = 'none';
+        console.log('=== loadPosts finished ===');
     }
 }
 
@@ -176,6 +229,14 @@ function createPostCard(post) {
             </span>
             <span class="post-date">
                 <i class="fas fa-clock"></i> ${formattedDate}
+            </span>
+        </div>
+        <div class="post-stats">
+            <span class="post-stat">
+                <i class="fas fa-eye"></i> ${post.viewCount || 0}
+            </span>
+            <span class="post-stat">
+                <i class="fas fa-comments"></i> ${post.replyCount || 0}
             </span>
         </div>
     `;
@@ -264,6 +325,9 @@ async function handleNewPost(e) {
             authorName: currentUser.displayName || currentUser.email || 'Anonymous',
             authorEmail: currentUser.email,
             likes: 0,
+            viewCount: 0,
+            replyCount: 0,
+            lastReplyAt: Timestamp.now(), // Initialize with post creation time
             createdAt: Timestamp.now(),
             updatedAt: Timestamp.now()
         };
@@ -298,8 +362,9 @@ async function handleNewPost(e) {
 }
 
 // Open post detail modal
-function openPostDetail(post) {
+async function openPostDetail(post) {
     const modal = document.getElementById('post-detail-modal');
+    currentPostId = post.id;
 
     document.getElementById('detail-title').textContent = post.title;
     document.getElementById('detail-author').textContent = post.authorName || 'Anonymous';
@@ -331,9 +396,32 @@ function openPostDetail(post) {
     document.getElementById('detail-content').textContent = post.content;
     document.getElementById('detail-likes').textContent = post.likes || 0;
 
+    // Display statistics
+    document.getElementById('detail-views').textContent = post.viewCount || 0;
+
     // Setup like button
     const likeBtn = document.getElementById('detail-like-btn');
     likeBtn.onclick = () => handleLike(post.id);
+
+    // Setup reply form
+    const replyForm = document.getElementById('reply-form');
+    const replyFormContainer = document.getElementById('reply-form-container');
+    const replyLoginHint = document.getElementById('reply-login-hint');
+
+    if (currentUser) {
+        replyForm.style.display = 'block';
+        replyLoginHint.style.display = 'none';
+        replyForm.onsubmit = (e) => handleReplySubmit(e, post.id);
+    } else {
+        replyForm.style.display = 'none';
+        replyLoginHint.style.display = 'block';
+    }
+
+    // Load replies
+    await loadReplies(post.id);
+
+    // Increment view count
+    await incrementViewCount(post.id);
 
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -344,6 +432,9 @@ function closeDetailModal() {
     const modal = document.getElementById('post-detail-modal');
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
+
+    // Refresh the post list to show updated counts
+    displayPosts();
 }
 
 // Handle like button
@@ -443,4 +534,195 @@ function showError(message) {
         notification.classList.remove('show');
         setTimeout(() => notification.remove(), 300);
     }, 3000);
+}
+
+// Increment view count
+async function incrementViewCount(postId) {
+    try {
+        const postRef = doc(db, 'forum-posts', postId);
+        await updateDoc(postRef, {
+            viewCount: increment(1)
+        });
+
+        // Update local data
+        const post = allPosts.find(p => p.id === postId);
+        if (post) {
+            post.viewCount = (post.viewCount || 0) + 1;
+            document.getElementById('detail-views').textContent = post.viewCount;
+        }
+    } catch (error) {
+        console.error('Error incrementing view count:', error);
+    }
+}
+
+
+// Load replies for a post
+async function loadReplies(postId) {
+    console.log('Loading replies for post:', postId);
+    const repliesList = document.getElementById('replies-list');
+    const noReplies = document.getElementById('no-replies');
+    const repliesCount = document.getElementById('replies-count');
+
+    try {
+        const repliesRef = collection(db, 'forum-replies');
+        let querySnapshot;
+
+        try {
+            // Try with orderBy first
+            const q = query(
+                repliesRef,
+                where('postId', '==', postId),
+                orderBy('createdAt', 'asc')
+            );
+            querySnapshot = await getDocs(q);
+        } catch (indexError) {
+            console.warn('Index not available, querying without orderBy:', indexError);
+            // If index error, query without orderBy
+            const q = query(
+                repliesRef,
+                where('postId', '==', postId)
+            );
+            querySnapshot = await getDocs(q);
+        }
+
+        console.log('Found replies:', querySnapshot.size);
+        repliesList.innerHTML = '';
+
+        if (querySnapshot.empty) {
+            repliesList.style.display = 'none';
+            noReplies.style.display = 'block';
+            repliesCount.textContent = '0';
+            console.log('No replies found, showing no-replies message');
+            return;
+        }
+
+        noReplies.style.display = 'none';
+        repliesList.style.display = 'block';
+        repliesCount.textContent = querySnapshot.size;
+
+        // Convert to array and sort manually if needed
+        const replies = [];
+        querySnapshot.forEach((doc) => {
+            replies.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        // Sort by createdAt in descending order (newest first)
+        replies.sort((a, b) => {
+            const aTime = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(0);
+            const bTime = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(0);
+            return bTime - aTime;  // Reversed for descending order
+        });
+
+        // Display sorted replies
+        replies.forEach((reply) => {
+            console.log('Adding reply:', reply);
+            const replyElement = createReplyElement(reply);
+            repliesList.appendChild(replyElement);
+        });
+    } catch (error) {
+        console.error('Error loading replies:', error);
+        console.error('Error details:', error.message, error.code);
+        // Show error message to user
+        repliesList.style.display = 'none';
+        noReplies.style.display = 'block';
+        noReplies.innerHTML = `
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Error loading replies. Please try again.</p>
+            <p style="font-size: 0.8rem; color: #888;">${error.message}</p>
+        `;
+    }
+}
+
+// Create reply element
+function createReplyElement(reply) {
+    const replyDiv = document.createElement('div');
+    replyDiv.className = 'reply-item';
+
+    const date = reply.createdAt?.toDate ? reply.createdAt.toDate() : new Date();
+    const formattedDate = formatDate(date);
+
+    replyDiv.innerHTML = `
+        <div class="reply-header">
+            <span class="reply-author">
+                <i class="fas fa-user"></i> ${escapeHtml(reply.authorName || 'Anonymous')}
+            </span>
+            <span class="reply-date">
+                <i class="fas fa-clock"></i> ${formattedDate}
+            </span>
+        </div>
+        <div class="reply-content">
+            ${escapeHtml(reply.content)}
+        </div>
+    `;
+
+    return replyDiv;
+}
+
+// Handle reply submission
+async function handleReplySubmit(e, postId) {
+    e.preventDefault();
+
+    if (!currentUser) {
+        alert('Please login to reply');
+        return;
+    }
+
+    const content = document.getElementById('reply-content').value.trim();
+
+    if (!content) {
+        alert('Please enter your reply');
+        return;
+    }
+
+    try {
+        const submitBtn = e.target.querySelector('.btn-reply');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
+
+        const repliesRef = collection(db, 'forum-replies');
+        const newReply = {
+            postId: postId,
+            content: content,
+            authorId: currentUser.uid,
+            authorName: currentUser.displayName || currentUser.email || 'Anonymous',
+            authorEmail: currentUser.email,
+            createdAt: Timestamp.now()
+        };
+
+        await addDoc(repliesRef, newReply);
+
+        // Update post: increment reply count and update lastReplyAt
+        const postRef = doc(db, 'forum-posts', postId);
+        const now = Timestamp.now();
+        await updateDoc(postRef, {
+            replyCount: increment(1),
+            lastReplyAt: now  // Update last reply time
+        });
+
+        // Update local data
+        const post = allPosts.find(p => p.id === postId);
+        if (post) {
+            post.replyCount = (post.replyCount || 0) + 1;
+            post.lastReplyAt = now;
+        }
+
+        // Reset form
+        document.getElementById('reply-content').value = '';
+        document.getElementById('reply-count').textContent = '0';
+
+        // Reload replies
+        await loadReplies(postId);
+
+        showSuccess('Reply posted successfully!');
+    } catch (error) {
+        console.error('Error posting reply:', error);
+        alert('Failed to post reply. Please try again.');
+    } finally {
+        const submitBtn = e.target.querySelector('.btn-reply');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Reply';
+    }
 }
