@@ -1,26 +1,16 @@
-// Webhook routes - 使用 Firebase Web SDK (简单版本)
+// Webhook routes - 使用 Firebase REST API (最简单可靠)
 import express from 'express';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
+import fetch from 'node-fetch';
 
 const router = express.Router();
 
-// Firebase 配置（和网页相同）
-const firebaseConfig = {
-    apiKey: "AIzaSyDBk4Qspp1eBT1rkUhmffWLf4a4kAF26gU",
-    authDomain: "studio-4395392521-1abeb.firebaseapp.com",
-    projectId: "studio-4395392521-1abeb",
-    storageBucket: "studio-4395392521-1abeb.firebasestorage.app",
-    messagingSenderId: "413532569115",
-    appId: "1:413532569115:web:afa287880769758b5382be"
-};
-
-// 初始化 Firebase（就像网页一样）
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Firebase 配置
+const FIREBASE_PROJECT_ID = 'studio-4395392521-1abeb';
+const FIREBASE_DATABASE_ID = 'zodia1';
+const FIREBASE_API_KEY = 'AIzaSyDBk4Qspp1eBT1rkUhmffWLf4a4kAF26gU';
 
 // ============================================
-// 认证中间件（简单的 Token 验证）
+// 认证中间件
 // ============================================
 function verifyWebhookAuth(req, res, next) {
     const authHeader = req.headers.authorization;
@@ -110,12 +100,42 @@ function validateArticleMiddleware(req, res, next) {
 }
 
 // ============================================
-// 创建文章（就像网页发帖一样）
+// 创建文章（使用 Firebase REST API）
 // ============================================
 function generateArticleId() {
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 8);
     return `article_${timestamp}_${random}`;
+}
+
+// 转换为 Firestore REST API 格式
+function toFirestoreFormat(data) {
+    const fields = {};
+
+    for (const [key, value] of Object.entries(data)) {
+        if (Array.isArray(value)) {
+            fields[key] = {
+                arrayValue: {
+                    values: value.map(v => ({ stringValue: String(v) }))
+                }
+            };
+        } else if (typeof value === 'object' && value !== null) {
+            // 递归处理对象
+            const subFields = {};
+            for (const [subKey, subValue] of Object.entries(value)) {
+                subFields[subKey] = { stringValue: String(subValue) };
+            }
+            fields[key] = {
+                mapValue: { fields: subFields }
+            };
+        } else if (typeof value === 'number') {
+            fields[key] = { integerValue: String(value) };
+        } else {
+            fields[key] = { stringValue: String(value) };
+        }
+    }
+
+    return { fields };
 }
 
 async function createArticle(req, res) {
@@ -144,11 +164,26 @@ async function createArticle(req, res) {
             }
         };
 
-        // 写入 Firestore（就像网页一样）
-        const articlesRef = collection(db, 'articles');
-        const articleDoc = doc(articlesRef, articleId);
-        await setDoc(articleDoc, article);
+        // 转换为 Firestore 格式
+        const firestoreDoc = toFirestoreFormat(article);
 
+        // 调用 Firebase REST API
+        const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/${FIREBASE_DATABASE_ID}/documents/articles?documentId=${articleId}&key=${FIREBASE_API_KEY}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firestoreDoc)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Firebase API error: ${response.status} - ${errorText}`);
+        }
+
+        const result = await response.json();
         console.log(`✅ Article created: ${articleId} - ${article.title}`);
 
         const baseUrl = process.env.BASE_URL || 'http://localhost:8080';
