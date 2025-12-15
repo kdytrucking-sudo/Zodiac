@@ -8,19 +8,11 @@ import { fileURLToPath } from 'url';
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
 
-// Webhook routes
-import webhookRoutes from './server/routes/webhook.mjs';
+// Webhook routes (简化版本 - 不需要服务账号密钥)
+import webhookRoutes from './server/routes/webhook-simple.mjs';
 
-// Firebase Admin SDK
-import admin from 'firebase-admin';
-
-// Initialize Firebase Admin (if not already initialized)
-if (!admin.apps.length) {
-  admin.initializeApp({
-    projectId: 'studio-4395392521-1abeb'
-  });
-  console.log('✅ Firebase Admin initialized');
-}
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ==== 关键：从环境变量里拿出 KEY，并显式传给 googleAI ====
 const rawKey =
@@ -36,9 +28,6 @@ console.log(
   '/ suffix:',
   rawKey.slice(-4)
 );
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 
