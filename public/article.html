@@ -31,11 +31,14 @@
                     <label><i class="fas fa-filter"></i> Category:</label>
                     <div class="filter-buttons" id="category-filter">
                         <button class="filter-btn active" data-category="all">All</button>
-                        <button class="filter-btn" data-category="Fortune">Fortune</button>
-                        <button class="filter-btn" data-category="Personality">Personality</button>
-                        <button class="filter-btn" data-category="Culture">Culture</button>
-                        <button class="filter-btn" data-category="Compatibility">Compatibility</button>
-                        <button class="filter-btn" data-category="History">History</button>
+                        <button class="filter-btn" data-category="fortune">Fortune</button>
+                        <button class="filter-btn" data-category="culture">Culture</button>
+                        <button class="filter-btn" data-category="lifestyle">Lifestyle</button>
+                        <button class="filter-btn" data-category="compatibility">Compatibility</button>
+                        <button class="filter-btn" data-category="history">History</button>
+                        <button class="filter-btn" data-category="basics">Basics</button>
+                        <button class="filter-btn" data-category="calendar">Calendar</button>
+                        <button class="filter-btn" data-category="legend">Legend</button>
                     </div>
                 </div>
 
@@ -77,6 +80,19 @@
                     <i class="fas fa-search"></i>
                     <h3>No Articles Found</h3>
                     <p>Try adjusting your filters to see more results.</p>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div id="pagination-controls" class="pagination-controls"
+                    style="display: none; text-align: center; margin-top: 2rem;">
+                    <button id="prev-page" class="theme-btn secondary-btn" style="margin-right: 10px;" disabled>
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    <span id="page-indicator" style="margin: 0 15px; font-weight: bold; color: var(--text-color);">Page
+                        1</span>
+                    <button id="next-page" class="theme-btn secondary-btn" style="margin-left: 10px;">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
             </div>
         </section>
