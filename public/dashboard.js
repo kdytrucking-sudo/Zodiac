@@ -253,18 +253,41 @@ async function loadFavorites(uid) {
             return;
         }
 
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
+        // Fetch article details for each favorite
+        const favoritePromises = [];
+        querySnapshot.forEach((favoriteDoc) => {
+            const favoriteData = favoriteDoc.data();
+            favoritePromises.push(
+                getDoc(doc(db, "articles", favoriteData.articleId))
+                    .then(articleDoc => ({
+                        favoriteData,
+                        articleData: articleDoc.exists() ? articleDoc.data() : null,
+                        articleId: favoriteData.articleId
+                    }))
+            );
+        });
+
+        const favorites = await Promise.all(favoritePromises);
+
+        favorites.forEach(({ favoriteData, articleData, articleId }) => {
             const item = document.createElement('div');
             item.className = 'list-item';
+
+            const viewCount = articleData?.viewCount || 0;
+            const commentCount = articleData?.commentCount || 0;
+
             item.innerHTML = `
-                <span>${data.articleTitle}</span>
-                <i class="fas fa-chevron-right"></i>
+                <span class="favorite-title">${favoriteData.articleTitle}</span>
+                <div class="favorite-stats">
+                    <span class="stat-item"><i class="fas fa-eye"></i> ${viewCount}</span>
+                    <span class="stat-item"><i class="fas fa-comments"></i> ${commentCount}</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
             `;
-            // Optional: Add click handler to navigate to article
+            // Add click handler to navigate to article detail
+            item.style.cursor = 'pointer';
             item.addEventListener('click', () => {
-                // window.location.href = `article.html?id=${data.articleId}`;
-                console.log("Navigate to article:", data.articleId);
+                window.location.href = `article-detail.html?id=${articleId}`;
             });
             favoritesListEl.appendChild(item);
         });
@@ -286,11 +309,42 @@ async function loadFavorites(uid) {
                     favoritesListEl.innerHTML = '<div class="list-item"><span>No favorites yet.</span></div>';
                     return;
                 }
-                snapSimple.forEach((doc) => {
-                    const data = doc.data();
+
+                // Fetch article details for fallback
+                const fallbackPromises = [];
+                snapSimple.forEach((favoriteDoc) => {
+                    const favoriteData = favoriteDoc.data();
+                    fallbackPromises.push(
+                        getDoc(doc(db, "articles", favoriteData.articleId))
+                            .then(articleDoc => ({
+                                favoriteData,
+                                articleData: articleDoc.exists() ? articleDoc.data() : null,
+                                articleId: favoriteData.articleId
+                            }))
+                    );
+                });
+
+                const fallbackFavorites = await Promise.all(fallbackPromises);
+
+                fallbackFavorites.forEach(({ favoriteData, articleData, articleId }) => {
                     const item = document.createElement('div');
                     item.className = 'list-item';
-                    item.innerHTML = `<span>${data.articleTitle}</span><i class="fas fa-chevron-right"></i>`;
+
+                    const viewCount = articleData?.viewCount || 0;
+                    const commentCount = articleData?.commentCount || 0;
+
+                    item.innerHTML = `
+                        <span class="favorite-title">${favoriteData.articleTitle}</span>
+                        <div class="favorite-stats">
+                            <span class="stat-item"><i class="fas fa-eye"></i> ${viewCount}</span>
+                            <span class="stat-item"><i class="fas fa-comments"></i> ${commentCount}</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    `;
+                    item.style.cursor = 'pointer';
+                    item.addEventListener('click', () => {
+                        window.location.href = `article-detail.html?id=${articleId}`;
+                    });
                     favoritesListEl.appendChild(item);
                 });
             } catch (e) {

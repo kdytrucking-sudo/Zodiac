@@ -1,10 +1,12 @@
 import { db, auth } from "./app.js";
-import { doc, getDoc, updateDoc, increment, collection, addDoc, getDocs, query, where, orderBy, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { doc, getDoc, updateDoc, increment, collection, addDoc, getDocs, query, where, orderBy, deleteDoc, Timestamp, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 let currentUser = null;
 let currentArticleId = null;
 let currentArticle = null;
+let allComments = [];
+let showingAllComments = false;
 
 // Get article ID from URL
 function getArticleId() {
@@ -76,9 +78,7 @@ function displayArticle(article) {
     // Breadcrumb
     document.getElementById('breadcrumb-title').textContent = article.title.substring(0, 50) + '...';
 
-    // Header
-    document.getElementById('article-category').textContent = article.category;
-    document.getElementById('article-zodiac').innerHTML = `${getZodiacEmoji(article.zodiacSign)} ${capitalizeFirst(article.zodiacSign)}`;
+    // Article Title
     document.getElementById('article-title').textContent = article.title;
 
     // Meta information
@@ -91,9 +91,16 @@ function displayArticle(article) {
     document.getElementById('article-date').textContent = formattedDate;
     document.getElementById('article-source').textContent = article.source;
 
-    // Keywords
+    // Keywords - display as tags
+    const keywordsSection = document.getElementById('keywords-section');
+    const keywordsContainer = document.getElementById('article-keywords');
     if (article.keywords && article.keywords.length > 0) {
-        document.getElementById('article-keywords').textContent = article.keywords.join(', ');
+        keywordsContainer.innerHTML = article.keywords.map(keyword =>
+            `<span class="keyword-tag">${keyword}</span>`
+        ).join('');
+        keywordsSection.style.display = 'block';
+    } else {
+        keywordsSection.style.display = 'none';
     }
 
     // Article body - convert \n to <br> for line breaks
@@ -103,7 +110,6 @@ function displayArticle(article) {
     // Display statistics
     document.getElementById('article-views').textContent = article.viewCount || 0;
     document.getElementById('article-favorites').textContent = article.favoriteCount || 0;
-    document.getElementById('article-comments-count').textContent = article.commentCount || 0;
     document.getElementById('comments-count').textContent = article.commentCount || 0;
 
     // Related zodiac info
@@ -119,6 +125,9 @@ function displayArticle(article) {
     // Setup comment form and load comments
     setupCommentForm();
     loadComments(currentArticleId);
+
+    // Load trending articles
+    loadTrendingArticles(article.zodiacSign);
 
     // Increment view count
     incrementViewCount(currentArticleId);
@@ -142,22 +151,72 @@ window.shareOnTwitter = function () {
     window.open(`https://twitter.com/intent/tweet?url=${url}&text=${title}`, '_blank');
 };
 
-window.copyLink = function () {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-        const btn = event.target.closest('.share-btn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-        btn.style.background = '#10b981';
+window.copyLink = function (event) {
+    const url = window.location.href;
+
+    // Try modern clipboard API first
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+            showCopySuccess(event);
+        }).catch(err => {
+            console.error('Clipboard API failed:', err);
+            fallbackCopyLink(url, event);
+        });
+    } else {
+        // Fallback for older browsers or insecure contexts
+        fallbackCopyLink(url, event);
+    }
+};
+
+// Show copy success feedback
+function showCopySuccess(event) {
+    const btn = event ? event.target.closest('.action-icon-btn') : null;
+
+    if (btn) {
+        const originalIcon = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        btn.style.background = 'rgba(16, 185, 129, 0.2)';
+        btn.style.borderColor = '#10b981';
+        btn.style.color = '#10b981';
 
         setTimeout(() => {
-            btn.innerHTML = originalText;
+            btn.innerHTML = originalIcon;
             btn.style.background = '';
+            btn.style.borderColor = '';
+            btn.style.color = '';
         }, 2000);
-    }).catch(err => {
-        console.error('Failed to copy:', err);
-        alert('Failed to copy link. Please copy manually: ' + window.location.href);
-    });
-};
+    }
+
+    // Also show a toast message
+    showSuccessMessage('Link copied to clipboard!');
+}
+
+// Fallback copy method for older browsers
+function fallbackCopyLink(url, event) {
+    const textArea = document.createElement('textarea');
+    textArea.value = url;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            showCopySuccess(event);
+        } else {
+            throw new Error('Copy command failed');
+        }
+    } catch (err) {
+        console.error('Fallback copy failed:', err);
+        // Show manual copy prompt
+        prompt('Copy this link:', url);
+    } finally {
+        document.body.removeChild(textArea);
+    }
+}
 
 
 // Initialize authentication
@@ -224,7 +283,7 @@ async function handleFavorite() {
             // Remove from favorites
             await removeFavorite(currentArticleId);
             favoriteBtn.classList.remove('favorited');
-            favoriteBtn.innerHTML = '<i class="far fa-star"></i> Favorite';
+            favoriteBtn.querySelector('i').className = 'far fa-star';
 
             // Update count
             currentArticle.favoriteCount = Math.max(0, (currentArticle.favoriteCount || 0) - 1);
@@ -233,9 +292,9 @@ async function handleFavorite() {
             // Add to favorites
             await addFavorite(currentArticleId, currentArticle.title);
             favoriteBtn.classList.add('favorited');
-            favoriteBtn.innerHTML = '<i class="fas fa-star"></i> Favorited';
+            favoriteBtn.querySelector('i').className = 'fas fa-star';
 
-            // Update count
+            // Update local data
             currentArticle.favoriteCount = (currentArticle.favoriteCount || 0) + 1;
             document.getElementById('article-favorites').textContent = currentArticle.favoriteCount;
         }
@@ -295,32 +354,33 @@ async function removeFavorite(articleId) {
 // Setup favorite button
 async function setupFavoriteButton() {
     const favoriteBtn = document.getElementById('favorite-btn');
-    const favoriteLoginHint = document.getElementById('favorite-login-hint');
 
     if (currentUser) {
-        favoriteBtn.style.display = 'inline-flex';
-        favoriteLoginHint.style.display = 'none';
+        favoriteBtn.style.display = 'flex';
 
         // Check if already favorited
         const isFavorited = await checkIfFavorited(currentArticleId);
         if (isFavorited) {
             favoriteBtn.classList.add('favorited');
-            favoriteBtn.innerHTML = '<i class="fas fa-star"></i> Favorited';
+            favoriteBtn.querySelector('i').className = 'fas fa-star';
         }
 
         // Add click handler
         favoriteBtn.onclick = handleFavorite;
     } else {
-        favoriteBtn.style.display = 'none';
-        favoriteLoginHint.style.display = 'block';
+        favoriteBtn.style.display = 'flex';
+        favoriteBtn.onclick = () => {
+            alert('Please login to favorite this article');
+        };
     }
 }
 
-// Load comments for the article
+// Load comments for the article (show only 3 initially)
 async function loadComments(articleId) {
     const commentsList = document.getElementById('comments-list');
     const noComments = document.getElementById('no-comments');
     const commentsCount = document.getElementById('comments-count');
+    const loadMoreBtn = document.getElementById('load-more-comments');
 
     try {
         const commentsRef = collection(db, 'article-comments');
@@ -350,6 +410,7 @@ async function loadComments(articleId) {
             commentsList.style.display = 'none';
             noComments.style.display = 'block';
             commentsCount.textContent = '0';
+            loadMoreBtn.style.display = 'none';
             return;
         }
 
@@ -358,26 +419,34 @@ async function loadComments(articleId) {
         commentsCount.textContent = querySnapshot.size;
 
         // Convert to array and sort manually if needed
-        const comments = [];
+        allComments = [];
         querySnapshot.forEach((doc) => {
-            comments.push({
+            allComments.push({
                 id: doc.id,
                 ...doc.data()
             });
         });
 
         // Sort by createdAt in descending order (newest first)
-        comments.sort((a, b) => {
+        allComments.sort((a, b) => {
             const aTime = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(0);
             const bTime = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(0);
             return bTime - aTime;
         });
 
-        // Display sorted comments
-        comments.forEach((comment) => {
+        // Display only first 3 comments
+        const commentsToShow = showingAllComments ? allComments : allComments.slice(0, 3);
+        commentsToShow.forEach((comment) => {
             const commentElement = createCommentElement(comment);
             commentsList.appendChild(commentElement);
         });
+
+        // Show/hide load more button
+        if (allComments.length > 3 && !showingAllComments) {
+            loadMoreBtn.style.display = 'block';
+        } else {
+            loadMoreBtn.style.display = 'none';
+        }
     } catch (error) {
         console.error('Error loading comments:', error);
         commentsList.style.display = 'none';
@@ -483,7 +552,7 @@ async function handleCommentSubmit(e) {
 
         // Update local data
         currentArticle.commentCount = (currentArticle.commentCount || 0) + 1;
-        document.getElementById('article-comments-count').textContent = currentArticle.commentCount;
+        document.getElementById('comments-count').textContent = currentArticle.commentCount;
 
         // Reset form
         document.getElementById('comment-content').value = '';
@@ -552,3 +621,89 @@ function setupCommentForm() {
         commentLoginHint.style.display = 'block';
     }
 }
+
+// Load trending articles (same zodiac sign)
+async function loadTrendingArticles(zodiacSign) {
+    const trendingContainer = document.getElementById('trending-articles');
+
+    try {
+        const articlesRef = collection(db, 'articles');
+        let querySnapshot;
+
+        try {
+            // Try with orderBy first
+            const q = query(
+                articlesRef,
+                where('zodiacSign', '==', zodiacSign),
+                orderBy('created_at', 'desc'),
+                limit(6)
+            );
+            querySnapshot = await getDocs(q);
+        } catch (indexError) {
+            console.warn('Index not available for trending, querying without orderBy:', indexError);
+            // Fallback: query without orderBy
+            const q = query(
+                articlesRef,
+                where('zodiacSign', '==', zodiacSign),
+                limit(6)
+            );
+            querySnapshot = await getDocs(q);
+        }
+
+        if (querySnapshot.empty) {
+            trendingContainer.innerHTML = '<p class="no-trending">No related articles found.</p>';
+            return;
+        }
+
+        trendingContainer.innerHTML = '';
+
+        let count = 0;
+        querySnapshot.forEach((doc) => {
+            const article = doc.data();
+            // Skip current article
+            if (doc.id === currentArticleId) return;
+
+            // Limit to 5 articles
+            if (count >= 5) return;
+            count++;
+
+            // Format date
+            const date = new Date(article.created_at);
+            const formattedDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+
+            const trendingItem = document.createElement('a');
+            trendingItem.href = `article-detail.html?id=${doc.id}`;
+            trendingItem.className = 'trending-item';
+            trendingItem.innerHTML = `
+                <div class="trending-content">
+                    <h4 class="trending-title">${article.title}</h4>
+                    <div class="trending-date">${formattedDate}</div>
+                    <div class="trending-meta">
+                        <span><i class="fas fa-eye"></i> ${article.viewCount || 0}</span>
+                        <span><i class="fas fa-star"></i> ${article.favoriteCount || 0}</span>
+                        <span class="trending-source"><i class="fas fa-book"></i> ${article.source || 'Unknown'}</span>
+                    </div>
+                </div>
+            `;
+            trendingContainer.appendChild(trendingItem);
+        });
+
+        // If no articles were added (all were current article)
+        if (count === 0) {
+            trendingContainer.innerHTML = '<p class="no-trending">No other related articles found.</p>';
+        }
+    } catch (error) {
+        console.error('Error loading trending articles:', error);
+        trendingContainer.innerHTML = '<p class="no-trending">Failed to load trending articles.</p>';
+    }
+}
+
+// Load all comments
+window.loadAllComments = function () {
+    showingAllComments = true;
+    loadComments(currentArticleId);
+};

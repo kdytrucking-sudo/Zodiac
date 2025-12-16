@@ -34,124 +34,133 @@
                 <span id="breadcrumb-title">Article</span>
             </nav>
 
-            <!-- Article Header -->
-            <header class="article-detail-header">
-                <div class="article-meta-top">
-                    <span class="article-category-badge" id="article-category"></span>
-                    <span class="article-zodiac-badge" id="article-zodiac"></span>
-                </div>
-                <h1 id="article-title" class="article-detail-title"></h1>
-                <div class="article-detail-meta">
-                    <span class="meta-item">
-                        <i class="far fa-calendar"></i>
-                        <span id="article-date"></span>
-                    </span>
-                    <span class="meta-item">
-                        <i class="fas fa-book"></i>
-                        <span id="article-source"></span>
-                    </span>
-                    <span class="meta-item">
-                        <i class="fas fa-tags"></i>
-                        <span id="article-keywords"></span>
-                    </span>
-                </div>
-            </header>
+            <!-- Main Content Layout -->
+            <div class="article-detail-layout">
+                <!-- Left Sidebar - Action Icons -->
+                <aside class="article-actions-sidebar">
+                    <button class="action-icon-btn" id="favorite-btn" title="Favorite">
+                        <i class="far fa-star"></i>
+                    </button>
+                    <button class="action-icon-btn" onclick="shareOnFacebook()" title="Share on Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </button>
+                    <button class="action-icon-btn" onclick="shareOnTwitter()" title="Share on Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </button>
+                    <button class="action-icon-btn" onclick="copyLink(event)" title="Copy Link">
+                        <i class="fas fa-link"></i>
+                    </button>
+                </aside>
 
-            <!-- Article Body -->
-            <div class="article-detail-body">
-                <div id="article-text" class="article-text"></div>
-            </div>
+                <!-- Center Content -->
+                <div class="article-main-content">
+                    <!-- Article Title -->
+                    <h1 id="article-title" class="article-detail-title"></h1>
 
-            <!-- Related Zodiac Info -->
-            <aside class="related-zodiac-info" id="related-zodiac">
-                <h3><i class="fas fa-info-circle"></i> About This Zodiac Sign</h3>
-                <div class="zodiac-quick-info">
-                    <div class="zodiac-icon-large" id="zodiac-icon"></div>
-                    <div class="zodiac-info-text">
-                        <h4 id="zodiac-name"></h4>
-                        <p id="zodiac-description">Learn more about this zodiac sign...</p>
-                        <a href="#" id="zodiac-detail-link" class="btn-link">
-                            View Full Details <i class="fas fa-arrow-right"></i>
+                    <!-- Article Meta -->
+                    <div class="article-detail-meta-row">
+                        <span class="meta-item">
+                            <i class="far fa-calendar"></i>
+                            <span id="article-date"></span>
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-book"></i>
+                            <span id="article-source"></span>
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-eye"></i>
+                            <span id="article-views">0</span> views
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-star"></i>
+                            <span id="article-favorites">0</span> favorites
+                        </span>
+                    </div>
+
+                    <!-- Article Body -->
+                    <div class="article-detail-body">
+                        <div id="article-text" class="article-text"></div>
+                    </div>
+
+                    <!-- Keywords -->
+                    <div class="article-keywords-section" id="keywords-section">
+                        <h4><i class="fas fa-tags"></i> Keywords:</h4>
+                        <div class="keywords-list" id="article-keywords"></div>
+                    </div>
+
+                    <!-- Related Zodiac Info -->
+                    <aside class="related-zodiac-info" id="related-zodiac">
+                        <div class="zodiac-quick-info">
+                            <div class="zodiac-icon-large" id="zodiac-icon"></div>
+                            <div class="zodiac-info-text">
+                                <h4 id="zodiac-name"></h4>
+                                <p id="zodiac-description">Learn more about this zodiac sign...</p>
+                                <a href="#" id="zodiac-detail-link" class="btn-link">
+                                    View Archive <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Comments Section -->
+                    <div class="comments-section">
+                        <h3 class="comments-title">
+                            <i class="fas fa-comments"></i> Comments (<span id="comments-count">0</span>)
+                        </h3>
+
+                        <!-- Comment Form -->
+                        <div class="comment-form-container" id="comment-form-container">
+                            <form id="comment-form" class="comment-form">
+                                <textarea id="comment-content"
+                                    placeholder="Share your thoughts on the Year of the Dragon..." rows="3"
+                                    maxlength="500" required></textarea>
+                                <div class="comment-form-actions">
+                                    <span class="char-count"><span id="comment-count">0</span>/500</span>
+                                    <button type="submit" class="btn-comment">
+                                        <i class="fas fa-paper-plane"></i> Submit Comment
+                                    </button>
+                                </div>
+                            </form>
+                            <p class="comment-login-hint" id="comment-login-hint" style="display: none;">
+                                <i class="fas fa-info-circle"></i> Please <a href="login.html">login</a> to comment
+                            </p>
+                        </div>
+
+                        <!-- Comments List (Show latest 3) -->
+                        <div id="comments-list" class="comments-list"></div>
+
+                        <!-- No Comments Message -->
+                        <div id="no-comments" class="no-comments">
+                            <i class="fas fa-comment-slash"></i>
+                            <p>No comments yet. Be the first to comment!</p>
+                        </div>
+
+                        <!-- Load More Comments Button -->
+                        <div class="load-more-comments" id="load-more-comments" style="display: none;">
+                            <button class="btn-load-more" onclick="loadAllComments()">
+                                Load More Comments <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Back to Articles -->
+                    <div class="article-navigation">
+                        <a href="article.html" class="btn-back">
+                            <i class="fas fa-arrow-left"></i> Back to Articles
                         </a>
                     </div>
                 </div>
-            </aside>
 
-            <!-- Actions Section -->
-            <div class="article-share">
-                <h4>Actions:</h4>
-                <div class="share-buttons">
-                    <button class="share-btn facebook" onclick="shareOnFacebook()">
-                        <i class="fab fa-facebook-f"></i> Facebook
-                    </button>
-                    <button class="share-btn twitter" onclick="shareOnTwitter()">
-                        <i class="fab fa-twitter"></i> Twitter
-                    </button>
-                    <button class="share-btn copy" onclick="copyLink()">
-                        <i class="fas fa-link"></i> Copy Link
-                    </button>
-                    <button class="share-btn favorite btn-favorite" id="favorite-btn">
-                        <i class="far fa-star"></i> Favorite
-                    </button>
-                </div>
-                <p class="favorite-login-hint" id="favorite-login-hint" style="display: none;">
-                    <i class="fas fa-info-circle"></i> Please <a href="login.html">login</a> to favorite this article
-                </p>
-            </div>
-
-            <!-- Article Statistics -->
-            <div class="article-stats">
-                <span class="stat-item">
-                    <i class="fas fa-eye"></i> <span id="article-views">0</span> views
-                </span>
-                <span class="stat-item">
-                    <i class="fas fa-star"></i> <span id="article-favorites">0</span> favorites
-                </span>
-                <span class="stat-item">
-                    <i class="fas fa-comments"></i> <span id="article-comments-count">0</span> comments
-                </span>
-            </div>
-
-            <!-- Comments Section -->
-            <div class="comments-section">
-                <h3 class="comments-title">
-                    <i class="fas fa-comments"></i> Comments (<span id="comments-count">0</span>)
-                </h3>
-
-                <!-- Comment Form -->
-                <div class="comment-form-container" id="comment-form-container">
-                    <form id="comment-form" class="comment-form">
-                        <textarea id="comment-content" placeholder="Write a comment..." rows="3" maxlength="500"
-                            required></textarea>
-                        <div class="comment-form-actions">
-                            <span class="char-count"><span id="comment-count">0</span>/500</span>
-                            <button type="submit" class="btn-comment">
-                                <i class="fas fa-paper-plane"></i> Comment
-                            </button>
-                        </div>
-                    </form>
-                    <p class="comment-login-hint" id="comment-login-hint" style="display: none;">
-                        <i class="fas fa-info-circle"></i> Please <a href="login.html">login">login</a> to comment
-                    </p>
-                </div>
-
-                <!-- Comments List -->
-                <div id="comments-list" class="comments-list">
-                    <!-- Comments will be dynamically inserted here -->
-                </div>
-
-                <!-- No Comments Message -->
-                <div id="no-comments" class="no-comments">
-                    <i class="fas fa-comment-slash"></i>
-                    <p>No comments yet. Be the first to comment!</p>
-                </div>
-            </div>
-
-            <!-- Back to Articles -->
-            <div class="article-navigation">
-                <a href="article.html" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> Back to Articles
-                </a>
+                <!-- Right Sidebar - Trending -->
+                <aside class="trending-sidebar">
+                    <div class="trending-header">
+                        <i class="fas fa-fire"></i>
+                        <h3>Trending Now</h3>
+                    </div>
+                    <div id="trending-articles" class="trending-list">
+                        <!-- Trending articles will be loaded here -->
+                    </div>
+                </aside>
             </div>
         </article>
 

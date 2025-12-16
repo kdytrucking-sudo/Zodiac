@@ -26,9 +26,33 @@
         <!-- Filter Section -->
         <section class="filter-section">
             <div class="filter-container">
-                <!-- Category Filter -->
-                <div class="filter-group">
-                    <label><i class="fas fa-filter"></i> Category:</label>
+                <!-- Compact Filter Row -->
+                <div class="filter-row-compact">
+                    <!-- Category Filter Toggle -->
+                    <div class="filter-toggle" id="category-toggle">
+                        <i class="fas fa-filter"></i>
+                        <span class="filter-label">Category:</span>
+                        <span class="filter-current" id="category-current">All</span>
+                        <i class="fas fa-chevron-right toggle-icon"></i>
+                    </div>
+
+                    <!-- Zodiac Filter Toggle -->
+                    <div class="filter-toggle" id="zodiac-toggle">
+                        <i class="fas fa-paw"></i>
+                        <span class="filter-label">Zodiac Sign:</span>
+                        <span class="filter-current" id="zodiac-current">All</span>
+                        <i class="fas fa-chevron-right toggle-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Category Filter Panel (Slide-out) -->
+                <div class="filter-panel" id="category-panel">
+                    <div class="filter-panel-header">
+                        <h4><i class="fas fa-filter"></i> Select Category</h4>
+                        <button class="close-panel" data-panel="category-panel">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                     <div class="filter-buttons" id="category-filter">
                         <button class="filter-btn active" data-category="all">All</button>
                         <button class="filter-btn" data-category="fortune">Fortune</button>
@@ -42,9 +66,14 @@
                     </div>
                 </div>
 
-                <!-- Zodiac Filter -->
-                <div class="filter-group">
-                    <label><i class="fas fa-paw"></i> Zodiac Sign:</label>
+                <!-- Zodiac Filter Panel (Slide-out) -->
+                <div class="filter-panel" id="zodiac-panel">
+                    <div class="filter-panel-header">
+                        <h4><i class="fas fa-paw"></i> Select Zodiac Sign</h4>
+                        <button class="close-panel" data-panel="zodiac-panel">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                     <div class="filter-buttons" id="zodiac-filter">
                         <button class="filter-btn active" data-zodiac="all">All</button>
                         <button class="filter-btn" data-zodiac="rat">Rat</button>

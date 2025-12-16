@@ -1,7 +1,7 @@
 import { db } from "./app.js";
 import { collection, getDocs, query, where, orderBy, limit, startAfter } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-const ARTICLES_PER_PAGE = 20;
+const ARTICLES_PER_PAGE = 6;
 let currentPage = 1;
 let pageStartDocs = [null]; // Array to store start document for each page
 let currentCategory = 'all';
@@ -11,6 +11,7 @@ let isLoading = false;
 // Initialize on load
 document.addEventListener('DOMContentLoaded', () => {
     setupFilters();
+    setupFilterPanels();
 
     // Initial load
     fetchArticles();
@@ -160,8 +161,8 @@ function createArticleCard(article) {
     // Get zodiac emoji
     const zodiacEmoji = getZodiacEmoji(article.zodiacSign);
 
-    // Truncate content for preview
-    const preview = article.content.substring(0, 150) + '...';
+    // Truncate content for preview (3 lines max)
+    const preview = article.content.substring(0, 120) + '...';
 
     // Get statistics (default to 0 if not present)
     const viewCount = article.viewCount || 0;
@@ -196,10 +197,12 @@ function createArticleCard(article) {
                 <i class="fas fa-comments"></i> ${commentCount}
             </span>
         </div>
-        <a href="article-detail.html?id=${article.id}" class="article-read-more">
-            Read More <i class="fas fa-arrow-right"></i>
-        </a>
     `;
+
+    // Make entire card clickable
+    card.addEventListener('click', () => {
+        window.location.href = `article-detail.html?id=${article.id}`;
+    });
 
     return card;
 }
@@ -239,6 +242,43 @@ function showError(message) {
     `;
 }
 
+// Setup filter panels
+function setupFilterPanels() {
+    // Category toggle
+    document.getElementById('category-toggle').addEventListener('click', () => {
+        const panel = document.getElementById('category-panel');
+        const zodiacPanel = document.getElementById('zodiac-panel');
+        zodiacPanel.classList.remove('active');
+        panel.classList.toggle('active');
+    });
+
+    // Zodiac toggle
+    document.getElementById('zodiac-toggle').addEventListener('click', () => {
+        const panel = document.getElementById('zodiac-panel');
+        const categoryPanel = document.getElementById('category-panel');
+        categoryPanel.classList.remove('active');
+        panel.classList.toggle('active');
+    });
+
+    // Close panel buttons
+    document.querySelectorAll('.close-panel').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const panelId = btn.dataset.panel;
+            document.getElementById(panelId).classList.remove('active');
+        });
+    });
+
+    // Close panels when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.filter-panel') && !e.target.closest('.filter-toggle')) {
+            document.querySelectorAll('.filter-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+        }
+    });
+}
+
 // Setup filter buttons
 function setupFilters() {
     // Category filter
@@ -248,12 +288,14 @@ function setupFilters() {
             categoryButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            // Normalize category: the API expects lowercase for most things, but let's check values
-            // The buttons have "Fortune", "Personality" etc.
-            // The API/DB stores lowercase usually? Let's check existing data.
-            // In article.js before it was just using the value.
-            // Let's assume the button data-category attribute matches DB.
             currentCategory = btn.dataset.category;
+
+            // Update current label
+            const label = btn.textContent;
+            document.getElementById('category-current').textContent = label;
+
+            // Close panel
+            document.getElementById('category-panel').classList.remove('active');
 
             resetPagination();
             fetchArticles();
@@ -267,6 +309,13 @@ function setupFilters() {
             zodiacButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentZodiac = btn.dataset.zodiac;
+
+            // Update current label
+            const label = btn.textContent;
+            document.getElementById('zodiac-current').textContent = label;
+
+            // Close panel
+            document.getElementById('zodiac-panel').classList.remove('active');
 
             resetPagination();
             fetchArticles();
