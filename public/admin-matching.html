@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matching Data Admin - Larak's Zodiac</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(253, 213, 106, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-box h1 {
+            margin-bottom: 30px;
+            color: #fdd56a;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid rgba(253, 213, 106, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #fdd56a 0%, #ffb84d 100%);
+            border: none;
+            border-radius: 10px;
+            color: #1a1a2e;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .login-box button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(253, 213, 106, 0.2);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #fdd56a;
+            font-size: 24px;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(253, 213, 106, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(253, 213, 106, 0.2);
+        }
+
+        .selector-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(253, 213, 106, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .selector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .selector-grid label {
+            display: block;
+            margin-bottom: 8px;
+            color: #fdd56a;
+            font-weight: 500;
+        }
+
+        .selector-grid select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(253, 213, 106, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .load-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #fdd56a 0%, #ffb84d 100%);
+            border: none;
+            border-radius: 8px;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .load-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(253, 213, 106, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #fdd56a 0%, #ffb84d 100%);
+            color: #1a1a2e;
+            border-color: transparent;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(253, 213, 106, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .form-section h3 {
+            color: #fdd56a;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(253, 213, 106, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .highlights-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .highlights-input input {
+            flex: 1;
+        }
+
+        .add-highlight-btn {
+            padding: 10px 20px;
+            background: rgba(253, 213, 106, 0.2);
+            border: 1px solid rgba(253, 213, 106, 0.3);
+            border-radius: 8px;
+            color: #fdd56a;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 20px;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #fdd56a;
+        }
+
+        .success-message {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #4CAF50;
+            display: none;
+        }
+
+        .error-message {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #f44336;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h1><i class="fas fa-lock"></i> Admin Login</h1>
+            <input type="password" id="passwordInput" placeholder="Enter Password" />
+            <button onclick="login()">Login</button>
+            <p id="loginError" style="color: #f44336; margin-top: 10px; display: none;">Incorrect password</p>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="container">
+            <div class="header">
+                <h1><i class="fas fa-database"></i> Matching Data Admin</h1>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i> Data saved successfully!
+            </div>
+
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i> <span id="errorText"></span>
+            </div>
+
+            <!-- Selector Section -->
+            <div class="selector-section">
+                <h2 style="color: #fdd56a; margin-bottom: 15px;">Select Zodiac Pair</h2>
+                <div class="selector-grid">
+                    <div>
+                        <label>Zodiac 1</label>
+                        <select id="zodiac1Select">
+                            <option value="Rat">Rat</option>
+                            <option value="Ox">Ox</option>
+                            <option value="Tiger">Tiger</option>
+                            <option value="Rabbit" selected>Rabbit</option>
+                            <option value="Dragon">Dragon</option>
+                            <option value="Snake">Snake</option>
+                            <option value="Horse">Horse</option>
+                            <option value="Goat">Goat</option>
+                            <option value="Monkey">Monkey</option>
+                            <option value="Rooster">Rooster</option>
+                            <option value="Dog">Dog</option>
+                            <option value="Pig">Pig</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Zodiac 2</label>
+                        <select id="zodiac2Select">
+                            <option value="Rat">Rat</option>
+                            <option value="Ox">Ox</option>
+                            <option value="Tiger">Tiger</option>
+                            <option value="Rabbit">Rabbit</option>
+                            <option value="Dragon">Dragon</option>
+                            <option value="Snake" selected>Snake</option>
+                            <option value="Horse">Horse</option>
+                            <option value="Goat">Goat</option>
+                            <option value="Monkey">Monkey</option>
+                            <option value="Rooster">Rooster</option>
+                            <option value="Dog">Dog</option>
+                            <option value="Pig">Pig</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="load-btn" onclick="loadData()">
+                    <i class="fas fa-download"></i> Load Data
+                </button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('romance')">
+                    <i class="fas fa-heart"></i> Romance
+                </button>
+                <button class="tab-btn" onclick="switchTab('business')">
+                    <i class="fas fa-briefcase"></i> Business
+                </button>
+            </div>
+
+            <!-- Romance Tab -->
+            <div class="tab-content active" id="romanceTab">
+                <div id="romanceContent"></div>
+            </div>
+
+            <!-- Business Tab -->
+            <div class="tab-content" id="businessTab">
+                <div id="businessContent"></div>
+            </div>
+
+            <button class="save-btn" onclick="saveData()">
+                <i class="fas fa-save"></i> Save All Changes
+            </button>
+        </div>
+    </div>
+
+    <script type="module" src="admin-matching.js"></script>
+</body>
+
+</html>
