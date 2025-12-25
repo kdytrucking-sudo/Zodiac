@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zodiac Compatibility Matcher | Larak's Zodiac</title>
+    <meta name="description" content="Explore zodiac compatibility and discover relationship potential">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="matching-redesign.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar-placeholder"></nav>
+
+    <!-- Main Container -->
+    <div class="matching-container">
+        <!-- Header -->
+        <div class="matching-header">
+            <h1>Zodiac Compatibility <span class="highlight">Matcher</span></h1>
+            <p class="subtitle">Unveil the cosmic connection. Select two signs to reveal your relationship potential,
+                conflict points, and deep emotional bond.</p>
+        </div>
+
+        <!-- Selection Area - Single Row -->
+        <div class="selection-wrapper-single">
+            <div class="selector-group">
+                <div class="person-label-inline">
+                    <i class="fas fa-user"></i>
+                    <span>Person A</span>
+                </div>
+                <select id="zodiac-a" class="zodiac-select-compact" data-person="A">
+                    <option value="Rat">🐭 Rat</option>
+                    <option value="Ox">🐮 Ox</option>
+                    <option value="Tiger">🐯 Tiger</option>
+                    <option value="Rabbit" selected>🐰 Rabbit</option>
+                    <option value="Dragon">🐲 Dragon</option>
+                    <option value="Snake">🐍 Snake</option>
+                    <option value="Horse">🐴 Horse</option>
+                    <option value="Goat">🐑 Goat</option>
+                    <option value="Monkey">🐵 Monkey</option>
+                    <option value="Rooster">🐔 Rooster</option>
+                    <option value="Dog">🐕 Dog</option>
+                    <option value="Pig">🐷 Pig</option>
+                </select>
+                <select id="gender-a" class="gender-select-compact" data-person="A">
+                    <option value="male">Male</option>
+                    <option value="female" selected>Female</option>
+                    <option value="others">Others</option>
+                </select>
+            </div>
+
+            <div class="vs-divider-inline">
+                <span>VS</span>
+            </div>
+
+            <div class="selector-group">
+                <div class="person-label-inline">
+                    <i class="fas fa-user"></i>
+                    <span>Person B</span>
+                </div>
+                <select id="zodiac-b" class="zodiac-select-compact" data-person="B">
+                    <option value="Rat">🐭 Rat</option>
+                    <option value="Ox">🐮 Ox</option>
+                    <option value="Tiger">🐯 Tiger</option>
+                    <option value="Rabbit">🐰 Rabbit</option>
+                    <option value="Dragon">🐲 Dragon</option>
+                    <option value="Snake" selected>🐍 Snake</option>
+                    <option value="Horse">🐴 Horse</option>
+                    <option value="Goat">🐑 Goat</option>
+                    <option value="Monkey">🐵 Monkey</option>
+                    <option value="Rooster">🐔 Rooster</option>
+                    <option value="Dog">🐕 Dog</option>
+                    <option value="Pig">🐷 Pig</option>
+                </select>
+                <select id="gender-b" class="gender-select-compact" data-person="B">
+                    <option value="male">Male</option>
+                    <option value="female" selected>Female</option>
+                    <option value="others">Others</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Match Type Buttons -->
+        <div class="match-type-buttons">
+            <button class="btn-match-type active" data-type="romance">
+                <i class="fas fa-heart"></i>
+                <span>Romance Compatibility</span>
+                <small>Love & Relationship Matching</small>
+            </button>
+            <button class="btn-match-type" data-type="business">
+                <i class="fas fa-briefcase"></i>
+                <span>Business Partnership</span>
+                <small>Career & Cooperation Matching</small>
+            </button>
+        </div>
+
+        <!-- Results Area - Redesigned -->
+        <div class="results-container">
+            <!-- Main Result Card -->
+            <div class="main-result-card">
+                <div class="result-header">
+                    <div class="header-icon">
+                        <i class="fas fa-heart-circle-check"></i>
+                    </div>
+                    <div class="header-text">
+                        <h2>Compatibility Analysis</h2>
+                        <p class="zodiac-pair-display">Rabbit & Snake</p>
+                    </div>
+                </div>
+
+                <!-- Matching Score -->
+                <div class="score-section">
+                    <div class="score-visual">
+                        <div class="score-circle-main">
+                            <svg viewBox="0 0 200 200">
+                                <defs>
+                                    <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#fdd56a;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#ffb84d;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="100" cy="100" r="90" class="score-bg"></circle>
+                                <circle cx="100" cy="100" r="90" class="score-fill"
+                                    style="stroke-dasharray: 565.48; stroke-dashoffset: 84.82;"></circle>
+                            </svg>
+                            <div class="score-text">
+                                <span class="score-number">88%</span>
+                                <span class="score-label">Excellent</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="score-description">
+                        <h3>Quick Overview</h3>
+                        <p>These two signs share a deep intellectual bond. While the Rabbit seeks harmony, the Snake
+                            provides wisdom, creating a stable and enriching partnership.</p>
+                        <div class="compatibility-tags">
+                            <span class="tag tag-positive"><i class="fas fa-check"></i> Emotional Balance</span>
+                            <span class="tag tag-positive"><i class="fas fa-check"></i> Intellectual Match</span>
+                            <span class="tag tag-neutral"><i class="fas fa-circle"></i> Communication Style</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Analysis Card (Premium) -->
+            <div class="detailed-analysis-card premium-locked">
+                <div class="premium-header">
+                    <div class="premium-badge">
+                        <i class="fas fa-crown"></i>
+                        <span>PREMIUM</span>
+                    </div>
+                    <h3>Detailed Compatibility Report</h3>
+                    <p>Unlock in-depth analysis and personalized insights</p>
+                </div>
+
+                <div class="premium-content-preview">
+                    <div class="preview-section">
+                        <div class="section-icon"><i class="fas fa-heart-pulse"></i></div>
+                        <div class="section-info">
+                            <h4>Emotional Compatibility</h4>
+                            <p>Deep dive into emotional connection patterns and relationship dynamics...</p>
+                        </div>
+                        <div class="lock-indicator"><i class="fas fa-lock"></i></div>
+                    </div>
+                    <div class="preview-section">
+                        <div class="section-icon"><i class="fas fa-brain"></i></div>
+                        <div class="section-info">
+                            <h4>Intellectual Alignment</h4>
+                            <p>Analysis of communication styles and shared values...</p>
+                        </div>
+                        <div class="lock-indicator"><i class="fas fa-lock"></i></div>
+                    </div>
+                    <div class="preview-section">
+                        <div class="section-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="section-info">
+                            <h4>Long-term Potential</h4>
+                            <p>Future outlook and relationship growth assessment...</p>
+                        </div>
+                        <div class="lock-indicator"><i class="fas fa-lock"></i></div>
+                    </div>
+                </div>
+
+                <button class="btn-unlock-main">
+                    <i class="fas fa-unlock"></i>
+                    <span>Unlock Full Report</span>
+                </button>
+            </div>
+
+            <!-- Conflict Analysis Card (Premium) -->
+            <div class="conflict-analysis-card premium-locked">
+                <div class="conflict-header-main">
+                    <div class="conflict-icon-main">
+                        <i class="fas fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="conflict-text-main">
+                        <h3>Potential Challenges & Solutions</h3>
+                        <p>Understand friction points and learn how to navigate them</p>
+                    </div>
+                    <div class="premium-badge-small">
+                        <i class="fas fa-crown"></i>
+                        <span>PREMIUM</span>
+                    </div>
+                </div>
+
+                <div class="conflict-preview">
+                    <div class="conflict-item-preview">
+                        <div class="conflict-bar-wrapper">
+                            <div class="conflict-bar-bg">
+                                <div class="conflict-bar-fill" style="width: 35%;"></div>
+                            </div>
+                            <span class="conflict-percentage">35%</span>
+                        </div>
+                        <div class="conflict-details">
+                            <h5>Communication Differences</h5>
+                            <p>How to bridge communication gaps...</p>
+                        </div>
+                        <div class="lock-indicator"><i class="fas fa-lock"></i></div>
+                    </div>
+                    <div class="conflict-item-preview">
+                        <div class="conflict-bar-wrapper">
+                            <div class="conflict-bar-bg">
+                                <div class="conflict-bar-fill" style="width: 55%;"></div>
+                            </div>
+                            <span class="conflict-percentage">55%</span>
+                        </div>
+                        <div class="conflict-details">
+                            <h5>Decision-Making Speed</h5>
+                            <p>Strategies for aligned decision-making...</p>
+                        </div>
+                        <div class="lock-indicator"><i class="fas fa-lock"></i></div>
+                    </div>
+                    <div class="conflict-item-preview">
+                        <div class="conflict-bar-wrapper">
+                            <div class="conflict-bar-bg">
+                                <div class="conflict-bar-fill" style="width: 25%;"></div>
+                            </div>
+                            <span class="conflict-percentage">25%</span>
+                        </div>
+                        <div class="conflict-details">
+                            <h5>Emotional Expression</h5>
+                            <p>Understanding different expression styles...</p>
+                        </div>
+                        <div class="lock-indicator"><i class="fas fa-lock"></i></div>
+                    </div>
+                </div>
+
+                <button class="btn-unlock-main">
+                    <i class="fas fa-unlock"></i>
+                    <span>Unlock Conflict Analysis</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" id="footer-placeholder"></footer>
+
+    <!-- Scripts -->
+    <script type="module" src="navbar.js"></script>
+    <script type="module" src="footer.js"></script>
+    <script type="module" src="matching.js"></script>
+</body>
+
+</html>
