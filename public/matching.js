@@ -218,26 +218,94 @@ function showError(message) {
     alert(message);
 }
 
+// Generate gender combination key
+function getGenderCombinationKey() {
+    const gender1 = state.personA.gender;
+    const gender2 = state.personB.gender;
+
+    // Generate key based on gender combination
+    // Using simplified 6-combination approach
+    if (gender1 === 'others' && gender2 === 'others') {
+        return 'others-others';
+    } else if (gender1 === 'others' || gender2 === 'others') {
+        // Combine male/female with others
+        const nonOther = gender1 === 'others' ? gender2 : gender1;
+        return `${nonOther}-others`;
+    } else if (gender1 === gender2) {
+        // Same gender
+        return `${gender1}-${gender1}`;
+    } else {
+        // Different genders (male-female or female-male)
+        return 'male-female';
+    }
+}
+
+// Get match data with gender-specific support
+function getMatchData() {
+    if (!state.currentData) return null;
+
+    // Check if gender-specific data exists
+    const genderKey = getGenderCombinationKey();
+    const genderSpecific = state.currentData.genderSpecificMatching?.[genderKey];
+
+    if (genderSpecific && genderSpecific[state.matchType]) {
+        console.log(`Using gender-specific data for: ${genderKey}, type: ${state.matchType}`);
+        return {
+            type: 'gender-specific',
+            data: genderSpecific[state.matchType],
+            genderKey: genderKey
+        };
+    }
+
+    // Fallback to base data
+    console.log(`Using base data for type: ${state.matchType}`);
+    return {
+        type: 'base',
+        data: state.currentData[state.matchType]
+    };
+}
+
 // Update display with current data
 function updateDisplay() {
     if (!state.currentData) return;
 
-    const matchData = state.currentData[state.matchType]; // 'romance' or 'business'
+    const matchResult = getMatchData();
+    if (!matchResult) return;
+
+    console.log('Match result:', matchResult);
 
     // Update zodiac pair name
     updatePairName();
 
-    // Update free content
-    updateFreeContent(matchData.free);
+    if (matchResult.type === 'gender-specific') {
+        // Using gender-specific data
+        const genderData = matchResult.data;
 
-    // Update premium content based on user status
-    console.log('Checking premium status before update:', state.isPremium);
-    if (state.isPremium) {
-        console.log('Calling updatePremiumContent...');
-        updatePremiumContent(matchData.premium);
+        // Update free content with gender-specific data
+        updateFreeContentGenderSpecific(genderData);
+
+        // Update premium content
+        if (state.isPremium) {
+            updatePremiumContentGenderSpecific(genderData);
+        } else {
+            updatePremiumPreviewGenderSpecific(genderData);
+        }
     } else {
-        console.log('Calling updatePremiumPreview...');
-        updatePremiumPreview(matchData.premium);
+        // Using base data (original logic)
+        const matchData = matchResult.data;
+
+        // Update free content
+        updateFreeContent(matchData.free);
+
+        // Update premium content based on user status
+        console.log('Checking premium status before update:', state.isPremium);
+        if (state.isPremium) {
+            console.log('Calling updatePremiumContent...');
+            updatePremiumContent(matchData.premium);
+        } else {
+            console.log('Calling updatePremiumPreview...');
+            updatePremiumPreview(matchData.premium);
+        }
     }
 
     // Update UI based on premium status
@@ -289,6 +357,44 @@ function updateFreeContent(freeData) {
                 tag.status === 'negative' ? 'fa-times' : 'fa-circle';
             return `<span class="tag tag-${tag.status}">
                 <i class="fas ${icon}"></i> ${tag.tag}
+            </span>`;
+        }).join('');
+    }
+}
+
+// Update free content with gender-specific data
+function updateFreeContentGenderSpecific(genderData) {
+    // Update matching score
+    const scoreNumber = document.querySelector('.score-number');
+    const scoreLabel = document.querySelector('.score-label');
+    const scoreFill = document.querySelector('.score-fill');
+
+    if (scoreNumber && scoreLabel && scoreFill) {
+        const score = genderData.score;
+        const rating = genderData.rating;
+
+        scoreNumber.textContent = `${score}%`;
+        scoreLabel.textContent = rating;
+
+        // Update circular progress
+        const circumference = 2 * Math.PI * 90; // radius = 90
+        const offset = circumference - (score / 100) * circumference;
+        scoreFill.style.strokeDasharray = circumference;
+        scoreFill.style.strokeDashoffset = offset;
+    }
+
+    // Update overview with gender-specific summary
+    const overviewText = document.querySelector('.score-description p');
+    if (overviewText) {
+        overviewText.textContent = genderData.summary;
+    }
+
+    // Update compatibility tags (create from highlights if available)
+    const tagsContainer = document.querySelector('.compatibility-tags');
+    if (tagsContainer && genderData.highlights) {
+        tagsContainer.innerHTML = genderData.highlights.slice(0, 3).map(highlight => {
+            return `<span class="tag tag-positive">
+                <i class="fas fa-check"></i> ${highlight}
             </span>`;
         }).join('');
     }
@@ -427,6 +533,113 @@ function updatePremiumContent(premiumData) {
 function updatePremiumPreview(premiumData) {
     // Keep locked state
     document.querySelectorAll('.premium-locked').forEach(el => {
+        el.classList.add('premium-locked');
+    });
+
+    // Show unlock buttons
+    document.querySelectorAll('.btn-unlock-main').forEach(btn => {
+        btn.style.display = 'flex';
+    });
+}
+
+// Update premium content with gender-specific data
+function updatePremiumContentGenderSpecific(genderData) {
+    console.log('Updating premium content with gender-specific data:', genderData);
+
+    // Update detailed analysis card content
+    const analysisCard = document.querySelector('.detailed-analysis-card');
+    if (analysisCard && genderData) {
+        const previewContainer = analysisCard.querySelector('.premium-content-preview');
+        if (previewContainer) {
+            previewContainer.innerHTML = `
+                <div class="preview-section unlocked" style="padding: 20px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid rgba(253, 213, 106, 0.1);">
+                    <div class="section-info">
+                        <h4 style="margin: 0 0 15px 0; color: #fdd56a; font-size: 20px;">
+                            <i class="fas fa-heart-pulse"></i> Detailed Analysis
+                        </h4>
+                        <p style="margin: 0 0 15px 0; color: #ccc; line-height: 1.8; font-size: 15px;">
+                            ${genderData.detailedAnalysis}
+                        </p>
+                        
+                        <h5 style="margin: 20px 0 10px 0; color: #fdd56a; font-size: 16px;">
+                            <i class="fas fa-star"></i> Key Highlights
+                        </h5>
+                        <ul class="section-highlights" style="margin: 0 0 15px 0; padding-left: 20px; color: #aaa;">
+                            ${genderData.highlights.map(h => `<li style="margin: 8px 0; line-height: 1.6;">${h}</li>`).join('')}
+                        </ul>
+                        
+                        ${genderData.challenges ? `
+                            <h5 style="margin: 20px 0 10px 0; color: #ff9800; font-size: 16px;">
+                                <i class="fas fa-exclamation-triangle"></i> Potential Challenges
+                            </h5>
+                            <ul class="section-challenges" style="margin: 0 0 15px 0; padding-left: 20px; color: #aaa;">
+                                ${genderData.challenges.map(c => `<li style="margin: 8px 0; line-height: 1.6;">${c}</li>`).join('')}
+                            </ul>
+                        ` : ''}
+                        
+                        ${genderData.advice ? `
+                            <h5 style="margin: 20px 0 10px 0; color: #4CAF50; font-size: 16px;">
+                                <i class="fas fa-lightbulb"></i> Advice
+                            </h5>
+                            <p style="margin: 0; color: #ccc; line-height: 1.8; font-size: 15px;">
+                                ${genderData.advice}
+                            </p>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    // Hide conflicts section for gender-specific data (or show if available)
+    const conflictCard = document.querySelector('.conflict-analysis-card');
+    if (conflictCard) {
+        conflictCard.style.display = 'none'; // Hide for now as gender-specific data doesn't have conflicts structure
+    }
+
+    // Remove locked state and hide lock elements
+    document.querySelectorAll('.premium-locked').forEach(el => el.classList.remove('premium-locked'));
+    document.querySelectorAll('.btn-unlock-main').forEach(btn => btn.style.display = 'none');
+    document.querySelectorAll('.lock-indicator').forEach(el => el.style.display = 'none');
+
+    console.log('Gender-specific premium content updated successfully');
+}
+
+// Update premium preview with gender-specific data (for non-premium users)
+function updatePremiumPreviewGenderSpecific(genderData) {
+    console.log('Updating premium preview with gender-specific data');
+
+    // Update detailed analysis card with preview
+    const analysisCard = document.querySelector('.detailed-analysis-card');
+    if (analysisCard && genderData) {
+        const previewContainer = analysisCard.querySelector('.premium-content-preview');
+        if (previewContainer) {
+            // Show truncated version
+            const truncatedAnalysis = genderData.detailedAnalysis.substring(0, 150) + '...';
+
+            previewContainer.innerHTML = `
+                <div class="preview-section" style="padding: 20px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid rgba(253, 213, 106, 0.1); position: relative;">
+                    <div class="section-info" style="filter: blur(3px); opacity: 0.5;">
+                        <h4 style="margin: 0 0 15px 0; color: #fdd56a; font-size: 20px;">
+                            <i class="fas fa-heart-pulse"></i> Detailed Analysis
+                        </h4>
+                        <p style="margin: 0 0 15px 0; color: #ccc; line-height: 1.8;">
+                            ${truncatedAnalysis}
+                        </p>
+                        <ul class="section-highlights" style="margin: 0; padding-left: 20px; color: #aaa;">
+                            ${genderData.highlights.slice(0, 2).map(h => `<li style="margin: 8px 0;">${h}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="lock-indicator" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 48px; color: #fdd56a;">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    // Keep locked state
+    document.querySelectorAll('.detailed-analysis-card, .conflict-analysis-card').forEach(el => {
         el.classList.add('premium-locked');
     });
 
