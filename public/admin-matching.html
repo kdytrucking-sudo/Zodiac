@@ -339,11 +339,11 @@
 
             <!-- Selector Section -->
             <div class="selector-section">
-                <h2 style="color: #fdd56a; margin-bottom: 15px;">Select Zodiac Pair</h2>
+                <h2 style="color: #fdd56a; margin-bottom: 15px;">Select Zodiac Pair & Gender Combination</h2>
                 <div class="selector-grid">
                     <div>
                         <label>Zodiac 1</label>
-                        <select id="zodiac1Select">
+                        <select id="zodiac1Select" onchange="loadData()">
                             <option value="Rat">Rat</option>
                             <option value="Ox">Ox</option>
                             <option value="Tiger">Tiger</option>
@@ -360,7 +360,7 @@
                     </div>
                     <div>
                         <label>Zodiac 2</label>
-                        <select id="zodiac2Select">
+                        <select id="zodiac2Select" onchange="loadData()">
                             <option value="Rat">Rat</option>
                             <option value="Ox">Ox</option>
                             <option value="Tiger">Tiger</option>
@@ -375,22 +375,35 @@
                             <option value="Pig">Pig</option>
                         </select>
                     </div>
+                    <div>
+                        <label>Gender Combination</label>
+                        <select id="genderCombinationSelect" onchange="loadData()">
+                            <option value="male-male">♂♂ Male - Male</option>
+                            <option value="male-female" selected>♂♀ Male - Female</option>
+                            <option value="male-others">♂⚪ Male - Others</option>
+                            <option value="female-female">♀♀ Female - Female</option>
+                            <option value="female-others">♀⚪ Female - Others</option>
+                            <option value="others-others">⚪⚪ Others - Others</option>
+                        </select>
+                    </div>
                 </div>
-                <button class="load-btn" onclick="loadData()">
-                    <i class="fas fa-download"></i> Load Data
-                </button>
+
+                <!-- Current Selection Display -->
+                <div id="currentSelection"
+                    style="margin-top: 20px; padding: 15px; background: rgba(253, 213, 106, 0.1); border: 1px solid rgba(253, 213, 106, 0.3); border-radius: 10px; display: none;">
+                    <p style="color: #fdd56a; font-size: 16px; margin: 0;">
+                        <i class="fas fa-edit"></i> Currently Editing: <span id="selectionText"></span>
+                    </p>
+                </div>
             </div>
 
             <!-- Tabs -->
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('romance')">
-                    <i class="fas fa-heart"></i> Romance (Base)
+                    <i class="fas fa-heart"></i> Romance
                 </button>
                 <button class="tab-btn" onclick="switchTab('business')">
-                    <i class="fas fa-briefcase"></i> Business (Base)
-                </button>
-                <button class="tab-btn" onclick="switchTab('gender')">
-                    <i class="fas fa-venus-mars"></i> Gender-Specific Data
+                    <i class="fas fa-briefcase"></i> Business
                 </button>
             </div>
 
@@ -402,11 +415,6 @@
             <!-- Business Tab -->
             <div class="tab-content" id="businessTab">
                 <div id="businessContent"></div>
-            </div>
-
-            <!-- Gender-Specific Data Tab -->
-            <div class="tab-content" id="genderTab">
-                <div id="genderContent"></div>
             </div>
 
             <button class="save-btn" onclick="saveData()">
