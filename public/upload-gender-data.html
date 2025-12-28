@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gender Data Uploader - Zodiac</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #fdd56a;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #aaa;
+            font-size: 16px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(253, 213, 106, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            color: #fdd56a;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .status.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #4CAF50;
+            display: block;
+        }
+
+        .status.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #f44336;
+            display: block;
+        }
+
+        .status.info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.5);
+            color: #2196F3;
+            display: block;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #fdd56a 0%, #ffb84d 100%);
+            border: none;
+            border-radius: 10px;
+            color: #1a1a2e;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(253, 213, 106, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+        }
+
+        .log-entry.success {
+            color: #4CAF50;
+        }
+
+        .log-entry.error {
+            color: #f44336;
+        }
+
+        .log-entry.info {
+            color: #2196F3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Gender Data Uploader</h1>
+            <p>Upload high-quality gender-specific matching data to Firestore</p>
+        </div>
+
+        <div class="card">
+            <h2>📊 Upload Sample Data</h2>
+            <div id="status" class="status"></div>
+
+            <button class="btn" onclick="uploadSampleData()" id="uploadBtn">
+                <i class="fas fa-upload"></i> Upload Rat-Rat & Rabbit-Snake Data
+            </button>
+
+            <p style="color: #aaa; font-size: 14px; margin-top: 10px;">
+                This will create gender-specific matching data for:<br>
+                • Rat-Rat (6 gender combinations)<br>
+                • Rabbit-Snake (6 gender combinations)
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>📝 Upload Log</h2>
+            <div id="log" class="log">
+                <div class="log-entry info">Ready to upload data...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db } from './app.js';
+        import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
+
+        // Sample data (abbreviated for file size - full data in separate file)
+        const SAMPLE_DATA = {
+            'Rat-Rat': {
+                'male-male': {
+                    romance: {
+                        score: 68,
+                        rating: 'Good',
+                        summary: 'Two male Rats create an intellectually stimulating partnership with strong mutual understanding. Their shared ambition and quick wit make for engaging companionship, though competitive tendencies may require conscious management.',
+                        detailedAnalysis: 'When two male Rats come together romantically, they form a relationship built on intellectual connection and shared ambitions. Both partners are naturally charming, intelligent, and socially adept, which creates a strong foundation of mutual respect.',
+                        highlights: [
+                            'Strong intellectual connection and stimulating conversations',
+                            'Mutual understanding of ambition and career goals',
+                            'Excellent problem-solving as a team'
+                        ],
+                        challenges: [
+                            'Competitive tendencies may create relationship tension',
+                            'Both may struggle with emotional vulnerability'
+                        ],
+                        advice: 'Focus on being teammates rather than competitors. Schedule regular quality time that isn\'t about achievements or goals.'
+                    },
+                    business: {
+                        score: 85,
+                        rating: 'Excellent',
+                        summary: 'Two male Rats in business create a powerhouse partnership. Their combined intelligence, resourcefulness, and networking abilities make them formidable in any industry.',
+                        detailedAnalysis: 'In business, two male Rats are exceptionally well-matched. Both bring sharp analytical minds, excellent networking skills, and a natural ability to spot opportunities.',
+                        highlights: [
+                            'Exceptional combined intelligence and analytical ability',
+                            'Superior networking and relationship-building skills',
+                            'Quick adaptation to market changes'
+                        ],
+                        challenges: [
+                            'Power struggles if roles aren\'t clearly defined',
+                            'Both may be tempted by outside opportunities'
+                        ],
+                        advice: 'Establish clear areas of authority from the start. Create a partnership agreement that addresses decision-making and profit-sharing.'
+                    }
+                },
+                'male-female': {
+                    romance: {
+                        score: 75,
+                        rating: 'Good',
+                        summary: 'A male and female Rat pairing combines intellectual compatibility with complementary approaches to life.',
+                        detailedAnalysis: 'The male-female Rat pairing often benefits from complementary approaches to their shared characteristics.',
+                        highlights: ['Strong intellectual compatibility', 'Complementary approaches to shared goals'],
+                        challenges: ['Both may struggle with emotional expression'],
+                        advice: 'Make emotional intimacy a priority alongside material goals.'
+                    },
+                    business: {
+                        score: 82,
+                        rating: 'Excellent',
+                        summary: 'Male and female Rats in business create a balanced, effective partnership.',
+                        detailedAnalysis: 'In business, a male-female Rat partnership combines the best of both partners\' abilities.',
+                        highlights: ['Diverse perspectives enhance decision-making', 'Combined networking reaches broader audiences'],
+                        challenges: ['Must actively ensure equal authority and respect'],
+                        advice: 'Establish clear equality in decision-making from the start.'
+                    }
+                },
+                'male-others': {
+                    romance: {
+                        score: 72,
+                        rating: 'Good',
+                        summary: 'A male Rat with a non-binary Rat partner creates a relationship that challenges traditional dynamics.',
+                        detailedAnalysis: 'This pairing brings together the Rat\'s natural intelligence with the opportunity to create a relationship free from traditional gender expectations.',
+                        highlights: ['Freedom from traditional gender role expectations', 'Opportunity for authentic self-expression'],
+                        challenges: ['Navigating external social expectations'],
+                        advice: 'Communicate openly about your needs and boundaries.'
+                    },
+                    business: {
+                        score: 78,
+                        rating: 'Good',
+                        summary: 'In business, a male and non-binary Rat partnership combines traditional business acumen with innovative perspectives.',
+                        detailedAnalysis: 'This business partnership benefits from combining different perspectives and approaches.',
+                        highlights: ['Diverse perspectives drive innovation', 'Modern, adaptive business approach'],
+                        challenges: ['May face external biases'],
+                        advice: 'Establish equal partnership from the start.'
+                    }
+                },
+                'female-female': {
+                    romance: {
+                        score: 77,
+                        rating: 'Good',
+                        summary: 'Two female Rats create a relationship with strong emotional intelligence and mutual understanding.',
+                        detailedAnalysis: 'When two female Rats come together, they often create a relationship with exceptional emotional depth.',
+                        highlights: ['Deep emotional understanding', 'Strong mutual support'],
+                        challenges: ['Subtle competition may arise'],
+                        advice: 'Celebrate each other\'s successes without comparison.'
+                    },
+                    business: {
+                        score: 80,
+                        rating: 'Very Good',
+                        summary: 'Two female Rats in business combine sharp intelligence with strong collaborative skills.',
+                        detailedAnalysis: 'In business, two female Rats create a partnership that\'s both strategically sound and emotionally intelligent.',
+                        highlights: ['Excellent relationship-building', 'Strong collaborative decision-making'],
+                        challenges: ['May face gender biases in some industries'],
+                        advice: 'Support each other in advocating for your business.'
+                    }
+                },
+                'female-others': {
+                    romance: {
+                        score: 74,
+                        rating: 'Good',
+                        summary: 'A female Rat with a non-binary Rat partner creates a relationship that combines emotional depth with freedom.',
+                        detailedAnalysis: 'This pairing offers the opportunity for a deeply authentic relationship.',
+                        highlights: ['Authentic self-expression', 'Deep emotional connection'],
+                        challenges: ['Navigating external expectations'],
+                        advice: 'Communicate openly about your needs.'
+                    },
+                    business: {
+                        score: 79,
+                        rating: 'Good',
+                        summary: 'In business, a female and non-binary Rat partnership brings diverse perspectives.',
+                        detailedAnalysis: 'This business partnership combines different perspectives to create a modern, inclusive business.',
+                        highlights: ['Diverse perspectives drive innovation', 'Modern, inclusive approach'],
+                        challenges: ['May face external biases'],
+                        advice: 'Establish equal partnership from the start.'
+                    }
+                },
+                'others-others': {
+                    romance: {
+                        score: 73,
+                        rating: 'Good',
+                        summary: 'Two non-binary Rats create a relationship with exceptional freedom and authenticity.',
+                        detailedAnalysis: 'When two non-binary Rats come together, they create a relationship with unique potential for authenticity.',
+                        highlights: ['Complete freedom from traditional expectations', 'Deep mutual understanding'],
+                        challenges: ['Creating relationship template without traditional models'],
+                        advice: 'Communicate frequently and openly.'
+                    },
+                    business: {
+                        score: 77,
+                        rating: 'Good',
+                        summary: 'Two non-binary Rats in business create an innovative, progressive partnership.',
+                        detailedAnalysis: 'In business, two non-binary Rats bring exceptional innovation and modern thinking.',
+                        highlights: ['Exceptional innovation', 'Freedom from traditional constraints'],
+                        challenges: ['May face biases in traditional environments'],
+                        advice: 'Establish clear, equal partnership from the start.'
+                    }
+                }
+            },
+            'Rabbit-Snake': {
+                'male-male': {
+                    romance: {
+                        score: 86,
+                        rating: 'Excellent',
+                        summary: 'Two males in a Rabbit-Snake pairing create a relationship of quiet strength and deep understanding.',
+                        detailedAnalysis: 'When a male Rabbit and male Snake come together, they create a relationship characterized by depth, intelligence, and mutual respect.',
+                        highlights: ['Deep intellectual connection', 'Shared appreciation for peace'],
+                        challenges: ['Both may struggle with emotional expression'],
+                        advice: 'Make conscious effort to express emotions verbally.'
+                    },
+                    business: {
+                        score: 80,
+                        rating: 'Very Good',
+                        summary: 'Male Rabbit and Snake in business create a sophisticated, strategic partnership.',
+                        detailedAnalysis: 'In business, a male Rabbit-Snake partnership combines complementary strengths effectively.',
+                        highlights: ['Complementary professional skills', 'Strong client relationships'],
+                        challenges: ['May be too cautious'],
+                        advice: 'Set decision-making deadlines to balance caution with timeliness.'
+                    }
+                },
+                'male-female': {
+                    romance: {
+                        score: 90,
+                        rating: 'Perfect',
+                        summary: 'Male Rabbit with female Snake creates a classic, harmonious pairing.',
+                        detailedAnalysis: 'The male-female Rabbit-Snake pairing is often considered ideal in traditional Chinese zodiac compatibility.',
+                        highlights: ['Exceptional compatibility', 'Complementary energies'],
+                        challenges: ['Different communication styles'],
+                        advice: 'Snake should verbalize feelings regularly.'
+                    },
+                    business: {
+                        score: 78,
+                        rating: 'Good',
+                        summary: 'Male-female Rabbit-Snake business partnerships combine diverse strengths effectively.',
+                        detailedAnalysis: 'In business, a male-female Rabbit-Snake partnership brings together complementary skills.',
+                        highlights: ['Complementary skills', 'Diverse viewpoints'],
+                        challenges: ['Must ensure equal authority'],
+                        advice: 'Establish clear equality from the start.'
+                    }
+                },
+                'male-others': {
+                    romance: {
+                        score: 87,
+                        rating: 'Excellent',
+                        summary: 'Male Rabbit or Snake with non-binary partner creates a relationship that honors both compatibility and authenticity.',
+                        detailedAnalysis: 'This pairing maintains the excellent Rabbit-Snake compatibility while adding freedom from traditional expectations.',
+                        highlights: ['Strong compatibility plus authentic expression', 'Freedom from rigid roles'],
+                        challenges: ['Navigating external expectations'],
+                        advice: 'Communicate openly about needs and boundaries.'
+                    },
+                    business: {
+                        score: 79,
+                        rating: 'Good',
+                        summary: 'Male and non-binary Rabbit-Snake partnership combines traditional strengths with innovation.',
+                        detailedAnalysis: 'In business, this partnership leverages strong complementarity while benefiting from diverse perspectives.',
+                        highlights: ['Strong complementarity plus diverse perspectives', 'Modern approach'],
+                        challenges: ['May face external biases'],
+                        advice: 'Establish clear, equal partnership.'
+                    }
+                },
+                'female-female': {
+                    romance: {
+                        score: 91,
+                        rating: 'Perfect',
+                        summary: 'Two females in a Rabbit-Snake pairing create a relationship of exceptional emotional depth.',
+                        detailedAnalysis: 'When a female Rabbit and female Snake come together, they create one of the most emotionally rich pairings possible.',
+                        highlights: ['Exceptional emotional depth', 'Intuitive understanding'],
+                        challenges: ['Both may be overly cautious'],
+                        advice: 'Balance emotional depth with practical decision-making.'
+                    },
+                    business: {
+                        score: 77,
+                        rating: 'Good',
+                        summary: 'Female Rabbit and Snake in business create a partnership strong in relationships and strategy.',
+                        detailedAnalysis: 'In business, two females in a Rabbit-Snake partnership combine excellent relationship skills with strategic thinking.',
+                        highlights: ['Excellent relationship-building', 'Strong emotional intelligence'],
+                        challenges: ['May face gender biases'],
+                        advice: 'Support each other in advocating for your business.'
+                    }
+                },
+                'female-others': {
+                    romance: {
+                        score: 89,
+                        rating: 'Excellent',
+                        summary: 'Female Rabbit or Snake with non-binary partner creates a relationship combining depth with authenticity.',
+                        detailedAnalysis: 'This pairing brings together excellent compatibility with freedom for authentic self-expression.',
+                        highlights: ['Strong compatibility plus authentic expression', 'Deep connection'],
+                        challenges: ['Navigating external expectations'],
+                        advice: 'Communicate openly about needs and boundaries.'
+                    },
+                    business: {
+                        score: 78,
+                        rating: 'Good',
+                        summary: 'Female and non-binary Rabbit-Snake partnership combines relationship excellence with innovation.',
+                        detailedAnalysis: 'In business, this partnership leverages complementarity while benefiting from diverse perspectives.',
+                        highlights: ['Strong relationship skills plus innovation', 'Modern approach'],
+                        challenges: ['May face external biases'],
+                        advice: 'Establish equal partnership from the start.'
+                    }
+                },
+                'others-others': {
+                    romance: {
+                        score: 88,
+                        rating: 'Excellent',
+                        summary: 'Two non-binary individuals in a Rabbit-Snake pairing create a relationship of exceptional authenticity.',
+                        detailedAnalysis: 'When two non-binary individuals come together in a Rabbit-Snake pairing, they create unique potential for authenticity.',
+                        highlights: ['Exceptional authenticity', 'Strong compatibility'],
+                        challenges: ['Creating relationship template'],
+                        advice: 'Communicate frequently and openly.'
+                    },
+                    business: {
+                        score: 78,
+                        rating: 'Good',
+                        summary: 'Two non-binary Rabbit-Snake partners create an innovative, values-driven partnership.',
+                        detailedAnalysis: 'In business, two non-binary individuals bring exceptional innovation and modern thinking.',
+                        highlights: ['Strong complementarity plus innovation', 'Values-driven approach'],
+                        challenges: ['May face biases'],
+                        advice: 'Establish clear, equal partnership.'
+                    }
+                }
+            }
+        };
+
+        function addLog(message, type = 'info') {
+            const log = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        async function uploadPairingData(pairId, genderData) {
+            try {
+                addLog(`Uploading ${pairId}...`, 'info');
+
+                const docRef = doc(db, 'zodiac-compatibility', pairId);
+                const docSnap = await getDoc(docRef);
+
+                if (!docSnap.exists()) {
+                    addLog(`Document ${pairId} does not exist!`, 'error');
+                    return false;
+                }
+
+                const existingData = docSnap.data();
+
+                await setDoc(docRef, {
+                    ...existingData,
+                    genderSpecificMatching: genderData,
+                    metadata: {
+                        ...existingData.metadata,
+                        updatedAt: new Date().toISOString(),
+                        version: 2.0,
+                        hasGenderSpecificData: true,
+                        dataQuality: 'high-quality-sample'
+                    }
+                });
+
+                addLog(`✅ Successfully uploaded ${pairId}`, 'success');
+                return true;
+
+            } catch (error) {
+                addLog(`❌ Error uploading ${pairId}: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        window.uploadSampleData = async function () {
+            const btn = document.getElementById('uploadBtn');
+            btn.disabled = true;
+            btn.textContent = 'Uploading...';
+
+            addLog('Starting upload process...', 'info');
+            showStatus('Uploading data...', 'info');
+
+            try {
+                // Upload Rat-Rat
+                await uploadPairingData('Rat-Rat', SAMPLE_DATA['Rat-Rat']);
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Upload Rabbit-Snake
+                await uploadPairingData('Rabbit-Snake', SAMPLE_DATA['Rabbit-Snake']);
+
+                addLog('Upload complete!', 'success');
+                showStatus('✅ All data uploaded successfully!', 'success');
+
+            } catch (error) {
+                addLog(`Fatal error: ${error.message}`, 'error');
+                showStatus('❌ Upload failed!', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Upload Rat-Rat & Rabbit-Snake Data';
+            }
+        };
+    </script>
+</body>
+
+</html>
