@@ -75,10 +75,11 @@ async function checkPremiumStatus(userId) {
     }
 }
 
-// Generate pair ID (alphabetically sorted)
+// Generate pair ID (keep original order for 144 pairings support)
 function generatePairId(zodiac1, zodiac2) {
-    const sorted = [zodiac1, zodiac2].sort();
-    return `${sorted[0]}-${sorted[1]}`;
+    // Keep original order to match seed script logic
+    // Rat-Ox and Ox-Rat are treated as different pairings
+    return `${zodiac1}-${zodiac2}`;
 }
 
 // Initialize event listeners
@@ -668,8 +669,10 @@ function updatePremiumPreviewGenderSpecific(genderData) {
     if (analysisCard && genderData) {
         const previewContainer = analysisCard.querySelector('.premium-content-preview');
         if (previewContainer) {
-            // Show truncated version
-            const truncatedAnalysis = genderData.detailedAnalysis.substring(0, 150) + '...';
+            // Show truncated version with safe fallback
+            const detailedAnalysis = genderData.detailedAnalysis || genderData.summary || 'Detailed compatibility analysis available with premium access';
+            const truncatedAnalysis = detailedAnalysis.substring(0, 150) + '...';
+            const highlights = genderData.highlights || [];
 
             previewContainer.innerHTML = `
                 <div class="preview-section" style="padding: 20px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid rgba(253, 213, 106, 0.1); position: relative;">
@@ -680,9 +683,11 @@ function updatePremiumPreviewGenderSpecific(genderData) {
                         <p style="margin: 0 0 15px 0; color: #ccc; line-height: 1.8;">
                             ${truncatedAnalysis}
                         </p>
-                        <ul class="section-highlights" style="margin: 0; padding-left: 20px; color: #aaa;">
-                            ${genderData.highlights.slice(0, 2).map(h => `<li style="margin: 8px 0;">${h}</li>`).join('')}
-                        </ul>
+                        ${highlights.length > 0 ? `
+                            <ul class="section-highlights" style="margin: 0; padding-left: 20px; color: #aaa;">
+                                ${highlights.slice(0, 2).map(h => `<li style="margin: 8px 0;">${h}</li>`).join('')}
+                            </ul>
+                        ` : ''}
                     </div>
                     <div class="lock-indicator" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 48px; color: #fdd56a;">
                         <i class="fas fa-lock"></i>

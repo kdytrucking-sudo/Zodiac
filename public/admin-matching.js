@@ -132,6 +132,8 @@ function ensureCompleteMatchTypeData(data, type) {
     if (data.score === undefined) data.score = 70;
     if (!data.rating) data.rating = 'Good';
     if (data.summary === undefined) data.summary = '';
+    if (data.detailedAnalysis === undefined) data.detailedAnalysis = '';
+    if (!data.highlights) data.highlights = [];
 
     // Ensure premium object exists
     if (!data.premium) {
@@ -215,6 +217,8 @@ function createDefaultMatchTypeData(type) {
         score: 70,
         rating: 'Good',
         summary: '',
+        detailedAnalysis: '',
+        highlights: [],
         premium: premium
     };
 }
@@ -275,6 +279,34 @@ function renderMatchTypeContent(type, data) {
             <div class="form-group">
                 <label>Summary (Quick Overview)</label>
                 <textarea id="${type}_summary" rows="3">${data.summary}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Detailed Analysis (For Non-Premium Preview) 
+                    <span style="color: #888; font-size: 12px;">- Shown as blurred preview to non-premium users</span>
+                </label>
+                <textarea id="${type}_detailedAnalysis" rows="4">${data.detailedAnalysis || ''}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Highlights (Free Content Tags)
+                    <span style="color: #888; font-size: 12px;">- Shown as tags to all users</span>
+                </label>
+                <div id="${type}_highlights_container" style="display: flex; flex-direction: column; gap: 10px;">
+                    ${(data.highlights || []).map((highlight, index) => `
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" value="${highlight}" style="flex: 1;" placeholder="Highlight ${index + 1}" />
+                            <button type="button" onclick="removeHighlight('${type}_highlights_container', ${index})" 
+                                    style="background: #ef4444; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+                <button type="button" onclick="addHighlight('${type}_highlights_container')" 
+                        style="margin-top: 10px; background: ${color}; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+                    <i class="fas fa-plus"></i> Add Highlight
+                </button>
             </div>
         </div>
 
@@ -447,6 +479,25 @@ function collectMatchTypeData(type) {
         summary: document.getElementById(`${type}_summary`).value.trim(),
         premium: {}
     };
+
+    // Collect detailedAnalysis (for non-premium preview)
+    const detailedAnalysisEl = document.getElementById(`${type}_detailedAnalysis`);
+    if (detailedAnalysisEl && detailedAnalysisEl.value.trim()) {
+        data.detailedAnalysis = detailedAnalysisEl.value.trim();
+    }
+
+    // Collect highlights (for free content tags)
+    const highlightsContainer = document.getElementById(`${type}_highlights_container`);
+    if (highlightsContainer) {
+        const highlights = [];
+        highlightsContainer.querySelectorAll('input').forEach(input => {
+            const value = input.value.trim();
+            if (value) highlights.push(value);
+        });
+        if (highlights.length > 0) {
+            data.highlights = highlights;
+        }
+    }
 
     // Collect compatibility sections
     const compatibilityKeys = type === 'romance'

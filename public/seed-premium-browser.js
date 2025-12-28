@@ -79,8 +79,9 @@ function getRating(score) {
 }
 
 function generatePairId(zodiac1, zodiac2) {
-    const sorted = [zodiac1, zodiac2].sort();
-    return `${sorted[0]}-${sorted[1]}`;
+    // Keep original order to support all 144 pairings (12×12)
+    // Rat-Ox and Ox-Rat are treated as different pairings
+    return `${zodiac1}-${zodiac2}`;
 }
 
 // Generate Romance Premium Sections
@@ -265,16 +266,33 @@ async function seedPairing(zodiac1, zodiac2, force = false) {
         const docRef = doc(db, 'zodiac-compatibility', pairId);
         const docSnap = await getDoc(docRef);
 
+        let existingData = {};
+        let isNewDocument = false;
+
         if (!docSnap.exists()) {
-            log(`⚠️  ${pairId} does not exist, skipping...`, 'warning');
-            return { success: false, reason: 'not-found' };
-        }
+            // Document doesn't exist - create a new one with base data
+            log(`🆕 ${pairId} - Creating new document...`, 'info');
+            isNewDocument = true;
 
-        const existingData = docSnap.data();
+            const baseScore = getBaseScore(zodiac1, zodiac2);
+            existingData = {
+                zodiac1,
+                zodiac2,
+                baseCompatibility: baseScore,
+                rating: getRating(baseScore),
+                metadata: {
+                    createdAt: new Date().toISOString(),
+                    version: 3.0,
+                    dataQuality: 'auto-generated-premium'
+                }
+            };
+        } else {
+            existingData = docSnap.data();
 
-        if (!force && existingData.genderSpecificMatching?.['male-male']?.romance?.premium) {
-            log(`ℹ️  ${pairId} already has premium data, skipping...`, 'info');
-            return { success: false, reason: 'already-exists' };
+            if (!force && existingData.genderSpecificMatching?.['male-male']?.romance?.premium) {
+                log(`ℹ️  ${pairId} - Already has premium data, skipping...`, 'info');
+                return { success: false, reason: 'already-exists' };
+            }
         }
 
         const genderSpecificMatching = generateGenderSpecificData(zodiac1, zodiac2);
@@ -292,8 +310,8 @@ async function seedPairing(zodiac1, zodiac2, force = false) {
             }
         });
 
-        log(`✅ ${pairId} - Generated complete premium data`, 'success');
-        return { success: true };
+        log(`✅ ${pairId} - ${isNewDocument ? 'Created new document with' : 'Updated with'} complete premium data`, 'success');
+        return { success: true, isNew: isNewDocument };
 
     } catch (error) {
         log(`❌ Error processing ${pairId}: ${error.message}`, 'error');
@@ -312,10 +330,10 @@ async function seedAllPairings(force = false) {
     log('🚀 Starting premium data seeding...', 'info');
 
     let stats = { total: 0, success: 0, skip: 0, error: 0 };
-    const totalPairings = zodiacSigns.length * (zodiacSigns.length + 1) / 2;
+    const totalPairings = zodiacSigns.length * zodiacSigns.length; // 12 × 12 = 144
 
     for (let i = 0; i < zodiacSigns.length; i++) {
-        for (let j = i; j < zodiacSigns.length; j++) {
+        for (let j = 0; j < zodiacSigns.length; j++) { // Changed from j=i to j=0 for all 144 pairings
             const zodiac1 = zodiacSigns[i];
             const zodiac2 = zodiacSigns[j];
             stats.total++;
