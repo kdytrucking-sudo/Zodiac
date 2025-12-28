@@ -167,64 +167,146 @@ function renderConflictsSection(type) {
     `;
 }
 
-// Render gender modifiers section
+// Render gender-specific data section (new structure)
 function renderGenderModifiersSection() {
-    const genderModifiers = currentData.genderModifiers || {
-        'male-male': { romanceScoreAdjustment: 0, businessScoreAdjustment: 0, notes: '' },
-        'female-female': { romanceScoreAdjustment: 0, businessScoreAdjustment: 0, notes: '' },
-        'male-female': { romanceScoreAdjustment: 0, businessScoreAdjustment: 0, notes: '' },
-        'others': { romanceScoreAdjustment: 0, businessScoreAdjustment: 0, notes: '' }
-    };
+    // Get gender-specific matching data
+    const genderSpecificMatching = currentData.genderSpecificMatching || {};
 
     const genderTypes = [
         { key: 'male-male', label: 'Male - Male', icon: 'fa-mars-double' },
-        { key: 'female-female', label: 'Female - Female', icon: 'fa-venus-double' },
         { key: 'male-female', label: 'Male - Female', icon: 'fa-mars-and-venus' },
-        { key: 'others', label: 'Others', icon: 'fa-genderless' }
+        { key: 'male-others', label: 'Male - Others', icon: 'fa-mars' },
+        { key: 'female-female', label: 'Female - Female', icon: 'fa-venus-double' },
+        { key: 'female-others', label: 'Female - Others', icon: 'fa-venus' },
+        { key: 'others-others', label: 'Others - Others', icon: 'fa-genderless' }
     ];
 
     return `
         <div class="form-section">
-            <h3><i class="fas fa-venus-mars"></i> Gender-Based Score Modifiers</h3>
+            <h3><i class="fas fa-venus-mars"></i> Gender-Specific Matching Data</h3>
             <p style="color: #aaa; margin-bottom: 20px; font-size: 14px;">
-                These modifiers adjust the base compatibility scores based on gender combinations. 
-                Positive values increase the score, negative values decrease it.
+                Edit romance and business compatibility data for each gender combination. 
+                Each combination has its own scores, descriptions, and analysis.
             </p>
             
             ${genderTypes.map(type => {
-        const data = genderModifiers[type.key];
+        const genderData = genderSpecificMatching[type.key] || {
+            romance: { score: 70, rating: 'Good', summary: '', detailedAnalysis: '', highlights: [], challenges: [], advice: '' },
+            business: { score: 70, rating: 'Good', summary: '', detailedAnalysis: '', highlights: [], challenges: [], advice: '' }
+        };
+
         return `
-                    <div class="form-section" style="background: rgba(255, 255, 255, 0.02); margin-bottom: 20px;">
-                        <h4 style="color: #fdd56a; margin-bottom: 15px;">
+                    <div class="form-section" style="background: rgba(255, 255, 255, 0.02); margin-bottom: 30px; border: 2px solid rgba(253, 213, 106, 0.2);">
+                        <h4 style="color: #fdd56a; margin-bottom: 20px; font-size: 20px;">
                             <i class="fas ${type.icon}"></i> ${type.label}
                         </h4>
                         
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                            <div class="form-group">
-                                <label>Romance Score Adjustment (-20 to +20)</label>
-                                <input type="number" 
-                                       id="gender_${type.key}_romance" 
-                                       value="${data.romanceScoreAdjustment}" 
-                                       min="-20" 
-                                       max="20" />
+                        <!-- Romance Data -->
+                        <div style="background: rgba(255, 100, 100, 0.05); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h5 style="color: #ff6b9d; margin-bottom: 15px;">
+                                <i class="fas fa-heart"></i> Romance Compatibility
+                            </h5>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                                <div class="form-group">
+                                    <label>Score (0-100)</label>
+                                    <input type="number" 
+                                           id="gender_${type.key}_romance_score" 
+                                           value="${genderData.romance.score}" 
+                                           min="0" 
+                                           max="100" />
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Rating</label>
+                                    <select id="gender_${type.key}_romance_rating">
+                                        <option value="Perfect" ${genderData.romance.rating === 'Perfect' ? 'selected' : ''}>Perfect</option>
+                                        <option value="Excellent" ${genderData.romance.rating === 'Excellent' ? 'selected' : ''}>Excellent</option>
+                                        <option value="Good" ${genderData.romance.rating === 'Good' ? 'selected' : ''}>Good</option>
+                                        <option value="Fair" ${genderData.romance.rating === 'Fair' ? 'selected' : ''}>Fair</option>
+                                        <option value="Poor" ${genderData.romance.rating === 'Poor' ? 'selected' : ''}>Poor</option>
+                                    </select>
+                                </div>
                             </div>
                             
                             <div class="form-group">
-                                <label>Business Score Adjustment (-20 to +20)</label>
-                                <input type="number" 
-                                       id="gender_${type.key}_business" 
-                                       value="${data.businessScoreAdjustment}" 
-                                       min="-20" 
-                                       max="20" />
+                                <label>Summary</label>
+                                <textarea id="gender_${type.key}_romance_summary" rows="3">${genderData.romance.summary}</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Detailed Analysis</label>
+                                <textarea id="gender_${type.key}_romance_detailedAnalysis" rows="5">${genderData.romance.detailedAnalysis}</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Highlights (one per line)</label>
+                                <textarea id="gender_${type.key}_romance_highlights" rows="4">${(genderData.romance.highlights || []).join('\n')}</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Challenges (one per line)</label>
+                                <textarea id="gender_${type.key}_romance_challenges" rows="3">${(genderData.romance.challenges || []).join('\n')}</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Advice</label>
+                                <textarea id="gender_${type.key}_romance_advice" rows="3">${genderData.romance.advice}</textarea>
                             </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label>Notes</label>
-                            <input type="text" 
-                                   id="gender_${type.key}_notes" 
-                                   value="${data.notes}" 
-                                   placeholder="Brief description of this gender combination's dynamics" />
+                        <!-- Business Data -->
+                        <div style="background: rgba(100, 150, 255, 0.05); padding: 20px; border-radius: 10px;">
+                            <h5 style="color: #6b9dff; margin-bottom: 15px;">
+                                <i class="fas fa-briefcase"></i> Business Compatibility
+                            </h5>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                                <div class="form-group">
+                                    <label>Score (0-100)</label>
+                                    <input type="number" 
+                                           id="gender_${type.key}_business_score" 
+                                           value="${genderData.business.score}" 
+                                           min="0" 
+                                           max="100" />
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Rating</label>
+                                    <select id="gender_${type.key}_business_rating">
+                                        <option value="Perfect" ${genderData.business.rating === 'Perfect' ? 'selected' : ''}>Perfect</option>
+                                        <option value="Excellent" ${genderData.business.rating === 'Excellent' ? 'selected' : ''}>Excellent</option>
+                                        <option value="Good" ${genderData.business.rating === 'Good' ? 'selected' : ''}>Good</option>
+                                        <option value="Fair" ${genderData.business.rating === 'Fair' ? 'selected' : ''}>Fair</option>
+                                        <option value="Poor" ${genderData.business.rating === 'Poor' ? 'selected' : ''}>Poor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Summary</label>
+                                <textarea id="gender_${type.key}_business_summary" rows="3">${genderData.business.summary}</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Detailed Analysis</label>
+                                <textarea id="gender_${type.key}_business_detailedAnalysis" rows="5">${genderData.business.detailedAnalysis}</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Highlights (one per line)</label>
+                                <textarea id="gender_${type.key}_business_highlights" rows="4">${(genderData.business.highlights || []).join('\n')}</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Challenges (one per line)</label>
+                                <textarea id="gender_${type.key}_business_challenges" rows="3">${(genderData.business.challenges || []).join('\n')}</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Advice</label>
+                                <textarea id="gender_${type.key}_business_advice" rows="3">${genderData.business.advice}</textarea>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -317,28 +399,63 @@ function collectFormData(type) {
     });
 }
 
-// Collect gender modifiers data
+// Collect gender-specific data (new structure)
 function collectGenderModifiers() {
-    const genderTypes = ['male-male', 'female-female', 'male-female', 'others'];
+    const genderTypes = ['male-male', 'male-female', 'male-others', 'female-female', 'female-others', 'others-others'];
 
-    // Initialize genderModifiers if it doesn't exist
-    if (!currentData.genderModifiers) {
-        currentData.genderModifiers = {};
+    // Initialize genderSpecificMatching if it doesn't exist
+    if (!currentData.genderSpecificMatching) {
+        currentData.genderSpecificMatching = {};
     }
 
     genderTypes.forEach(type => {
-        const romanceEl = document.getElementById(`gender_${type}_romance`);
-        const businessEl = document.getElementById(`gender_${type}_business`);
-        const notesEl = document.getElementById(`gender_${type}_notes`);
+        // Collect Romance data
+        const romanceScore = document.getElementById(`gender_${type}_romance_score`);
+        const romanceRating = document.getElementById(`gender_${type}_romance_rating`);
+        const romanceSummary = document.getElementById(`gender_${type}_romance_summary`);
+        const romanceDetailedAnalysis = document.getElementById(`gender_${type}_romance_detailedAnalysis`);
+        const romanceHighlights = document.getElementById(`gender_${type}_romance_highlights`);
+        const romanceChallenges = document.getElementById(`gender_${type}_romance_challenges`);
+        const romanceAdvice = document.getElementById(`gender_${type}_romance_advice`);
 
-        if (romanceEl && businessEl && notesEl) {
-            currentData.genderModifiers[type] = {
-                romanceScoreAdjustment: parseInt(romanceEl.value) || 0,
-                businessScoreAdjustment: parseInt(businessEl.value) || 0,
-                notes: notesEl.value.trim()
+        // Collect Business data
+        const businessScore = document.getElementById(`gender_${type}_business_score`);
+        const businessRating = document.getElementById(`gender_${type}_business_rating`);
+        const businessSummary = document.getElementById(`gender_${type}_business_summary`);
+        const businessDetailedAnalysis = document.getElementById(`gender_${type}_business_detailedAnalysis`);
+        const businessHighlights = document.getElementById(`gender_${type}_business_highlights`);
+        const businessChallenges = document.getElementById(`gender_${type}_business_challenges`);
+        const businessAdvice = document.getElementById(`gender_${type}_business_advice`);
+
+        if (romanceScore && businessScore) {
+            currentData.genderSpecificMatching[type] = {
+                romance: {
+                    score: parseInt(romanceScore.value) || 70,
+                    rating: romanceRating.value || 'Good',
+                    summary: romanceSummary.value.trim(),
+                    detailedAnalysis: romanceDetailedAnalysis.value.trim(),
+                    highlights: romanceHighlights.value.split('\n').map(h => h.trim()).filter(h => h !== ''),
+                    challenges: romanceChallenges.value.split('\n').map(c => c.trim()).filter(c => c !== ''),
+                    advice: romanceAdvice.value.trim()
+                },
+                business: {
+                    score: parseInt(businessScore.value) || 70,
+                    rating: businessRating.value || 'Good',
+                    summary: businessSummary.value.trim(),
+                    detailedAnalysis: businessDetailedAnalysis.value.trim(),
+                    highlights: businessHighlights.value.split('\n').map(h => h.trim()).filter(h => h !== ''),
+                    challenges: businessChallenges.value.split('\n').map(c => c.trim()).filter(c => c !== ''),
+                    advice: businessAdvice.value.trim()
+                }
             };
         }
     });
+
+    // Update metadata to indicate gender-specific data is present
+    if (!currentData.metadata) {
+        currentData.metadata = {};
+    }
+    currentData.metadata.hasGenderSpecificData = true;
 }
 
 // Switch tab

@@ -217,7 +217,8 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 12px;
             border: 1px solid rgba(253, 213, 106, 0.3);
@@ -226,6 +227,15 @@
             color: #fff;
             font-size: 14px;
             font-family: inherit;
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: #1a1a2e;
+            color: #fff;
         }
 
         .form-group textarea {
@@ -374,13 +384,13 @@
             <!-- Tabs -->
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('romance')">
-                    <i class="fas fa-heart"></i> Romance
+                    <i class="fas fa-heart"></i> Romance (Base)
                 </button>
                 <button class="tab-btn" onclick="switchTab('business')">
-                    <i class="fas fa-briefcase"></i> Business
+                    <i class="fas fa-briefcase"></i> Business (Base)
                 </button>
                 <button class="tab-btn" onclick="switchTab('gender')">
-                    <i class="fas fa-venus-mars"></i> Gender Modifiers
+                    <i class="fas fa-venus-mars"></i> Gender-Specific Data
                 </button>
             </div>
 
@@ -394,7 +404,7 @@
                 <div id="businessContent"></div>
             </div>
 
-            <!-- Gender Modifiers Tab -->
+            <!-- Gender-Specific Data Tab -->
             <div class="tab-content" id="genderTab">
                 <div id="genderContent"></div>
             </div>
