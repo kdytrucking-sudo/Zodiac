@@ -67,7 +67,7 @@ async function checkPremiumStatus(userId) {
         console.error('Error checking premium status:', error);
         state.isPremium = false;
     }
-    
+
     // Refresh display if data is already loaded
     if (state.currentData) {
         console.log('Premium status updated, refreshing display...');
@@ -260,9 +260,13 @@ function updateFreeContent(freeData) {
     const scoreFill = document.querySelector('.score-fill');
 
     if (scoreNumber && scoreLabel && scoreFill) {
-        const score = freeData.matchingScore;
+        let score = freeData.matchingScore;
+
+        // Apply gender modifier if available
+        score = applyGenderModifier(score, state.matchType);
+
         scoreNumber.textContent = `${score}%`;
-        scoreLabel.textContent = freeData.rating;
+        scoreLabel.textContent = getRatingFromScore(score);
 
         // Update circular progress
         const circumference = 2 * Math.PI * 90; // radius = 90
@@ -290,10 +294,55 @@ function updateFreeContent(freeData) {
     }
 }
 
+// Apply gender modifier to score
+function applyGenderModifier(baseScore, matchType) {
+    if (!state.currentData || !state.currentData.genderModifiers) {
+        return baseScore;
+    }
+
+    const gender1 = state.personA.gender;
+    const gender2 = state.personB.gender;
+
+    // Generate gender combination key
+    let genderKey;
+    if (gender1 === 'others' || gender2 === 'others') {
+        genderKey = 'others';
+    } else if (gender1 === gender2) {
+        genderKey = `${gender1}-${gender1}`;
+    } else {
+        genderKey = 'male-female';
+    }
+
+    const modifier = state.currentData.genderModifiers[genderKey];
+    if (!modifier) {
+        console.log('No gender modifier found for:', genderKey);
+        return baseScore;
+    }
+
+    const adjustment = matchType === 'romance'
+        ? modifier.romanceScoreAdjustment
+        : modifier.businessScoreAdjustment;
+
+    const adjustedScore = baseScore + adjustment;
+    console.log(`Gender modifier applied: ${genderKey}, adjustment: ${adjustment}, base: ${baseScore}, final: ${adjustedScore}`);
+
+    // Ensure score stays within 0-100 range
+    return Math.max(0, Math.min(100, adjustedScore));
+}
+
+// Get rating from score
+function getRatingFromScore(score) {
+    if (score >= 90) return 'Perfect';
+    if (score >= 75) return 'Excellent';
+    if (score >= 60) return 'Good';
+    if (score >= 40) return 'Fair';
+    return 'Poor';
+}
+
 // Update premium content (for premium users)
 function updatePremiumContent(premiumData) {
     console.log('Updating premium content with data:', premiumData);
-    
+
     // Update detailed analysis card content
     const analysisCard = document.querySelector('.detailed-analysis-card');
     if (analysisCard && premiumData) {
@@ -319,9 +368,9 @@ function updatePremiumContent(premiumData) {
                     { icon: 'fa-tools', data: premiumData.others2, isConstruction: true }
                 ];
             }
-            
+
             const validSections = sections.filter(s => s.data);
-            
+
             previewContainer.innerHTML = validSections.map(section => `
                 <div class="preview-section unlocked" style="display: flex; align-items: flex-start; gap: 20px; padding: 20px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid ${section.isConstruction ? 'rgba(253, 213, 106, 0.3)' : 'rgba(253, 213, 106, 0.1)'}; ${section.isConstruction ? 'opacity: 0.7; border-style: dashed;' : ''}">
                     <div style="flex-shrink: 0; width: 80px; text-align: center;">
@@ -344,7 +393,7 @@ function updatePremiumContent(premiumData) {
             `).join('');
         }
     }
-    
+
     // Update conflicts with full details
     const conflictPreview = document.querySelector('.conflict-preview');
     if (conflictPreview && premiumData.conflicts) {
@@ -365,12 +414,12 @@ function updatePremiumContent(premiumData) {
             </div>
         `).join('');
     }
-    
+
     // Remove locked state and hide lock elements
     document.querySelectorAll('.premium-locked').forEach(el => el.classList.remove('premium-locked'));
     document.querySelectorAll('.btn-unlock-main').forEach(btn => btn.style.display = 'none');
     document.querySelectorAll('.lock-indicator').forEach(el => el.style.display = 'none');
-    
+
     console.log('Premium content updated successfully');
 }
 

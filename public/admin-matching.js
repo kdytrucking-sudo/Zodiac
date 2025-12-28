@@ -85,6 +85,10 @@ function renderForms() {
         ${renderPremiumSection('business', 'others2', 'Others 2', 'fa-tools')}
         ${renderConflictsSection('business')}
     `;
+
+    // Render Gender Modifiers forms
+    const genderContent = document.getElementById('genderContent');
+    genderContent.innerHTML = renderGenderModifiersSection();
 }
 
 // Render premium section form
@@ -163,6 +167,72 @@ function renderConflictsSection(type) {
     `;
 }
 
+// Render gender modifiers section
+function renderGenderModifiersSection() {
+    const genderModifiers = currentData.genderModifiers || {
+        'male-male': { romanceScoreAdjustment: 0, businessScoreAdjustment: 0, notes: '' },
+        'female-female': { romanceScoreAdjustment: 0, businessScoreAdjustment: 0, notes: '' },
+        'male-female': { romanceScoreAdjustment: 0, businessScoreAdjustment: 0, notes: '' },
+        'others': { romanceScoreAdjustment: 0, businessScoreAdjustment: 0, notes: '' }
+    };
+
+    const genderTypes = [
+        { key: 'male-male', label: 'Male - Male', icon: 'fa-mars-double' },
+        { key: 'female-female', label: 'Female - Female', icon: 'fa-venus-double' },
+        { key: 'male-female', label: 'Male - Female', icon: 'fa-mars-and-venus' },
+        { key: 'others', label: 'Others', icon: 'fa-genderless' }
+    ];
+
+    return `
+        <div class="form-section">
+            <h3><i class="fas fa-venus-mars"></i> Gender-Based Score Modifiers</h3>
+            <p style="color: #aaa; margin-bottom: 20px; font-size: 14px;">
+                These modifiers adjust the base compatibility scores based on gender combinations. 
+                Positive values increase the score, negative values decrease it.
+            </p>
+            
+            ${genderTypes.map(type => {
+        const data = genderModifiers[type.key];
+        return `
+                    <div class="form-section" style="background: rgba(255, 255, 255, 0.02); margin-bottom: 20px;">
+                        <h4 style="color: #fdd56a; margin-bottom: 15px;">
+                            <i class="fas ${type.icon}"></i> ${type.label}
+                        </h4>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div class="form-group">
+                                <label>Romance Score Adjustment (-20 to +20)</label>
+                                <input type="number" 
+                                       id="gender_${type.key}_romance" 
+                                       value="${data.romanceScoreAdjustment}" 
+                                       min="-20" 
+                                       max="20" />
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Business Score Adjustment (-20 to +20)</label>
+                                <input type="number" 
+                                       id="gender_${type.key}_business" 
+                                       value="${data.businessScoreAdjustment}" 
+                                       min="-20" 
+                                       max="20" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <input type="text" 
+                                   id="gender_${type.key}_notes" 
+                                   value="${data.notes}" 
+                                   placeholder="Brief description of this gender combination's dynamics" />
+                        </div>
+                    </div>
+                `;
+    }).join('')}
+        </div>
+    `;
+}
+
 // Add highlight
 window.addHighlight = function (containerId) {
     const container = document.getElementById(containerId);
@@ -188,6 +258,7 @@ window.saveData = async function () {
         // Collect data from forms
         collectFormData('romance');
         collectFormData('business');
+        collectGenderModifiers();
 
         // Update metadata
         currentData.metadata.updatedAt = new Date().toISOString();
@@ -242,6 +313,30 @@ function collectFormData(type) {
             conflict.severity = parseInt(severityEl.value);
             conflict.description = descEl.value;
             conflict.resolution = resEl.value;
+        }
+    });
+}
+
+// Collect gender modifiers data
+function collectGenderModifiers() {
+    const genderTypes = ['male-male', 'female-female', 'male-female', 'others'];
+
+    // Initialize genderModifiers if it doesn't exist
+    if (!currentData.genderModifiers) {
+        currentData.genderModifiers = {};
+    }
+
+    genderTypes.forEach(type => {
+        const romanceEl = document.getElementById(`gender_${type}_romance`);
+        const businessEl = document.getElementById(`gender_${type}_business`);
+        const notesEl = document.getElementById(`gender_${type}_notes`);
+
+        if (romanceEl && businessEl && notesEl) {
+            currentData.genderModifiers[type] = {
+                romanceScoreAdjustment: parseInt(romanceEl.value) || 0,
+                businessScoreAdjustment: parseInt(businessEl.value) || 0,
+                notes: notesEl.value.trim()
+            };
         }
     });
 }
