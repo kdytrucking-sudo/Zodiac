@@ -546,55 +546,109 @@ function updatePremiumPreview(premiumData) {
 function updatePremiumContentGenderSpecific(genderData) {
     console.log('Updating premium content with gender-specific data:', genderData);
 
+    // Check if premium data exists
+    if (!genderData.premium) {
+        console.warn('No premium data found in gender-specific data');
+        return;
+    }
+
+    const premiumData = genderData.premium;
+
     // Update detailed analysis card content
     const analysisCard = document.querySelector('.detailed-analysis-card');
-    if (analysisCard && genderData) {
+    if (analysisCard) {
         const previewContainer = analysisCard.querySelector('.premium-content-preview');
         if (previewContainer) {
-            previewContainer.innerHTML = `
-                <div class="preview-section unlocked" style="padding: 20px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid rgba(253, 213, 106, 0.1);">
-                    <div class="section-info">
-                        <h4 style="margin: 0 0 15px 0; color: #fdd56a; font-size: 20px;">
-                            <i class="fas fa-heart-pulse"></i> Detailed Analysis
-                        </h4>
-                        <p style="margin: 0 0 15px 0; color: #ccc; line-height: 1.8; font-size: 15px;">
-                            ${genderData.detailedAnalysis}
-                        </p>
-                        
-                        <h5 style="margin: 20px 0 10px 0; color: #fdd56a; font-size: 16px;">
-                            <i class="fas fa-star"></i> Key Highlights
-                        </h5>
-                        <ul class="section-highlights" style="margin: 0 0 15px 0; padding-left: 20px; color: #aaa;">
-                            ${genderData.highlights.map(h => `<li style="margin: 8px 0; line-height: 1.6;">${h}</li>`).join('')}
-                        </ul>
-                        
-                        ${genderData.challenges ? `
-                            <h5 style="margin: 20px 0 10px 0; color: #ff9800; font-size: 16px;">
-                                <i class="fas fa-exclamation-triangle"></i> Potential Challenges
-                            </h5>
-                            <ul class="section-challenges" style="margin: 0 0 15px 0; padding-left: 20px; color: #aaa;">
-                                ${genderData.challenges.map(c => `<li style="margin: 8px 0; line-height: 1.6;">${c}</li>`).join('')}
-                            </ul>
-                        ` : ''}
-                        
-                        ${genderData.advice ? `
-                            <h5 style="margin: 20px 0 10px 0; color: #4CAF50; font-size: 16px;">
-                                <i class="fas fa-lightbulb"></i> Advice
-                            </h5>
-                            <p style="margin: 0; color: #ccc; line-height: 1.8; font-size: 15px;">
-                                ${genderData.advice}
+            // Select sections based on match type
+            let sections;
+            if (state.matchType === 'romance') {
+                sections = [
+                    { icon: 'fa-heart-pulse', key: 'emotionalCompatibility', data: premiumData.emotionalCompatibility },
+                    { icon: 'fa-brain', key: 'intellectualAlignment', data: premiumData.intellectualAlignment },
+                    { icon: 'fa-chart-line', key: 'longTermPotential', data: premiumData.longTermPotential },
+                    { icon: 'fa-tools', key: 'others1', data: premiumData.others1, isBackup: true },
+                    { icon: 'fa-tools', key: 'others2', data: premiumData.others2, isBackup: true }
+                ];
+            } else {
+                // business
+                sections = [
+                    { icon: 'fa-briefcase', key: 'workStyleCompatibility', data: premiumData.workStyleCompatibility },
+                    { icon: 'fa-users', key: 'leadershipDynamics', data: premiumData.leadershipDynamics },
+                    { icon: 'fa-dollar-sign', key: 'financialAlignment', data: premiumData.financialAlignment },
+                    { icon: 'fa-tools', key: 'others1', data: premiumData.others1, isBackup: true },
+                    { icon: 'fa-tools', key: 'others2', data: premiumData.others2, isBackup: true }
+                ];
+            }
+
+            const validSections = sections.filter(s => s.data && s.data.title);
+
+            previewContainer.innerHTML = validSections.map(section => {
+                const isEmpty = !section.data.title && !section.data.content;
+                const isConstruction = section.isBackup || isEmpty;
+
+                return `
+                    <div class="preview-section unlocked" style="display: flex; align-items: flex-start; gap: 20px; padding: 20px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid ${isConstruction ? 'rgba(253, 213, 106, 0.3)' : 'rgba(253, 213, 106, 0.1)'}; ${isConstruction ? 'opacity: 0.7; border-style: dashed;' : ''}">
+                        <div style="flex-shrink: 0; width: 80px; text-align: center;">
+                            <div class="section-icon" style="width: 60px; height: 60px; background: rgba(253, 213, 106, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
+                                <i class="fas ${section.icon}" style="font-size: 24px; color: #fdd56a;"></i>
+                            </div>
+                            <div class="section-score" style="font-weight: bold; color: #fdd56a; font-size: 18px;">
+                                ${section.data.score || 0}
+                            </div>
+                            <div style="font-size: 12px; color: #888; margin-top: 2px;">/ 100</div>
+                        </div>
+                        <div class="section-info" style="flex: 1; min-width: 0;">
+                            <h4 style="margin: 0 0 10px 0; color: #fff; font-size: 18px;">
+                                ${section.data.title || 'Coming Soon'} ${isConstruction ? '🚧' : ''}
+                            </h4>
+                            <p style="margin: 0 0 12px 0; color: #ccc; line-height: 1.6;">
+                                ${section.data.content || 'Content under development - Stay tuned!'}
                             </p>
+                            ${section.data.highlights && section.data.highlights.length > 0 ? `
+                                <ul class="section-highlights" style="margin: 0; padding-left: 20px; color: #aaa;">
+                                    ${section.data.highlights.map(h => `<li style="margin: 5px 0;">${h}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    // Update conflicts with gender-specific data
+    const conflictCard = document.querySelector('.conflict-analysis-card');
+    const conflictPreview = document.querySelector('.conflict-preview');
+
+    if (conflictCard && conflictPreview && premiumData.conflicts) {
+        // Show conflicts card
+        conflictCard.style.display = 'block';
+
+        // Filter and display conflicts
+        const validConflicts = premiumData.conflicts.filter(c => c.type || c.description);
+
+        conflictPreview.innerHTML = validConflicts.map(conflict => {
+            const isEmpty = !conflict.type && !conflict.description;
+            const isConstruction = isEmpty || conflict.description === 'On Construction';
+
+            return `
+                <div class="conflict-item-preview unlocked" style="${isConstruction ? 'opacity: 0.7; border: 1px dashed rgba(253, 213, 106, 0.3);' : ''}">
+                    <div class="conflict-bar-wrapper">
+                        <div class="conflict-bar-bg">
+                            <div class="conflict-bar-fill" style="width: ${conflict.severity || 0}%;"></div>
+                        </div>
+                        <span class="conflict-percentage">${conflict.severity || 0}%</span>
+                    </div>
+                    <div class="conflict-details">
+                        <h5>${conflict.type || 'Coming Soon'} ${isConstruction ? '🚧' : ''}</h5>
+                        <p><strong>Issue:</strong> ${conflict.description || 'Content under development - Coming soon!'}</p>
+                        ${conflict.resolution && !isConstruction ? `
+                            <p style="margin-top: 10px;"><strong>Resolution:</strong> ${conflict.resolution}</p>
                         ` : ''}
                     </div>
                 </div>
             `;
-        }
-    }
-
-    // Hide conflicts section for gender-specific data (or show if available)
-    const conflictCard = document.querySelector('.conflict-analysis-card');
-    if (conflictCard) {
-        conflictCard.style.display = 'none'; // Hide for now as gender-specific data doesn't have conflicts structure
+        }).join('');
     }
 
     // Remove locked state and hide lock elements
