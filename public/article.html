@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Articles - Larak's Zodiac</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <div id="navbar-placeholder"></div>
+
+    <main class="article-page">
+        <!-- Page Header -->
+        <header class="page-header">
+            <div class="header-content">
+                <h1><i class="fas fa-newspaper"></i> Zodiac Articles</h1>
+                <p class="subtitle">Explore insights, stories, and wisdom about Chinese Zodiac</p>
+            </div>
+        </header>
+
+        <!-- Filter Section -->
+        <section class="filter-section">
+            <div class="filter-container">
+                <!-- Compact Filter Row -->
+                <div class="filter-row-compact">
+                    <!-- Category Filter Toggle -->
+                    <div class="filter-toggle" id="category-toggle">
+                        <i class="fas fa-filter"></i>
+                        <span class="filter-label">Category:</span>
+                        <span class="filter-current" id="category-current">All</span>
+                        <i class="fas fa-chevron-right toggle-icon"></i>
+                    </div>
+
+                    <!-- Zodiac Filter Toggle -->
+                    <div class="filter-toggle" id="zodiac-toggle">
+                        <i class="fas fa-paw"></i>
+                        <span class="filter-label">Zodiac Sign:</span>
+                        <span class="filter-current" id="zodiac-current">All</span>
+                        <i class="fas fa-chevron-right toggle-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Category Filter Panel (Slide-out) -->
+                <div class="filter-panel" id="category-panel">
+                    <div class="filter-panel-header">
+                        <h4><i class="fas fa-filter"></i> Select Category</h4>
+                        <button class="close-panel" data-panel="category-panel">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="filter-buttons" id="category-filter">
+                        <button class="filter-btn active" data-category="all">All</button>
+                        <button class="filter-btn" data-category="fortune">Fortune</button>
+                        <button class="filter-btn" data-category="culture">Culture</button>
+                        <button class="filter-btn" data-category="lifestyle">Lifestyle</button>
+                        <button class="filter-btn" data-category="compatibility">Compatibility</button>
+                        <button class="filter-btn" data-category="history">History</button>
+                        <button class="filter-btn" data-category="basics">Basics</button>
+                        <button class="filter-btn" data-category="calendar">Calendar</button>
+                        <button class="filter-btn" data-category="legend">Legend</button>
+                    </div>
+                </div>
+
+                <!-- Zodiac Filter Panel (Slide-out) -->
+                <div class="filter-panel" id="zodiac-panel">
+                    <div class="filter-panel-header">
+                        <h4><i class="fas fa-paw"></i> Select Zodiac Sign</h4>
+                        <button class="close-panel" data-panel="zodiac-panel">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="filter-buttons" id="zodiac-filter">
+                        <button class="filter-btn active" data-zodiac="all">All</button>
+                        <button class="filter-btn" data-zodiac="rat">Rat</button>
+                        <button class="filter-btn" data-zodiac="ox">Ox</button>
+                        <button class="filter-btn" data-zodiac="tiger">Tiger</button>
+                        <button class="filter-btn" data-zodiac="rabbit">Rabbit</button>
+                        <button class="filter-btn" data-zodiac="dragon">Dragon</button>
+                        <button class="filter-btn" data-zodiac="snake">Snake</button>
+                        <button class="filter-btn" data-zodiac="horse">Horse</button>
+                        <button class="filter-btn" data-zodiac="goat">Goat</button>
+                        <button class="filter-btn" data-zodiac="monkey">Monkey</button>
+                        <button class="filter-btn" data-zodiac="rooster">Rooster</button>
+                        <button class="filter-btn" data-zodiac="dog">Dog</button>
+                        <button class="filter-btn" data-zodiac="pig">Pig</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Articles Grid -->
+        <section class="articles-section">
+            <div class="articles-container">
+                <div id="articles-grid" class="articles-grid">
+                    <!-- Loading indicator -->
+                    <div class="loading-indicator">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading articles...</p>
+                    </div>
+                </div>
+
+                <!-- No Results Message -->
+                <div id="no-results" class="no-results" style="display: none;">
+                    <i class="fas fa-search"></i>
+                    <h3>No Articles Found</h3>
+                    <p>Try adjusting your filters to see more results.</p>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div id="pagination-controls" class="pagination-controls"
+                    style="display: none; text-align: center; margin-top: 2rem;">
+                    <button id="prev-page" class="theme-btn secondary-btn" style="margin-right: 10px;" disabled>
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    <span id="page-indicator" style="margin: 0 15px; font-weight: bold; color: var(--text-color);">Page
+                        1</span>
+                    <button id="next-page" class="theme-btn secondary-btn" style="margin-left: 10px;">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <script type="module" src="article.js"></script>
+    <script type="module" src="navbar.js"></script>
+    <script type="module" src="footer.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,186 @@
+{
+    "name": "创建文章 - Firebase REST API",
+    "nodes": [
+        {
+            "parameters": {},
+            "id": "1",
+            "name": "手动触发",
+            "type": "n8n-nodes-base.manualTrigger",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "// 生成唯一的文章 ID\nconst timestamp = Date.now();\nconst random = Math.random().toString(36).substring(2, 8);\nconst articleId = `article_${timestamp}_${random}`;\n\n// 获取当前时间（ISO 8601 格式）\nconst currentTime = new Date().toISOString();\n\n// 文章数据（可以从上一个节点获取，这里是示例）\nconst title = \"2025年龙年运势完整解析\";\nconst content = \"龙年是一个充满机遇和挑战的年份。在2025年，属龙的人将迎来事业上的重大突破。财运方面表现稳健，但需要注意理财规划。感情方面，单身者有望遇到心仪对象，已婚者需要多花时间陪伴家人。健康方面整体良好，但要注意劳逸结合。本年度的幸运色是金色和红色，幸运数字是3和8。\";\n\n// 格式化为 Firestore 文档格式\nconst firestoreDocument = {\n  fields: {\n    title: { stringValue: title },\n    content: { stringValue: content },\n    category: { stringValue: \"fortune\" },\n    zodiacSign: { stringValue: \"dragon\" },\n    source: { stringValue: \"N8N AI Generator\" },\n    keywords: {\n      arrayValue: {\n        values: [\n          { stringValue: \"龙年\" },\n          { stringValue: \"运势\" },\n          { stringValue: \"2025\" },\n          { stringValue: \"生肖\" }\n        ]\n      }\n    },\n    viewCount: { integerValue: \"0\" },\n    favoriteCount: { integerValue: \"0\" },\n    commentCount: { integerValue: \"0\" },\n    created_at: { stringValue: currentTime },\n    updated_at: { stringValue: currentTime },\n    metadata: {\n      mapValue: {\n        fields: {\n          createdBy: { stringValue: \"n8n\" },\n          createdVia: { stringValue: \"workflow\" },\n          workflowId: { stringValue: $workflow.id }\n        }\n      }\n    }\n  }\n};\n\nreturn {\n  json: {\n    articleId: articleId,\n    document: firestoreDocument,\n    title: title\n  }\n};"
+            },
+            "id": "2",
+            "name": "格式化数据",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "=https://firestore.googleapis.com/v1/projects/studio-4395392521-1abeb/databases/zodia1/documents/articles?documentId={{ $json.articleId }}&key=AIzaSyDBk4Qspp1eBT1rkUhmffWLf4a4kAF26gU",
+                "options": {},
+                "bodyParametersJson": "={{ JSON.stringify($json.document) }}"
+            },
+            "id": "3",
+            "name": "创建文章",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.name }}",
+                            "operation": "isNotEmpty"
+                        }
+                    ]
+                }
+            },
+            "id": "4",
+            "name": "检查结果",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                850,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "values": {
+                    "string": [
+                        {
+                            "name": "status",
+                            "value": "success"
+                        },
+                        {
+                            "name": "message",
+                            "value": "文章创建成功"
+                        },
+                        {
+                            "name": "articleId",
+                            "value": "={{ $('格式化数据').item.json.articleId }}"
+                        },
+                        {
+                            "name": "title",
+                            "value": "={{ $('格式化数据').item.json.title }}"
+                        },
+                        {
+                            "name": "url",
+                            "value": "=http://localhost:8080/article-detail.html?id={{ $('格式化数据').item.json.articleId }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "5",
+            "name": "成功",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 1,
+            "position": [
+                1050,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "values": {
+                    "string": [
+                        {
+                            "name": "status",
+                            "value": "error"
+                        },
+                        {
+                            "name": "message",
+                            "value": "文章创建失败"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "6",
+            "name": "失败",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 1,
+            "position": [
+                1050,
+                400
+            ]
+        }
+    ],
+    "connections": {
+        "手动触发": {
+            "main": [
+                [
+                    {
+                        "node": "格式化数据",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "格式化数据": {
+            "main": [
+                [
+                    {
+                        "node": "创建文章",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "创建文章": {
+            "main": [
+                [
+                    {
+                        "node": "检查结果",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "检查结果": {
+            "main": [
+                [
+                    {
+                        "node": "成功",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "失败",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {},
+    "staticData": null,
+    "tags": [],
+    "triggerCount": 0,
+    "updatedAt": "2024-01-15T12:00:00.000Z",
+    "versionId": "1"
+}

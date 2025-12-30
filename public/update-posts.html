@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Forum Posts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #2196F3;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        #log {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔧 Update Forum Posts</h1>
+
+        <div class="info">
+            <strong>ℹ️ What does this do?</strong>
+            <p>This tool adds the <code>lastReplyAt</code> field to existing forum posts that don't have it. This field
+                is required for the new sorting feature.</p>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Important:</strong>
+            <ul>
+                <li>This only needs to be run <strong>once</strong></li>
+                <li>It will update all existing posts in the database</li>
+                <li>New posts will automatically have this field</li>
+            </ul>
+        </div>
+
+        <button id="updateBtn" onclick="updateExistingPosts()">
+            🚀 Update Existing Posts
+        </button>
+
+        <div id="log"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js';
+        import { getFirestore, collection, getDocs, doc, updateDoc, Timestamp } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXhq0_wWjhQKOTlvTWJzYyOBDrUxPjMJg",
+            authDomain: "zodia1.firebaseapp.com",
+            projectId: "zodia1",
+            storageBucket: "zodia1.firebasestorage.app",
+            messagingSenderId: "1050720827671",
+            appId: "1:1050720827671:web:b8b8e0b0f0b0b0b0b0b0b0",
+            measurementId: "G-XXXXXXXXXX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${time}] ${message}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        window.updateExistingPosts = async function () {
+            const btn = document.getElementById('updateBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Updating...';
+
+            document.getElementById('log').innerHTML = '';
+            log('🚀 Starting to update existing posts...');
+
+            try {
+                const postsRef = collection(db, 'forum-posts');
+                const querySnapshot = await getDocs(postsRef);
+
+                log(`📊 Found ${querySnapshot.size} posts in database`);
+
+                let updated = 0;
+                let skipped = 0;
+
+                for (const docSnapshot of querySnapshot.docs) {
+                    const postData = docSnapshot.data();
+
+                    // If post doesn't have lastReplyAt, add it
+                    if (!postData.lastReplyAt) {
+                        const postRef = doc(db, 'forum-posts', docSnapshot.id);
+
+                        // Use createdAt as initial lastReplyAt
+                        const lastReplyAt = postData.createdAt || Timestamp.now();
+
+                        await updateDoc(postRef, {
+                            lastReplyAt: lastReplyAt
+                        });
+
+                        updated++;
+                        log(`✅ Updated: ${postData.title || 'Untitled'}`);
+                    } else {
+                        skipped++;
+                    }
+                }
+
+                log(`\n🎉 Update complete!`);
+                log(`✅ Updated: ${updated} posts`);
+                log(`⏭️  Skipped: ${skipped} posts (already have lastReplyAt)`);
+
+                alert(`✅ Successfully updated ${updated} posts!\n\nYou can now close this page and refresh the forum.`);
+
+                btn.textContent = '✅ Update Complete!';
+                btn.style.background = '#4CAF50';
+            } catch (error) {
+                console.error('Error updating posts:', error);
+                log(`❌ Error: ${error.message}`);
+                alert('❌ Error: ' + error.message);
+
+                btn.disabled = false;
+                btn.textContent = '🔄 Try Again';
+                btn.style.background = '#f44336';
+            }
+        };
+    </script>
+</body>
+
+</html>

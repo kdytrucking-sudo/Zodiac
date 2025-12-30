@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum - Larak's Zodiac</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <div id="navbar-placeholder"></div>
+
+    <main class="forum-page">
+        <!-- Page Header -->
+        <header class="page-header">
+            <div class="header-content">
+                <h1><i class="fas fa-comments"></i> Community Forum</h1>
+                <p class="subtitle">Share your thoughts, ask questions, and connect with fellow zodiac enthusiasts</p>
+            </div>
+        </header>
+
+        <!-- Forum Sections -->
+        <section class="forum-sections">
+            <div class="forum-container">
+                <!-- Section Tabs -->
+                <div class="forum-tabs">
+                    <button class="forum-tab active" data-section="customer-service">
+                        <i class="fas fa-headset"></i>
+                        <span>Customer Service</span>
+                        <span class="tab-count" id="cs-count">0</span>
+                    </button>
+                    <button class="forum-tab" data-section="general-discussion">
+                        <i class="fas fa-users"></i>
+                        <span>General Discussion</span>
+                        <span class="tab-count" id="gd-count">0</span>
+                    </button>
+                </div>
+
+                <!-- New Post Button -->
+                <div class="new-post-section">
+                    <button class="btn-new-post" id="new-post-btn">
+                        <i class="fas fa-plus"></i> New Post
+                    </button>
+                    <p class="login-hint" id="login-hint" style="display: none;">
+                        <i class="fas fa-info-circle"></i> Please <a href="login.html">login</a> to create a new post
+                    </p>
+                </div>
+
+                <!-- Posts Container -->
+                <div class="posts-container">
+                    <!-- Loading indicator -->
+                    <div class="loading-indicator" id="loading-indicator">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading posts...</p>
+                    </div>
+
+                    <!-- Posts Grid -->
+                    <div id="posts-grid" class="posts-grid" style="display: none;">
+                        <!-- Posts will be dynamically inserted here -->
+                    </div>
+
+                    <!-- No Posts Message -->
+                    <div id="no-posts" class="no-posts" style="display: none;">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No Posts Yet</h3>
+                        <p>Be the first to start a discussion in this section!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- New Post Modal -->
+    <div id="new-post-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Create New Post</h2>
+                <button class="modal-close" id="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="new-post-form" class="modal-form">
+                <div class="form-group">
+                    <label for="post-section">
+                        <i class="fas fa-folder"></i> Section
+                    </label>
+                    <select id="post-section" required>
+                        <option value="customer-service">Customer Service</option>
+                        <option value="general-discussion">General Discussion</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-zodiac">
+                        <i class="fas fa-paw"></i> Related Zodiac Sign (Optional)
+                    </label>
+                    <select id="post-zodiac">
+                        <option value="">None - Not related to any zodiac</option>
+                        <option value="rat">🐀 Rat (鼠)</option>
+                        <option value="ox">🐂 Ox (牛)</option>
+                        <option value="tiger">🐅 Tiger (虎)</option>
+                        <option value="rabbit">🐇 Rabbit (兔)</option>
+                        <option value="dragon">🐉 Dragon (龙)</option>
+                        <option value="snake">🐍 Snake (蛇)</option>
+                        <option value="horse">🐴 Horse (马)</option>
+                        <option value="goat">🐐 Goat (羊)</option>
+                        <option value="monkey">🐵 Monkey (猴)</option>
+                        <option value="rooster">🐓 Rooster (鸡)</option>
+                        <option value="dog">🐕 Dog (狗)</option>
+                        <option value="pig">🐖 Pig (猪)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-title">
+                        <i class="fas fa-heading"></i> Title
+                    </label>
+                    <input type="text" id="post-title" placeholder="Enter your post title" required maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="post-content">
+                        <i class="fas fa-align-left"></i> Content
+                    </label>
+                    <textarea id="post-content" placeholder="Share your thoughts..." required rows="8"
+                        maxlength="2000"></textarea>
+                    <span class="char-count"><span id="content-count">0</span>/2000</span>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancel-btn">Cancel</button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane"></i> Post
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Post Detail Modal -->
+    <div id="post-detail-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="detail-title">Post Title</h2>
+                <button class="modal-close" id="detail-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="post-detail-meta">
+                    <span class="post-author">
+                        <i class="fas fa-user"></i> <span id="detail-author">Author</span>
+                    </span>
+                    <span class="post-date">
+                        <i class="fas fa-clock"></i> <span id="detail-date">Date</span>
+                    </span>
+                    <span class="post-section-badge" id="detail-section-badge">Section</span>
+                    <span class="post-zodiac-badge" id="detail-zodiac-badge" style="display: none;">
+                        <i class="fas fa-paw"></i> <span id="detail-zodiac-name">Zodiac</span>
+                    </span>
+                </div>
+                <div class="post-detail-content" id="detail-content">
+                    Post content will appear here...
+                </div>
+                <div class="post-detail-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-eye"></i> <span id="detail-views">0</span> views
+                    </span>
+                </div>
+                <div class="post-detail-actions">
+                    <button class="btn-like" id="detail-like-btn">
+                        <i class="far fa-heart"></i> <span id="detail-likes">0</span>
+                    </button>
+                </div>
+
+                <!-- Replies Section -->
+                <div class="replies-section" style="display: block;">
+                    <h3 class="replies-title">
+                        <i class="fas fa-comments"></i> Replies (<span id="replies-count">0</span>)
+                    </h3>
+
+                    <!-- Reply Form -->
+                    <div class="reply-form-container" id="reply-form-container">
+                        <form id="reply-form" class="reply-form">
+                            <textarea id="reply-content" placeholder="Write a reply..." rows="3" maxlength="500"
+                                required></textarea>
+                            <div class="reply-form-actions">
+                                <span class="char-count"><span id="reply-count">0</span>/500</span>
+                                <button type="submit" class="btn-reply">
+                                    <i class="fas fa-paper-plane"></i> Reply
+                                </button>
+                            </div>
+                        </form>
+                        <p class="reply-login-hint" id="reply-login-hint" style="display: none;">
+                            <i class="fas fa-info-circle"></i> Please <a href="login.html">login</a> to reply
+                        </p>
+                    </div>
+
+                    <!-- Replies List -->
+                    <div id="replies-list" class="replies-list">
+                        <!-- Replies will be dynamically inserted here -->
+                    </div>
+
+                    <!-- No Replies Message -->
+                    <div id="no-replies" class="no-replies">
+                        <i class="fas fa-comment-slash"></i>
+                        <p>No replies yet. Be the first to reply!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <script type="module" src="forum.js"></script>
+    <script type="module" src="navbar.js"></script>
+    <script type="module" src="footer.js"></script>
+</body>
+
+</html>
