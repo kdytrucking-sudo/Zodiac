@@ -295,6 +295,44 @@
             color: #f44336;
             display: none;
         }
+
+        .floating-save-btn {
+            position: fixed;
+            bottom: 150px;
+            right: 40px;
+            background: linear-gradient(135deg, #fdd56a 0%, #f9a825 100%);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 60px;
+            padding: 20px 35px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(253, 213, 106, 0.5);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .floating-save-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(253, 213, 106, 0.7);
+            background: linear-gradient(135deg, #f9a825 0%, #fdd56a 100%);
+        }
+
+        .floating-save-btn:active {
+            transform: translateY(0) scale(1);
+        }
+
+        .floating-save-btn i {
+            font-size: 22px;
+        }
+
+        .floating-save-btn span {
+            font-size: 18px;
+        }
     </style>
 </head>
 
@@ -329,46 +367,62 @@
 
             <!-- Selector Section -->
             <div class="selector-section">
-                <h2 style="color: #fdd56a; margin-bottom: 15px;">Select Zodiac Pair</h2>
-                <div class="selector-grid">
-                    <div>
-                        <label>Zodiac 1</label>
-                        <select id="zodiac1Select">
-                            <option value="Rat">Rat</option>
-                            <option value="Ox">Ox</option>
-                            <option value="Tiger">Tiger</option>
-                            <option value="Rabbit" selected>Rabbit</option>
-                            <option value="Dragon">Dragon</option>
-                            <option value="Snake">Snake</option>
-                            <option value="Horse">Horse</option>
-                            <option value="Goat">Goat</option>
-                            <option value="Monkey">Monkey</option>
-                            <option value="Rooster">Rooster</option>
-                            <option value="Dog">Dog</option>
-                            <option value="Pig">Pig</option>
-                        </select>
+                <h2 style="color: #fdd56a; margin-bottom: 15px;">Select Zodiac Pair & Gender Combination</h2>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div class="selector-grid" style="flex: 1;">
+                        <div>
+                            <label>Primary Zodiac</label>
+                            <select id="zodiac1Select">
+                                <option value="Rat">Rat</option>
+                                <option value="Ox">Ox</option>
+                                <option value="Tiger">Tiger</option>
+                                <option value="Rabbit" selected>Rabbit</option>
+                                <option value="Dragon">Dragon</option>
+                                <option value="Snake">Snake</option>
+                                <option value="Horse">Horse</option>
+                                <option value="Goat">Goat</option>
+                                <option value="Monkey">Monkey</option>
+                                <option value="Rooster">Rooster</option>
+                                <option value="Dog">Dog</option>
+                                <option value="Pig">Pig</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Primary Gender</label>
+                            <select id="gender1Select">
+                                <option value="male">Male</option>
+                                <option value="female" selected>Female</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Partner Zodiac</label>
+                            <select id="zodiac2Select">
+                                <option value="Rat">Rat</option>
+                                <option value="Ox">Ox</option>
+                                <option value="Tiger">Tiger</option>
+                                <option value="Rabbit">Rabbit</option>
+                                <option value="Dragon">Dragon</option>
+                                <option value="Snake" selected>Snake</option>
+                                <option value="Horse">Horse</option>
+                                <option value="Goat">Goat</option>
+                                <option value="Monkey">Monkey</option>
+                                <option value="Rooster">Rooster</option>
+                                <option value="Dog">Dog</option>
+                                <option value="Pig">Pig</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Partner Gender</label>
+                            <select id="gender2Select">
+                                <option value="male">Male</option>
+                                <option value="female" selected>Female</option>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <label>Zodiac 2</label>
-                        <select id="zodiac2Select">
-                            <option value="Rat">Rat</option>
-                            <option value="Ox">Ox</option>
-                            <option value="Tiger">Tiger</option>
-                            <option value="Rabbit">Rabbit</option>
-                            <option value="Dragon">Dragon</option>
-                            <option value="Snake" selected>Snake</option>
-                            <option value="Horse">Horse</option>
-                            <option value="Goat">Goat</option>
-                            <option value="Monkey">Monkey</option>
-                            <option value="Rooster">Rooster</option>
-                            <option value="Dog">Dog</option>
-                            <option value="Pig">Pig</option>
-                        </select>
-                    </div>
+                    <button class="load-btn" onclick="loadData()" style="align-self: flex-end; margin-bottom: 0;">
+                        <i class="fas fa-download"></i> Load Data
+                    </button>
                 </div>
-                <button class="load-btn" onclick="loadData()">
-                    <i class="fas fa-download"></i> Load Data
-                </button>
             </div>
 
             <!-- Tabs -->
@@ -396,6 +450,12 @@
             </button>
         </div>
     </div>
+
+    <!-- Floating Save Button -->
+    <button class="floating-save-btn" onclick="saveData()" title="Save All Changes">
+        <i class="fas fa-save"></i>
+        <span>Save</span>
+    </button>
 
     <script type="module" src="admin-matching.js"></script>
 </body>

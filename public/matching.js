@@ -67,7 +67,7 @@ async function checkPremiumStatus(userId) {
         console.error('Error checking premium status:', error);
         state.isPremium = false;
     }
-    
+
     // Refresh display if data is already loaded
     if (state.currentData) {
         console.log('Premium status updated, refreshing display...');
@@ -218,11 +218,22 @@ function showError(message) {
     alert(message);
 }
 
+
 // Update display with current data
 function updateDisplay() {
     if (!state.currentData) return;
 
-    const matchData = state.currentData[state.matchType]; // 'romance' or 'business'
+    // Calculate gender combination key
+    const genderKey = getGenderKey(state.personA.gender, state.personB.gender);
+    console.log('Gender combination:', genderKey);
+
+    // Get gender-specific data
+    const matchData = state.currentData[state.matchType][genderKey]; // e.g., romance['male-male']
+
+    if (!matchData) {
+        console.error('No data found for gender combination:', genderKey);
+        return;
+    }
 
     // Update zodiac pair name
     updatePairName();
@@ -242,6 +253,13 @@ function updateDisplay() {
 
     // Update UI based on premium status
     updatePremiumUI();
+}
+
+// Get gender combination key
+function getGenderKey(gender1, gender2) {
+    if (gender1 === 'male' && gender2 === 'male') return 'male-male';
+    if (gender1 === 'female' && gender2 === 'female') return 'female-female';
+    return 'male-female';  // covers male-female and female-male
 }
 
 // Update pair name display
@@ -293,7 +311,7 @@ function updateFreeContent(freeData) {
 // Update premium content (for premium users)
 function updatePremiumContent(premiumData) {
     console.log('Updating premium content with data:', premiumData);
-    
+
     // Update detailed analysis card content
     const analysisCard = document.querySelector('.detailed-analysis-card');
     if (analysisCard && premiumData) {
@@ -319,9 +337,9 @@ function updatePremiumContent(premiumData) {
                     { icon: 'fa-tools', data: premiumData.others2, isConstruction: true }
                 ];
             }
-            
+
             const validSections = sections.filter(s => s.data);
-            
+
             previewContainer.innerHTML = validSections.map(section => `
                 <div class="preview-section unlocked" style="display: flex; align-items: flex-start; gap: 20px; padding: 20px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid ${section.isConstruction ? 'rgba(253, 213, 106, 0.3)' : 'rgba(253, 213, 106, 0.1)'}; ${section.isConstruction ? 'opacity: 0.7; border-style: dashed;' : ''}">
                     <div style="flex-shrink: 0; width: 80px; text-align: center;">
@@ -344,7 +362,7 @@ function updatePremiumContent(premiumData) {
             `).join('');
         }
     }
-    
+
     // Update conflicts with full details
     const conflictPreview = document.querySelector('.conflict-preview');
     if (conflictPreview && premiumData.conflicts) {
@@ -365,12 +383,12 @@ function updatePremiumContent(premiumData) {
             </div>
         `).join('');
     }
-    
+
     // Remove locked state and hide lock elements
     document.querySelectorAll('.premium-locked').forEach(el => el.classList.remove('premium-locked'));
     document.querySelectorAll('.btn-unlock-main').forEach(btn => btn.style.display = 'none');
     document.querySelectorAll('.lock-indicator').forEach(el => el.style.display = 'none');
-    
+
     console.log('Premium content updated successfully');
 }
 

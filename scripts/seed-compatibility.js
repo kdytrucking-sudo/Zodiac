@@ -158,25 +158,34 @@ function createCompatibilityDoc(zodiac1, zodiac2) {
     const level = getCompatibilityLevel(zodiac1, zodiac2);
     const template = compatibilityTemplates[level];
 
-    return {
-        zodiacPair: {
-            zodiac1: zodiac1,
-            zodiac2: zodiac2,
-            pairName: `${zodiac1} & ${zodiac2}`
-        },
+    // Helper function to create gender-specific content
+    const createGenderContent = (genderKey, matchType) => {
+        const isRomance = matchType === 'romance';
+        const baseTemplate = isRomance ? template.romance : template.business;
 
-        romance: {
+        // Gender-specific score adjustments
+        const scoreAdjustment =
+            genderKey === 'male-male' ? (isRomance ? 0 : 5) :
+                genderKey === 'female-female' ? (isRomance ? 3 : 0) :
+                    (isRomance ? 2 : 0); // male-female
+
+        const genderLabel =
+            genderKey === 'male-male' ? 'two males' :
+                genderKey === 'female-female' ? 'two females' :
+                    'male and female';
+
+        return {
             free: {
-                matchingScore: template.romance.score,
-                rating: template.romance.rating,
-                quickOverview: template.romance.overview,
-                compatibilityTags: template.romance.tags
+                matchingScore: baseTemplate.score + scoreAdjustment,
+                rating: baseTemplate.rating,
+                quickOverview: `${baseTemplate.overview} (${genderLabel})`,
+                compatibilityTags: baseTemplate.tags
             },
-            premium: {
+            premium: isRomance ? {
                 emotionalCompatibility: {
                     title: 'Emotional Compatibility',
-                    content: `Deep analysis of emotional connection between ${zodiac1} and ${zodiac2}. This pairing shows ${level} emotional resonance.`,
-                    score: template.romance.score - 5,
+                    content: `Deep analysis of emotional connection between ${zodiac1} and ${zodiac2} (${genderLabel}). This pairing shows ${level} emotional resonance.`,
+                    score: baseTemplate.score + scoreAdjustment - 5,
                     highlights: [
                         'Emotional understanding',
                         'Mutual support',
@@ -185,8 +194,8 @@ function createCompatibilityDoc(zodiac1, zodiac2) {
                 },
                 intellectualAlignment: {
                     title: 'Intellectual Alignment',
-                    content: `Communication and intellectual compatibility analysis. ${zodiac1} and ${zodiac2} demonstrate ${level} mental connection.`,
-                    score: template.romance.score + 3,
+                    content: `Communication and intellectual compatibility analysis for ${genderLabel}. ${zodiac1} and ${zodiac2} demonstrate ${level} mental connection.`,
+                    score: baseTemplate.score + scoreAdjustment + 3,
                     highlights: [
                         'Communication style',
                         'Shared interests',
@@ -195,8 +204,8 @@ function createCompatibilityDoc(zodiac1, zodiac2) {
                 },
                 longTermPotential: {
                     title: 'Long-term Potential',
-                    content: `Future outlook for ${zodiac1} and ${zodiac2} relationship. This pairing has ${level} long-term prospects.`,
-                    score: template.romance.score,
+                    content: `Future outlook for ${zodiac1} and ${zodiac2} relationship (${genderLabel}). This pairing has ${level} long-term prospects.`,
+                    score: baseTemplate.score + scoreAdjustment,
                     highlights: [
                         'Relationship stability',
                         'Growth potential',
@@ -207,27 +216,19 @@ function createCompatibilityDoc(zodiac1, zodiac2) {
                     title: 'Others1',
                     content: 'On Construction',
                     score: 0,
-                    highlights: [
-                        'Under development',
-                        'Coming soon',
-                        'Stay tuned'
-                    ]
+                    highlights: ['Under development', 'Coming soon', 'Stay tuned']
                 },
                 others2: {
                     title: 'Others2',
                     content: 'On Construction',
                     score: 0,
-                    highlights: [
-                        'Under development',
-                        'Coming soon',
-                        'Stay tuned'
-                    ]
+                    highlights: ['Under development', 'Coming soon', 'Stay tuned']
                 },
                 conflicts: [
                     {
                         type: 'Communication Differences',
                         severity: level === 'excellent' ? 25 : level === 'good' ? 40 : level === 'fair' ? 60 : 75,
-                        description: `Different communication styles between ${zodiac1} and ${zodiac2}.`,
+                        description: `Different communication styles between ${zodiac1} and ${zodiac2} (${genderLabel}).`,
                         resolution: 'Establish clear communication guidelines and practice active listening.'
                     },
                     {
@@ -255,66 +256,36 @@ function createCompatibilityDoc(zodiac1, zodiac2) {
                         resolution: 'On Construction'
                     }
                 ]
-            }
-        },
-
-        business: {
-            free: {
-                matchingScore: template.business.score,
-                rating: template.business.rating,
-                quickOverview: template.business.overview,
-                compatibilityTags: template.business.tags
-            },
-            premium: {
+            } : {
                 workStyleCompatibility: {
                     title: 'Work Style Compatibility',
-                    content: `Analysis of work styles between ${zodiac1} and ${zodiac2}. This partnership shows ${level} professional synergy.`,
-                    score: template.business.score,
-                    highlights: [
-                        'Complementary skills',
-                        'Work approach',
-                        'Professional respect'
-                    ]
+                    content: `Analysis of work styles between ${zodiac1} and ${zodiac2} (${genderLabel}). This partnership shows ${level} professional synergy.`,
+                    score: baseTemplate.score + scoreAdjustment,
+                    highlights: ['Complementary skills', 'Work approach', 'Professional respect']
                 },
                 leadershipDynamics: {
                     title: 'Leadership Dynamics',
-                    content: `Leadership and decision-making dynamics. ${zodiac1} and ${zodiac2} demonstrate ${level} leadership compatibility.`,
-                    score: template.business.score - 5,
-                    highlights: [
-                        'Role clarity',
-                        'Power balance',
-                        'Delegation effectiveness'
-                    ]
+                    content: `Leadership and decision-making dynamics for ${genderLabel}. ${zodiac1} and ${zodiac2} demonstrate ${level} leadership compatibility.`,
+                    score: baseTemplate.score + scoreAdjustment - 5,
+                    highlights: ['Role clarity', 'Power balance', 'Delegation effectiveness']
                 },
                 financialAlignment: {
                     title: 'Financial Alignment',
-                    content: `Financial management and risk tolerance analysis. This pairing shows ${level} financial compatibility.`,
-                    score: template.business.score + 2,
-                    highlights: [
-                        'Financial goals',
-                        'Risk approach',
-                        'Investment strategy'
-                    ]
+                    content: `Financial management and risk tolerance analysis (${genderLabel}). This pairing shows ${level} financial compatibility.`,
+                    score: baseTemplate.score + scoreAdjustment + 2,
+                    highlights: ['Financial goals', 'Risk approach', 'Investment strategy']
                 },
                 others1: {
                     title: 'Others1',
                     content: 'On Construction',
                     score: 0,
-                    highlights: [
-                        'Under development',
-                        'Coming soon',
-                        'Stay tuned'
-                    ]
+                    highlights: ['Under development', 'Coming soon', 'Stay tuned']
                 },
                 others2: {
                     title: 'Others2',
                     content: 'On Construction',
                     score: 0,
-                    highlights: [
-                        'Under development',
-                        'Coming soon',
-                        'Stay tuned'
-                    ]
+                    highlights: ['Under development', 'Coming soon', 'Stay tuned']
                 },
                 conflicts: [
                     {
@@ -349,36 +320,34 @@ function createCompatibilityDoc(zodiac1, zodiac2) {
                     }
                 ]
             }
+        };
+    };
+
+    return {
+        zodiacPair: {
+            zodiac1: zodiac1,
+            zodiac2: zodiac2,
+            pairName: `${zodiac1} & ${zodiac2}`
         },
 
-        genderModifiers: {
-            'male-male': {
-                romanceScoreAdjustment: 0,
-                businessScoreAdjustment: 5,
-                notes: 'Strong professional synergy'
-            },
-            'female-female': {
-                romanceScoreAdjustment: 3,
-                businessScoreAdjustment: 0,
-                notes: 'Enhanced emotional connection'
-            },
-            'male-female': {
-                romanceScoreAdjustment: 2,
-                businessScoreAdjustment: 0,
-                notes: 'Traditional complementary dynamic'
-            },
-            'others': {
-                romanceScoreAdjustment: 0,
-                businessScoreAdjustment: 0,
-                notes: 'Base compatibility applies'
-            }
+        romance: {
+            'male-male': createGenderContent('male-male', 'romance'),
+            'female-female': createGenderContent('female-female', 'romance'),
+            'male-female': createGenderContent('male-female', 'romance')
+        },
+
+        business: {
+            'male-male': createGenderContent('male-male', 'business'),
+            'female-female': createGenderContent('female-female', 'business'),
+            'male-female': createGenderContent('male-female', 'business')
         },
 
         metadata: {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            version: 1,
-            dataQuality: 'complete'
+            version: 2,
+            dataQuality: 'complete',
+            structure: 'gender-specific'
         }
     };
 }
@@ -389,7 +358,7 @@ async function seedDatabase() {
     console.log(`Total documents to create: ${zodiacSigns.length * zodiacSigns.length}`);
 
     let count = 0;
-    const batchSize = 500; // Firestore batch limit
+    const batchSize = 50; // Reduced due to larger document size (30-40KB each)
     let batch = writeBatch(db);
     let batchCount = 0;
 
