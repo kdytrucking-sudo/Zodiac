@@ -145,6 +145,19 @@
             font-size: 14px;
         }
 
+        /* Fix for Windows Chrome dropdown options */
+        .selector-grid select option {
+            background: #2a2a3e;
+            color: #fff;
+            padding: 10px;
+        }
+
+        .selector-grid select option:checked {
+            background: linear-gradient(135deg, #fdd56a 0%, #ffb84d 100%);
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+
         .load-btn {
             margin-top: 20px;
             padding: 12px 30px;
