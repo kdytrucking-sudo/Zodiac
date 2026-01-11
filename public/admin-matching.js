@@ -186,7 +186,7 @@ function renderFreeSection(type, freeData) {
                         <label>Compatibility Tags</label>
                         <div id="${type}_free_tags">
                             ${freeData.compatibilityTags.map((tag, i) => `
-                                <div style="display: grid; grid-template-columns: 1fr 120px; gap: 10px; margin-bottom: 10px;">
+                                <div style="display: grid; grid-template-columns: 1fr 120px 40px; gap: 10px; margin-bottom: 10px;" data-tag-item>
                                     <input type="text" placeholder="Tag name" value="${tag.tag}" 
                                            id="${type}_free_tag_${i}_name" />
                                     <select id="${type}_free_tag_${i}_status">
@@ -194,6 +194,12 @@ function renderFreeSection(type, freeData) {
                                         <option value="neutral" ${tag.status === 'neutral' ? 'selected' : ''}>Neutral</option>
                                         <option value="negative" ${tag.status === 'negative' ? 'selected' : ''}>Negative</option>
                                     </select>
+                                    <button type="button" onclick="this.parentElement.remove()" 
+                                            style="padding: 8px; background: rgba(244, 67, 54, 0.2); border: 1px solid rgba(244, 67, 54, 0.5); border-radius: 6px; color: #f44336; cursor: pointer; transition: all 0.3s;"
+                                            onmouseover="this.style.background='rgba(244, 67, 54, 0.3)'" 
+                                            onmouseout="this.style.background='rgba(244, 67, 54, 0.2)'">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
                             `).join('')}
                         </div>
@@ -243,8 +249,14 @@ function renderPremiumSection(type, key, title, icon, premiumData) {
                         <label>Highlights</label>
                         <div id="${type}_${key}_highlights">
                             ${data.highlights.map((h, i) => `
-                                <div class="highlights-input">
-                                    <input type="text" value="${h}" data-index="${i}" />
+                                <div class="highlights-input" style="display: flex; gap: 10px; margin-bottom: 10px;" data-highlight-item>
+                                    <input type="text" value="${h}" data-index="${i}" style="flex: 1;" />
+                                    <button type="button" onclick="this.parentElement.remove()" 
+                                            style="padding: 8px 12px; background: rgba(244, 67, 54, 0.2); border: 1px solid rgba(244, 67, 54, 0.5); border-radius: 6px; color: #f44336; cursor: pointer; transition: all 0.3s;"
+                                            onmouseover="this.style.background='rgba(244, 67, 54, 0.3)'" 
+                                            onmouseout="this.style.background='rgba(244, 67, 54, 0.2)'">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
                             `).join('')}
                         </div>
@@ -304,7 +316,17 @@ window.addHighlight = function (containerId) {
 
     const div = document.createElement('div');
     div.className = 'highlights-input';
-    div.innerHTML = `<input type="text" placeholder="New highlight" data-index="${newIndex}" />`;
+    div.setAttribute('data-highlight-item', '');
+    div.style.cssText = 'display: flex; gap: 10px; margin-bottom: 10px;';
+    div.innerHTML = `
+        <input type="text" placeholder="New highlight" data-index="${newIndex}" style="flex: 1;" />
+        <button type="button" onclick="this.parentElement.remove()" 
+                style="padding: 8px 12px; background: rgba(244, 67, 54, 0.2); border: 1px solid rgba(244, 67, 54, 0.5); border-radius: 6px; color: #f44336; cursor: pointer; transition: all 0.3s;"
+                onmouseover="this.style.background='rgba(244, 67, 54, 0.3)'" 
+                onmouseout="this.style.background='rgba(244, 67, 54, 0.2)'">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    `;
     container.appendChild(div);
 };
 
@@ -315,7 +337,8 @@ window.addTag = function (containerId, type) {
     const newIndex = existingTags.length;
 
     const div = document.createElement('div');
-    div.style.cssText = 'display: grid; grid-template-columns: 1fr 120px; gap: 10px; margin-bottom: 10px;';
+    div.setAttribute('data-tag-item', '');
+    div.style.cssText = 'display: grid; grid-template-columns: 1fr 120px 40px; gap: 10px; margin-bottom: 10px;';
     div.innerHTML = `
         <input type="text" placeholder="Tag name" id="${type}_free_tag_${newIndex}_name" />
         <select id="${type}_free_tag_${newIndex}_status">
@@ -323,6 +346,12 @@ window.addTag = function (containerId, type) {
             <option value="neutral" selected>Neutral</option>
             <option value="negative">Negative</option>
         </select>
+        <button type="button" onclick="this.parentElement.remove()" 
+                style="padding: 8px; background: rgba(244, 67, 54, 0.2); border: 1px solid rgba(244, 67, 54, 0.5); border-radius: 6px; color: #f44336; cursor: pointer; transition: all 0.3s;"
+                onmouseover="this.style.background='rgba(244, 67, 54, 0.3)'" 
+                onmouseout="this.style.background='rgba(244, 67, 54, 0.2)'">
+            <i class="fas fa-trash-alt"></i>
+        </button>
     `;
     container.appendChild(div);
 };
