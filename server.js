@@ -10,6 +10,7 @@ import { googleAI } from '@genkit-ai/googleai';
 
 // Webhook routes (简化版本 - 不需要服务账号密钥)
 import webhookRoutes from './server/routes/webhook-simple.mjs';
+import fortuneWebhookRoutes from './server/routes/webhook-fortune.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -115,6 +116,10 @@ app.post('/api/genkit/generate', async (req, res) => {
 // Webhook API routes
 app.use('/api/webhook', webhookRoutes);
 console.log('✅ Webhook routes loaded');
+
+// Fortune Webhook API routes
+app.use('/api/webhook/fortune', fortuneWebhookRoutes);
+console.log('✅ Fortune webhook routes loaded');
 
 
 // 全局错误兜底（以后加复杂逻辑时有用）
