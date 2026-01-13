@@ -113,6 +113,19 @@ app.post('/api/genkit/generate', async (req, res) => {
   }
 });
 
+// Debug endpoint to check loaded routes
+app.get('/api/debug/routes', (req, res) => {
+  res.json({
+    message: 'Routes loaded successfully',
+    routes: {
+      article: '/api/webhook/articles/create',
+      fortune: '/api/webhook/fortune/update',
+      fortuneHealth: '/api/webhook/fortune/health'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Webhook API routes
 app.use('/api/webhook', webhookRoutes);
 console.log('✅ Webhook routes loaded');
