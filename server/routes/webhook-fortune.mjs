@@ -1,6 +1,6 @@
 // Webhook routes for fortune management (ES Module version)
 import express from 'express';
-import admin from 'firebase-admin';
+import fetch from 'node-fetch';
 
 const router = express.Router();
 
@@ -222,30 +222,81 @@ function validateFortuneMiddleware(req, res, next) {
 // ============================================
 // Controllers
 // ============================================
+
+// Firebase 配置
+const FIREBASE_PROJECT_ID = 'studio-4395392521-1abeb';
+const FIREBASE_DATABASE_ID = 'zodia1';
+const FIREBASE_API_KEY = 'AIzaSyDBk4Qspp1eBT1rkUhmffWLf4a4kAF26gU';
+
+// 转换为 Firestore REST API 格式
+function toFirestoreFormat(data) {
+    const fields = {};
+
+    for (const [key, value] of Object.entries(data)) {
+        if (Array.isArray(value)) {
+            fields[key] = {
+                arrayValue: {
+                    values: value.map(v => {
+                        if (typeof v === 'string') {
+                            return { stringValue: v };
+                        } else if (typeof v === 'number') {
+                            return { integerValue: String(v) };
+                        } else {
+                            return { stringValue: String(v) };
+                        }
+                    })
+                }
+            };
+        } else if (typeof value === 'object' && value !== null) {
+            // 递归处理对象
+            fields[key] = {
+                mapValue: { fields: toFirestoreFormat(value).fields }
+            };
+        } else if (typeof value === 'number') {
+            fields[key] = { integerValue: String(value) };
+        } else if (typeof value === 'boolean') {
+            fields[key] = { booleanValue: value };
+        } else {
+            fields[key] = { stringValue: String(value) };
+        }
+    }
+
+    return { fields };
+}
+
 async function updateFortune(req, res) {
     try {
         const { zodiacSign, period, free, paid } = req.body;
 
-        const db = admin.firestore();
-        const fortuneRef = db.collection('fortune').doc(zodiacSign);
-
-        // Get existing document
-        const fortuneDoc = await fortuneRef.get();
-
-        let fortuneData = {};
-        if (fortuneDoc.exists()) {
-            fortuneData = fortuneDoc.data();
-        }
-
-        // Update the specific period
-        fortuneData[period] = {
-            free,
-            paid
+        // 构建 fortune 数据
+        const fortuneData = {
+            [period]: {
+                free,
+                paid
+            }
         };
 
-        // Write back to Firestore
-        await fortuneRef.set(fortuneData, { merge: true });
+        // 转换为 Firestore 格式
+        const firestoreDoc = toFirestoreFormat(fortuneData);
 
+        // 使用 PATCH 方法更新文档（merge: true）
+        const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/${FIREBASE_DATABASE_ID}/documents/fortune/${zodiacSign}?updateMask.fieldPaths=${period}&key=${FIREBASE_API_KEY}`;
+
+        const response = await fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firestoreDoc)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Firebase API error:', errorText);
+            throw new Error(`Firebase API error: ${response.status} - ${errorText}`);
+        }
+
+        const result = await response.json();
         console.log(`✅ Fortune updated: ${zodiacSign} - ${period}`);
 
         res.status(200).json({
@@ -263,7 +314,7 @@ async function updateFortune(req, res) {
         res.status(500).json({
             success: false,
             error: 'Internal server error',
-            message: 'Failed to update fortune. Please try again later.'
+            message: error.message || 'Failed to update fortune. Please try again later.'
         });
     }
 }
