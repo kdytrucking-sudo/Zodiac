@@ -26,7 +26,3 @@ env:
     secret: GOOGLE_GENAI_API_KEY
     availability:
       - RUNTIME
-  - variable: WEBHOOK_SECRET_TOKEN
-    secret: WEBHOOK_SECRET_TOKEN
-    availability:
-      - RUNTIME
