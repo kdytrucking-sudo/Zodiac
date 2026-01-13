@@ -12,7 +12,7 @@ function verifyWebhookAuth(req, res, next) {
     const authHeader = req.headers.authorization;
     const token = authHeader?.split(' ')[1];
 
-    const WEBHOOK_SECRET_TOKEN = process.env.WEBHOOK_SECRET_TOKEN || 'wh_3ec5ecbb-199e-436f-ab02-aad323e822f6';
+    const WEBHOOK_SECRET_TOKEN = process.env.WEBHOOK_SECRET_TOKEN || 'wh_3e5fecbc-109ee-435f-ab02-ab0323c8523E';
 
     if (!token || token !== WEBHOOK_SECRET_TOKEN) {
         return res.status(401).json({
