@@ -81,6 +81,9 @@ function updateFreeContent() {
 
     const data = currentFortuneData[selectedPeriod].free;
 
+    // Update last updated time
+    updateLastUpdatedTime();
+
     document.getElementById('free-zodiac-name').textContent = capitalizeFirst(selectedZodiac);
     document.getElementById('free-overview-text').textContent = data.overview;
     document.getElementById('free-career').textContent = data.career;
@@ -119,6 +122,9 @@ function updatePaidContent() {
     }
 
     const data = currentFortuneData[selectedPeriod].paid;
+
+    // Update last updated time
+    updateLastUpdatedTime();
 
     document.getElementById('paid-zodiac-name').textContent = capitalizeFirst(selectedZodiac);
     document.getElementById('paid-career-desc').textContent = data.careerDetailed;
@@ -167,6 +173,43 @@ function updatePaidContent() {
 
 function capitalizeFirst(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// Format and update last updated time
+function updateLastUpdatedTime() {
+    if (!currentFortuneData || !currentFortuneData[selectedPeriod]) {
+        return;
+    }
+
+    const updatedAt = currentFortuneData[selectedPeriod].updatedAt;
+    const lastUpdatedElement = document.getElementById('last-updated');
+
+    if (!lastUpdatedElement) return;
+
+    if (updatedAt) {
+        const date = new Date(updatedAt);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        let timeText = '';
+        if (diffHours < 1) {
+            timeText = 'Updated just now';
+        } else if (diffHours < 24) {
+            timeText = `Updated ${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+        } else if (diffDays < 7) {
+            timeText = `Updated ${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+        } else {
+            // Format as date
+            const options = { month: 'short', day: 'numeric', year: 'numeric' };
+            timeText = `Updated ${date.toLocaleDateString('en-US', options)}`;
+        }
+
+        lastUpdatedElement.textContent = `(${timeText})`;
+    } else {
+        lastUpdatedElement.textContent = '';
+    }
 }
 
 // Unified Zodiac Selection
