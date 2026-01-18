@@ -268,11 +268,15 @@ async function updateFortune(req, res) {
     try {
         const { zodiacSign, period, free, paid } = req.body;
 
-        // 构建 fortune 数据
+        // 获取当前时间
+        const updatedAt = new Date().toISOString();
+
+        // 构建 fortune 数据（包含 updatedAt）
         const fortuneData = {
             [period]: {
                 free,
-                paid
+                paid,
+                updatedAt  // 添加更新时间
             }
         };
 

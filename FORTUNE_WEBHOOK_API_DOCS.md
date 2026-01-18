@@ -343,11 +343,25 @@ curl -X POST https://your-domain.com/api/webhook/fortune/update \
 ## 注意事项
 
 1. **数据完整性**：每次更新会覆盖指定生肖和周期的数据，请确保提供完整的 `free` 和 `paid` 对象
-2. **评分一致性**：建议 `free` 和 `paid` 部分的评分保持一致
-3. **文本长度**：详细分析文本（`*Detailed` 字段）建议在 100-500 字之间
-4. **数组长度**：`dos` 和 `donts` 数组建议包含 3-5 项
-5. **时间格式**：时间段建议使用 "HH:MM AM/PM - HH:MM AM/PM" 格式或 "All Day"
-6. **数字格式**：`luckyNumbers` 可以是单个数字或多个数字的组合，用逗号分隔
+2. **自动添加时间戳**：系统会自动在数据库中添加 `updatedAt` 字段（ISO 8601格式），记录更新时间，无需在请求中提供
+3. **评分一致性**：建议 `free` 和 `paid` 部分的评分保持一致
+4. **文本长度**：详细分析文本（`*Detailed` 字段）建议在 100-500 字之间
+5. **数组长度**：`dos` 和 `donts` 数组建议包含 3-5 项
+6. **时间格式**：时间段建议使用 "HH:MM AM/PM - HH:MM AM/PM" 格式或 "All Day"
+7. **数字格式**：`luckyNumbers` 可以是单个数字或多个数字的组合，用逗号分隔
+
+## 数据库结构
+
+更新后，Firestore中的数据结构如下：
+
+```
+fortune/
+  └─ {zodiacSign}/          // 例如: tiger
+      └─ {period}/          // 例如: week
+          ├─ free: { ... }
+          ├─ paid: { ... }
+          └─ updatedAt: "2026-01-18T14:21:28.000Z"  // 自动添加
+```
 
 ## 健康检查
 
