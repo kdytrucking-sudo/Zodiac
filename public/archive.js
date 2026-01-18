@@ -92,6 +92,45 @@ function renderZodiac(data, signId) {
         document.getElementById('attr-flowers').textContent =
             data.attributes.luckyFlowers ? data.attributes.luckyFlowers.join(', ') : '-';
     }
+
+    // Update meta tags for social sharing
+    updateMetaTags(data, signId);
+}
+
+// Update Open Graph and Twitter Card meta tags for social sharing
+function updateMetaTags(data, signId) {
+    const zodiacName = data.name || 'Unknown';
+    const chineseName = data.chineseChar || '';
+    const currentUrl = `${window.location.origin}${window.location.pathname}?sign=${signId}`;
+    const imageUrl = `${window.location.origin}/images/${signId}.png`;
+
+    // Create dynamic title and description
+    const title = `${zodiacName} ${chineseName} - Larak's Zodiac`;
+    const description = data.introduction
+        ? data.introduction.substring(0, 150) + '...'
+        : `Discover the wisdom and characteristics of the ${zodiacName} in Chinese Zodiac`;
+
+    // Update page title
+    document.title = title;
+
+    // Update Open Graph tags
+    updateMetaTag('og-url', currentUrl);
+    updateMetaTag('og-title', title);
+    updateMetaTag('og-description', description);
+    updateMetaTag('og-image', imageUrl);
+
+    // Update Twitter Card tags
+    updateMetaTag('twitter-title', title);
+    updateMetaTag('twitter-description', description);
+    updateMetaTag('twitter-image', imageUrl);
+}
+
+// Helper function to update meta tag content
+function updateMetaTag(id, content) {
+    const metaTag = document.getElementById(id);
+    if (metaTag) {
+        metaTag.setAttribute('content', content);
+    }
 }
 
 function renderList(elementId, items) {
@@ -145,3 +184,81 @@ if (signParam) {
     zodiacSelect.value = signParam;
     zodiacSelect.dispatchEvent(new Event('change'));
 }
+
+// Social Media Sharing Functions
+let currentZodiacName = '';
+let currentZodiacSign = '';
+
+// Update current zodiac info when data is loaded
+function updateCurrentZodiac(name, sign) {
+    currentZodiacName = name;
+    currentZodiacSign = sign;
+}
+
+// Modify renderZodiac to track current zodiac
+const originalRenderZodiac = renderZodiac;
+renderZodiac = function (data, signId) {
+    originalRenderZodiac(data, signId);
+    updateCurrentZodiac(data.name || 'Unknown', signId);
+};
+
+// Facebook Share
+document.getElementById('share-facebook')?.addEventListener('click', () => {
+    const url = window.location.href;
+    const title = `${currentZodiacName} - Chinese Zodiac`;
+    const description = `Discover the wisdom of the ${currentZodiacName} in Chinese Zodiac! 🐉✨`;
+
+    // Check if running on localhost
+    if (url.includes('localhost') || url.includes('127.0.0.1')) {
+        // For localhost, show helpful message and copy URL
+        const message = '📝 Facebook Sharing on Localhost\n\n' +
+            'Facebook requires a public URL for sharing.\n\n' +
+            'Your URL has been copied to clipboard!\n' +
+            'You can paste it manually on Facebook.\n\n' +
+            '💡 Tip: Use the X (Twitter) button for localhost testing,\n' +
+            'or deploy to a public URL for full Facebook integration.';
+
+        // Copy URL to clipboard
+        navigator.clipboard.writeText(url).then(() => {
+            alert(message);
+        }).catch(err => {
+            alert(message + '\n\n(Note: Clipboard copy failed, please copy manually)');
+            console.error('Failed to copy URL:', err);
+        });
+    } else {
+        // For production URLs, use Facebook Dialog API with App ID
+        // This allows Facebook to fetch Open Graph meta tags from the page
+        const facebookUrl = `https://www.facebook.com/dialog/share?` +
+            `app_id=727675370331926&` +
+            `display=popup&` +
+            `href=${encodeURIComponent(url)}&` +
+            `redirect_uri=${encodeURIComponent(url)}`;
+
+        window.open(facebookUrl, 'facebook-share-dialog', 'width=626,height=436');
+    }
+});
+
+// X (Twitter) Share
+document.getElementById('share-twitter')?.addEventListener('click', () => {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(`Discover the wisdom of the ${currentZodiacName} in Chinese Zodiac! 🐉✨`);
+    const hashtags = encodeURIComponent('ChineseZodiac,Astrology,Zodiac');
+    const twitterUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}&hashtags=${hashtags}`;
+    window.open(twitterUrl, '_blank', 'width=600,height=400');
+});
+
+// TikTok Share (Placeholder - to be implemented)
+document.getElementById('share-tiktok')?.addEventListener('click', () => {
+    alert('TikTok sharing feature coming soon! 🎵');
+    // TODO: Implement TikTok sharing functionality
+    // Note: TikTok doesn't have a direct web share API like Facebook/Twitter
+    // You may need to use their official SDK or create shareable content
+});
+
+// Instagram Share (Placeholder - to be implemented)
+document.getElementById('share-instagram')?.addEventListener('click', () => {
+    alert('Instagram sharing feature coming soon! 📸');
+    // TODO: Implement Instagram sharing functionality
+    // Note: Instagram doesn't support direct web sharing
+    // You may need to use their official API or create shareable content
+});
