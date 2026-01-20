@@ -8,8 +8,8 @@ const router = express.Router();
  * Redirect to Facebook (Meta) Login for Instagram permissions
  */
 router.get('/auth', (req, res) => {
-    // TEMPORARY: Hardcoded credentials for testing (User needs to provide real ones)
-    const appId = 'YOUR_INSTAGRAM_APP_ID';
+    // TEMPORARY: Hardcoded credentials for testing
+    const appId = '727675370331926';
     const redirectUri = 'https://zodiac.laraks.com/api/instagram/callback';
 
     const state = JSON.stringify({
@@ -43,8 +43,8 @@ router.get('/callback', async (req, res) => {
         console.log(`🎟️ Exchanging Meta code for access token...`);
 
         // TEMPORARY: Hardcoded credentials
-        const appId = 'YOUR_INSTAGRAM_APP_ID';
-        const appSecret = 'YOUR_INSTAGRAM_APP_SECRET';
+        const appId = '727675370331926';
+        const appSecret = '94c1854a593959b5a1161fcaa1c94a4c';
         const redirectUri = 'https://zodiac.laraks.com/api/instagram/callback';
 
         // 1. Exchange code for User Access Token
