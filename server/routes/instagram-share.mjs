@@ -9,7 +9,7 @@ const router = express.Router();
  */
 router.get('/auth', (req, res) => {
     // TEMPORARY: Hardcoded credentials for testing
-    const appId = '727675370331926';
+    const appId = '1362534018821764';
     const redirectUri = 'https://zodiac.laraks.com/api/instagram/callback';
 
     const state = JSON.stringify({
@@ -43,8 +43,8 @@ router.get('/callback', async (req, res) => {
         console.log(`🎟️ Exchanging Meta code for access token...`);
 
         // TEMPORARY: Hardcoded credentials
-        const appId = '727675370331926';
-        const appSecret = '94c1854a593959b5a1161fcaa1c94a4c';
+        const appId = '1362534018821764';
+        const appSecret = '0e0c884ae84fc27b4719293d07f6cb9f';
         const redirectUri = 'https://zodiac.laraks.com/api/instagram/callback';
 
         // 1. Exchange code for User Access Token
