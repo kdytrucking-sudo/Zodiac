@@ -201,7 +201,7 @@ router.get('/callback', async (req, res) => {
 
         const publishData = await publishResponse.json();
 
-        if (publishData.error) {
+        if (publishData.error && publishData.error.code !== 'ok') {
             console.error('❌ TikTok Publishing Error:', publishData);
             return res.status(500).send(`
                 <div style="font-family: sans-serif; text-align: center; padding: 50px; background: #121212; color: white; min-height: 100vh;">
