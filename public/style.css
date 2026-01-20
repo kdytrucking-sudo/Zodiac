@@ -7982,6 +7982,23 @@ input:checked+.slider:before {
     transform: translateY(-1px);
 }
 
+.btn-share-tiktok.instagram-theme {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    box-shadow: 0 8px 25px rgba(220, 39, 67, 0.3);
+}
+
+.btn-share-tiktok.instagram-theme:hover {
+    box-shadow: 0 12px 35px rgba(220, 39, 67, 0.5);
+}
+
+.modal-icon.fab.fa-instagram {
+    color: #E1306C;
+}
+
+.modal-icon.fab.fa-tiktok {
+    color: #ff0050;
+}
+
 .btn-share-tiktok:disabled {
     opacity: 0.6;
     cursor: not-allowed;

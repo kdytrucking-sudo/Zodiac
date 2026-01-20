@@ -12,6 +12,7 @@ import { googleAI } from '@genkit-ai/googleai';
 import webhookRoutes from './server/routes/webhook-simple.mjs';
 import fortuneWebhookRoutes from './server/routes/webhook-fortune.mjs';
 import tiktokVideoRoutes from './server/routes/tiktok-video.mjs';
+import instagramShareRoutes from './server/routes/instagram-share.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -138,6 +139,10 @@ console.log('✅ Fortune webhook routes loaded');
 // TikTok Video Generation API routes
 app.use('/api/tiktok', tiktokVideoRoutes);
 console.log('✅ TikTok video routes loaded');
+
+// Instagram Sharing API routes
+app.use('/api/instagram', instagramShareRoutes);
+console.log('✅ Instagram share routes loaded');
 
 
 // 全局错误兜底（以后加复杂逻辑时有用）

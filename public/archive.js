@@ -253,15 +253,16 @@ document.getElementById('share-tiktok')?.addEventListener('click', () => {
         alert('Please select a zodiac sign first!');
         return;
     }
-    openTikTokModal();
+    openVideoShareModal('tiktok');
 });
 
-// Instagram Share (Placeholder - to be implemented)
+// Instagram Share - Open Modal and Load Local Video
 document.getElementById('share-instagram')?.addEventListener('click', () => {
-    alert('Instagram sharing feature coming soon! 📸');
-    // TODO: Implement Instagram sharing functionality
-    // Note: Instagram doesn't support direct web sharing
-    // You may need to use their official API or create shareable content
+    if (!currentZodiacName || !currentZodiacSign) {
+        alert('Please select a zodiac sign first!');
+        return;
+    }
+    openVideoShareModal('instagram');
 });
 
 // ===== TikTok Video Preview Modal =====
@@ -274,16 +275,35 @@ renderZodiac = function (data, signId) {
     currentZodiacData = data;
 };
 
-function openTikTokModal() {
-    const modal = document.getElementById('tiktok-modal');
+function openVideoShareModal(platform = 'tiktok') {
+    const modal = document.getElementById('tiktok-modal'); // Keep the ID for now as it's used in CSS
     const modalTitle = document.getElementById('modal-title');
+    const modalIcon = document.getElementById('modal-header-icon');
     const videoPreview = document.getElementById('video-preview');
     const videoSource = document.getElementById('video-source');
     const statusEl = document.getElementById('video-status');
     const previewContainer = document.getElementById('video-preview-container');
+    const shareBtn = document.getElementById('btn-share-video');
+    const shareIcon = document.getElementById('btn-share-icon');
+    const shareText = document.getElementById('btn-share-text');
 
-    // Set title
-    modalTitle.textContent = 'Share Your Zodiac Video';
+    // Store current platform
+    window.currentSharePlatform = platform;
+
+    // Update UI based on platform
+    if (platform === 'instagram') {
+        modalTitle.textContent = 'Share to Instagram';
+        modalIcon.className = 'fab fa-instagram modal-icon';
+        shareBtn.className = 'btn-share-tiktok instagram-theme'; // We'll add a CSS class for theme
+        shareIcon.className = 'fab fa-instagram';
+        shareText.textContent = 'Share to Instagram';
+    } else {
+        modalTitle.textContent = 'Share to TikTok';
+        modalIcon.className = 'fab fa-tiktok modal-icon';
+        shareBtn.className = 'btn-share-tiktok';
+        shareIcon.className = 'fab fa-tiktok';
+        shareText.textContent = 'Share to My TikTok';
+    }
 
     // Load local video file based on zodiac sign
     const videoPath = `/video/${currentZodiacSign}.mp4`;
@@ -304,7 +324,7 @@ function openTikTokModal() {
 
     // Add video event listeners
     videoPreview.addEventListener('loadeddata', () => {
-        console.log('✅ Video loaded successfully');
+        console.log(`✅ Video loaded successfully for ${platform}`);
         statusEl.className = 'video-status';
         statusEl.innerHTML = '<i class="fas fa-check-circle"></i><span>Video ready! Click play to preview.</span>';
     }, { once: true });
@@ -363,25 +383,23 @@ function closeTikTokModal() {
 document.getElementById('close-tiktok-modal')?.addEventListener('click', closeTikTokModal);
 document.querySelector('.tiktok-modal-overlay')?.addEventListener('click', closeTikTokModal);
 
-// Share video to TikTok
-document.getElementById('btn-share-tiktok')?.addEventListener('click', async () => {
-    const shareBtnEl = document.getElementById('btn-share-tiktok');
-    const statusEl = document.getElementById('video-status');
+// Share video to Platform (TikTok or Instagram)
+document.getElementById('btn-share-video')?.addEventListener('click', async () => {
+    const shareBtnEl = document.getElementById('btn-share-video');
+    const platform = window.currentSharePlatform || 'tiktok';
 
     if (!window.currentVideoUrl) {
         alert('No video available to share.');
         return;
     }
 
-    // Redirect to backend auth endpoint
-    // This will handle the TikTok OAuth redirect
     const sign = currentZodiacSign || 'rat';
     const video = window.currentVideoUrl;
 
-    // Redirecting user to our server's TikTok auth initiation point
-    const authInitiateUrl = `/api/tiktok/auth?sign=${sign}&video=${encodeURIComponent(video)}`;
+    // Redirecting user to our server's auth initiation point
+    const authInitiateUrl = `/api/${platform}/auth?sign=${sign}&video=${encodeURIComponent(video)}`;
 
-    console.log(`🚀 Initiating TikTok Share via: ${authInitiateUrl}`);
+    console.log(`🚀 Initiating ${platform} Share via: ${authInitiateUrl}`);
 
     // Disable button to prevent double clicks during redirect
     shareBtnEl.disabled = true;
