@@ -186,7 +186,7 @@ router.get('/callback', async (req, res) => {
             body: JSON.stringify({
                 post_info: {
                     title: `Check out my ${zodiacSign} Zodiac video! #zodiac #lara-k`,
-                    privacy_level: 'PUBLIC_TO_EVERYONE',
+                    privacy_level: 'SELF_ONLY', // Changed from PUBLIC_TO_EVERYONE to bypass unaudited client restriction
                     disable_duet: false,
                     disable_comment: false,
                     disable_stitch: false,
