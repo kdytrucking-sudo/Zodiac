@@ -88,19 +88,15 @@ router.post('/generate-tiktok-video', async (req, res) => {
  */
 router.all('/auth', (req, res) => {
     console.log(`🔍 Received request for TikTok auth: sign=${req.query.sign}, video=${req.query.video}`);
-    const clientKey = process.env.TIKTOK_CLIENT_KEY;
-    const redirectUri = process.env.TIKTOK_REDIRECT_URI;
+
+    // TEMPORARY: Hardcoded credentials for testing
+    const clientKey = 'sbaw1imsw3k4var7mm';
+    const redirectUri = 'https://zodiac.laraks.com/api/tiktok/callback';
+
     const state = JSON.stringify({
         zodiacSign: req.query.sign || 'unknown',
         videoUrl: req.query.video || ''
     });
-
-    if (!clientKey || !redirectUri) {
-        return res.status(500).json({
-            success: false,
-            error: 'TikTok configuration missing (Client Key or Redirect URI)'
-        });
-    }
 
     // New version of TikTok authorization URL (v2)
     const authUrl = `https://www.tiktok.com/v2/auth/authorize/` +
@@ -128,6 +124,11 @@ router.get('/callback', async (req, res) => {
     try {
         console.log(`🎟️ Exchanging TikTok code for access token...`);
 
+        // TEMPORARY: Hardcoded credentials for testing
+        const clientKey = 'sbaw1imsw3k4var7mm';
+        const clientSecret = 'sSrlcKFYuMvHMEWhnLE94n1UeMdv9Wtz';
+        const redirectUri = 'https://zodiac.laraks.com/api/tiktok/callback';
+
         // Change code for access token
         const tokenUrl = 'https://open.tiktokapis.com/v2/oauth/token/';
         const response = await fetch(tokenUrl, {
@@ -137,11 +138,11 @@ router.get('/callback', async (req, res) => {
                 'Cache-Control': 'no-cache'
             },
             body: new URLSearchParams({
-                client_key: process.env.TIKTOK_CLIENT_KEY,
-                client_secret: process.env.TIKTOK_CLIENT_SECRET,
+                client_key: clientKey,
+                client_secret: clientSecret,
                 code: code,
                 grant_type: 'authorization_code',
-                redirect_uri: process.env.TIKTOK_REDIRECT_URI
+                redirect_uri: redirectUri
             })
         });
 
