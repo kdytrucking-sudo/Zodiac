@@ -588,11 +588,11 @@ body {
         height: 50px;
         font-size: 1.2rem;
     }
-    
+
     .social-share-buttons {
         gap: 10px;
     }
-    
+
     .share-title {
         font-size: 1rem;
     }
@@ -7714,5 +7714,402 @@ input:checked+.slider:before {
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+    }
+}
+
+/* ===== TikTok Video Generation Modal ===== */
+.tiktok-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tiktok-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.3s ease;
+}
+
+.tiktok-modal-content {
+    position: relative;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 24px;
+    padding: 25px 30px;
+    max-width: 550px;
+    width: 90%;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: slideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: rgba(255, 0, 80, 0.2);
+    transform: rotate(90deg);
+}
+
+.modal-header {
+    text-align: center;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+
+.modal-icon {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #ff0050 0%, #00f2ea 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.modal-header h2 {
+    color: #fdd56a;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+    font-family: 'Playfair Display', serif;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.video-description-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.video-description-section label {
+    color: #d1d1d6;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.prompt-tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: help;
+    color: #fdd56a;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.prompt-tooltip:hover {
+    color: #ffe08a;
+    transform: scale(1.1);
+}
+
+.prompt-tooltip .tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0f0f1a;
+    color: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    max-width: 350px;
+    width: max-content;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    line-height: 1.6;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+}
+
+.prompt-tooltip .tooltip-text::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top-color: #0f0f1a;
+}
+
+.prompt-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+#video-description {
+    width: 100%;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #d1d1d6;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    resize: none;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s ease;
+}
+
+#video-description:focus {
+    outline: none;
+    border-color: #fdd56a;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.video-status {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    border-radius: 10px;
+    color: #81c784;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.video-status.loading {
+    background: rgba(255, 193, 7, 0.1);
+    border-color: rgba(255, 193, 7, 0.3);
+    color: #ffd54f;
+}
+
+.video-status.error {
+    background: rgba(244, 67, 54, 0.1);
+    border-color: rgba(244, 67, 54, 0.3);
+    color: #e57373;
+}
+
+.video-status i {
+    font-size: 1.2rem;
+}
+
+.btn-share-tiktok {
+    width: 100%;
+    padding: 14px 25px;
+    background: linear-gradient(135deg, #ff0050 0%, #00f2ea 100%);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(255, 0, 80, 0.3);
+    font-family: 'Inter', sans-serif;
+    flex-shrink: 0;
+}
+
+.btn-share-tiktok:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(255, 0, 80, 0.4);
+}
+
+.btn-share-tiktok:active {
+    transform: translateY(-1px);
+}
+
+.btn-share-tiktok:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-share-tiktok i {
+    font-size: 1.3rem;
+}
+
+/* Loading spinner */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.btn-share-tiktok.loading i {
+    animation: spin 1s linear infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tiktok-modal-content {
+        padding: 30px 20px;
+        width: 95%;
+    }
+
+    .modal-header h2 {
+        font-size: 1.4rem;
+    }
+
+    .modal-icon {
+        font-size: 2.5rem;
+    }
+
+    .btn-share-tiktok {
+        font-size: 1rem;
+        padding: 15px 25px;
+    }
+
+    .prompt-tooltip .tooltip-text {
+        max-width: 250px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Video Preview Styles */
+.video-preview-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.video-preview-container label {
+    color: #d1d1d6;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.video-preview-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 180px;
+    margin: 0 auto;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(253, 213, 106, 0.3);
+}
+
+.video-preview-wrapper video {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9/16;
+    display: block;
+    object-fit: contain;
+}
+
+.btn-generate-video {
+    width: 100%;
+    padding: 18px 30px;
+    background: linear-gradient(135deg, #fdd56a 0%, #ffb84d 100%);
+    border: none;
+    border-radius: 12px;
+    color: #0f0f1a;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(253, 213, 106, 0.3);
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-generate-video:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(253, 213, 106, 0.4);
+    background: linear-gradient(135deg, #ffe08a 0%, #ffc966 100%);
+}
+
+.btn-generate-video:active {
+    transform: translateY(-1px);
+}
+
+.btn-generate-video:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-generate-video i {
+    font-size: 1.3rem;
+}
+
+.btn-generate-video.loading i {
+    animation: spin 1s linear infinite;
+}
+
+/* Responsive video preview */
+@media (max-width: 768px) {
+    .video-preview-wrapper {
+        max-width: 250px;
     }
 }

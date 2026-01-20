@@ -247,12 +247,13 @@ document.getElementById('share-twitter')?.addEventListener('click', () => {
     window.open(twitterUrl, '_blank', 'width=600,height=400');
 });
 
-// TikTok Share (Placeholder - to be implemented)
+// TikTok Share - Open Modal and Load Local Video
 document.getElementById('share-tiktok')?.addEventListener('click', () => {
-    alert('TikTok sharing feature coming soon! 🎵');
-    // TODO: Implement TikTok sharing functionality
-    // Note: TikTok doesn't have a direct web share API like Facebook/Twitter
-    // You may need to use their official SDK or create shareable content
+    if (!currentZodiacName || !currentZodiacSign) {
+        alert('Please select a zodiac sign first!');
+        return;
+    }
+    openTikTokModal();
 });
 
 // Instagram Share (Placeholder - to be implemented)
@@ -261,4 +262,131 @@ document.getElementById('share-instagram')?.addEventListener('click', () => {
     // TODO: Implement Instagram sharing functionality
     // Note: Instagram doesn't support direct web sharing
     // You may need to use their official API or create shareable content
+});
+
+// ===== TikTok Video Preview Modal =====
+let currentZodiacData = null;
+
+// Store zodiac data when loaded
+const originalRenderZodiacFunc = renderZodiac;
+renderZodiac = function (data, signId) {
+    originalRenderZodiacFunc(data, signId);
+    currentZodiacData = data;
+};
+
+function openTikTokModal() {
+    const modal = document.getElementById('tiktok-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const videoPreview = document.getElementById('video-preview');
+    const videoSource = document.getElementById('video-source');
+    const statusEl = document.getElementById('video-status');
+    const previewContainer = document.getElementById('video-preview-container');
+
+    // Set title
+    modalTitle.textContent = 'Share Your Zodiac Video';
+
+    // Load local video file based on zodiac sign
+    const videoPath = `/video/${currentZodiacSign}.mp4`;
+
+    // Show loading status
+    statusEl.className = 'video-status loading';
+    statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Loading video...</span>';
+
+    // Set video source
+    videoSource.src = videoPath;
+    videoPreview.load();
+
+    // Store video URL for sharing
+    window.currentVideoUrl = videoPath;
+
+    // Show preview container
+    previewContainer.style.display = 'flex';
+
+    // Add video event listeners
+    videoPreview.addEventListener('loadeddata', () => {
+        console.log('✅ Video loaded successfully');
+        statusEl.className = 'video-status';
+        statusEl.innerHTML = '<i class="fas fa-check-circle"></i><span>Video ready! Click play to preview.</span>';
+    }, { once: true });
+
+    videoPreview.addEventListener('error', (e) => {
+        console.error('❌ Video loading error:', e);
+        statusEl.className = 'video-status error';
+        statusEl.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>Video file not found. Please contact administrator.</span>';
+    }, { once: true });
+
+    // Auto-play preview (muted)
+    setTimeout(async () => {
+        try {
+            videoPreview.muted = true;
+            await videoPreview.play();
+            statusEl.className = 'video-status';
+            statusEl.innerHTML = '<i class="fas fa-check-circle"></i><span>Preview playing. Unmute to hear audio.</span>';
+            // Unmute after starting
+            setTimeout(() => {
+                videoPreview.muted = false;
+            }, 500);
+        } catch (playError) {
+            console.log('Auto-play prevented:', playError);
+            statusEl.className = 'video-status';
+            statusEl.innerHTML = '<i class="fas fa-check-circle"></i><span>Video ready! Click play to preview.</span>';
+        }
+    }, 100);
+
+    // Show modal
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeTikTokModal() {
+    const modal = document.getElementById('tiktok-modal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+
+    // Reset video
+    const videoPreview = document.getElementById('video-preview');
+    const videoSource = document.getElementById('video-source');
+
+    videoPreview.pause();
+    videoSource.src = '';
+
+    // Reset status
+    const statusEl = document.getElementById('video-status');
+    statusEl.className = 'video-status';
+    statusEl.innerHTML = '<i class="fas fa-info-circle"></i><span>Loading video...</span>';
+
+    // Clear stored video URL
+    window.currentVideoUrl = null;
+}
+
+// Close modal handlers
+document.getElementById('close-tiktok-modal')?.addEventListener('click', closeTikTokModal);
+document.querySelector('.tiktok-modal-overlay')?.addEventListener('click', closeTikTokModal);
+
+// Share video to TikTok
+document.getElementById('btn-share-tiktok')?.addEventListener('click', async () => {
+    const shareBtnEl = document.getElementById('btn-share-tiktok');
+    const statusEl = document.getElementById('video-status');
+
+    if (!window.currentVideoUrl) {
+        alert('No video available to share.');
+        return;
+    }
+
+    // Redirect to backend auth endpoint
+    // This will handle the TikTok OAuth redirect
+    const sign = currentZodiacSign || 'rat';
+    const video = window.currentVideoUrl;
+
+    // Redirecting user to our server's TikTok auth initiation point
+    const authInitiateUrl = `/api/tiktok/auth?sign=${sign}&video=${encodeURIComponent(video)}`;
+
+    console.log(`🚀 Initiating TikTok Share via: ${authInitiateUrl}`);
+
+    // Disable button to prevent double clicks during redirect
+    shareBtnEl.disabled = true;
+    shareBtnEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Redirecting...</span>';
+
+    // Navigate to auth
+    window.location.href = authInitiateUrl;
 });

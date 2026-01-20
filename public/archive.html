@@ -206,6 +206,44 @@
 
     <div id="footer-placeholder"></div>
 
+    <!-- TikTok Video Preview Modal -->
+    <div id="tiktok-modal" class="tiktok-modal" style="display: none;">
+        <div class="tiktok-modal-overlay"></div>
+        <div class="tiktok-modal-content">
+            <button class="modal-close" id="close-tiktok-modal">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="modal-header">
+                <i class="fab fa-tiktok modal-icon"></i>
+                <h2 id="modal-title">Share Your Zodiac Video</h2>
+            </div>
+
+            <div class="modal-body">
+                <!-- Video Preview Area -->
+                <div class="video-preview-container" id="video-preview-container">
+                    <label>Video Preview</label>
+                    <div class="video-preview-wrapper">
+                        <video id="video-preview" controls playsinline>
+                            <source id="video-source" src="" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+
+                <div class="video-status" id="video-status">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Loading video...</span>
+                </div>
+
+                <button class="btn-share-tiktok" id="btn-share-tiktok">
+                    <i class="fab fa-tiktok"></i>
+                    Share to My TikTok
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="archive.js"></script>
     <script type="module" src="navbar.js"></script>
     <script type="module" src="footer.js"></script>

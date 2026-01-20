@@ -11,6 +11,7 @@ import { googleAI } from '@genkit-ai/googleai';
 // Webhook routes (简化版本 - 不需要服务账号密钥)
 import webhookRoutes from './server/routes/webhook-simple.mjs';
 import fortuneWebhookRoutes from './server/routes/webhook-fortune.mjs';
+import tiktokVideoRoutes from './server/routes/tiktok-video.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -133,6 +134,10 @@ console.log('✅ Webhook routes loaded');
 // Fortune Webhook API routes
 app.use('/api/webhook/fortune', fortuneWebhookRoutes);
 console.log('✅ Fortune webhook routes loaded');
+
+// TikTok Video Generation API routes
+app.use('/api/tiktok', tiktokVideoRoutes);
+console.log('✅ TikTok video routes loaded');
 
 
 // 全局错误兜底（以后加复杂逻辑时有用）
