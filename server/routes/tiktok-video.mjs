@@ -90,7 +90,7 @@ router.all('/auth', (req, res) => {
     console.log(`🔍 Received request for TikTok auth: sign=${req.query.sign}, video=${req.query.video}`);
 
     // TEMPORARY: Hardcoded credentials for testing
-    const clientKey = 'WOEgKAqpJZZGaS4bmyoWq7I1uGXkI5E2';
+    const clientKey = 'aww6zbavqvwdcffv';
     const redirectUri = 'https://zodiac.laraks.com/api/tiktok/callback';
 
     const state = JSON.stringify({
@@ -125,8 +125,8 @@ router.get('/callback', async (req, res) => {
         console.log(`🎟️ Exchanging TikTok code for access token...`);
 
         // TEMPORARY: Hardcoded credentials for testing
-        const clientKey = 'WOEgKAqpJZZGaS4bmyoWq7I1uGXkI5E2';
-        const clientSecret = 'aww6zbavqvwdcffv';
+        const clientKey = 'aww6zbavqvwdcffv';
+        const clientSecret = 'WOEgKAqpJZZGaS4bmyoWq7I1uGXkI5E2';
         const redirectUri = 'https://zodiac.laraks.com/api/tiktok/callback';
 
         // Change code for access token
