@@ -21,3 +21,5 @@ env:
     secret: WEBHOOK_SECRET_TOKEN
     availability:
       - RUNTIME
+  - variable: BASE_URL
+    value: https://zodiac.laraks.com
