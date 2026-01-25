@@ -226,7 +226,7 @@ function validateFortuneMiddleware(req, res, next) {
 // Firebase 配置
 const FIREBASE_PROJECT_ID = 'studio-4395392521-1abeb';
 const FIREBASE_DATABASE_ID = 'zodia1';
-const FIREBASE_API_KEY = 'AIzaSyDBk4Qspp1eBT1rkUhmffWLf4a4kAF26gU';
+const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
 
 // 转换为 Firestore REST API 格式
 function toFirestoreFormat(data) {
