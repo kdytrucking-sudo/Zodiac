@@ -12,7 +12,16 @@ function verifyWebhookAuth(req, res, next) {
     const authHeader = req.headers.authorization;
     const token = authHeader?.split(' ')[1];
 
-    const WEBHOOK_SECRET_TOKEN = process.env.WEBHOOK_SECRET_TOKEN || 'wh_3e5fecbc-109ee-435f-ab02-ab0323c8523E';
+    const WEBHOOK_SECRET_TOKEN = process.env.WEBHOOK_SECRET_TOKEN;
+
+    if (!WEBHOOK_SECRET_TOKEN) {
+        console.error('❌ WEBHOOK_SECRET_TOKEN not found in environment variables');
+        return res.status(500).json({
+            success: false,
+            error: 'Server configuration error',
+            message: 'Webhook token not configured'
+        });
+    }
 
     if (!token || token !== WEBHOOK_SECRET_TOKEN) {
         return res.status(401).json({
